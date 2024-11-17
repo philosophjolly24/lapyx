@@ -1,16 +1,7 @@
 # icarus
 
-A new Flutter project.
+## What is Icarus?
+Icarus is an interactive strategy creation tool for Valorant teams. The application focuses on providing a robust map drawing system that allows teams to create, save, and iterate on their strategies.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## What's with the name?
+Currently, it's simply an internal code name. I really haven't thought about a name yet.
