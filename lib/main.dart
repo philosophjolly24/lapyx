@@ -42,7 +42,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[InteractiveMap()],
+          children: <Widget>[
+            InteractiveMap(),
+          ],
         ),
       ),
     );
