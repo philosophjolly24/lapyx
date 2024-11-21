@@ -21,7 +21,6 @@ class _InteractiveMapState extends State<InteractiveMap> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height -
         60.0; // -60 adjusts for app bar height. I'm not sure if app bar will be included so this would be modified accordingly
     Size playAreaSize = Size(height * 1.24, height);
@@ -37,7 +36,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
           children: [
             Positioned.fill(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(bottom: 55.0, top: 8),
                 child: SvgPicture.asset(
                   assetName,
                   semanticsLabel: 'Map',

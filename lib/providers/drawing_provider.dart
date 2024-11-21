@@ -3,7 +3,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:icarus/DrawingElement.dart';
 
+enum InteractionState {
+  navigation,
+  drawLine,
+  drawFreeLine,
+}
+
 class DrawingProvider extends ChangeNotifier {
+  InteractionState interactionState = InteractionState.navigation;
   bool isDrawing = false;
   int updateCounter = 0;
   int indexOfCurrentEdit = -1;
@@ -18,6 +25,11 @@ class DrawingProvider extends ChangeNotifier {
     updateCounter = (updateCounter + 1) % 3;
     notifyListeners();
     return updateCounter;
+  }
+
+  void updateInteractionState(InteractionState interactionState) {
+    this.interactionState = interactionState;
+    notifyListeners();
   }
 
   void startLine(Offset start) {
@@ -42,6 +54,11 @@ class DrawingProvider extends ChangeNotifier {
   void finishCurrentLine(Offset endpoint) {
     (listOfElements[indexOfCurrentEdit] as Line).updateEndPoint(endpoint);
     indexOfCurrentEdit = -1;
+    getNextUpdate();
+  }
+
+  void clearAll() {
+    listOfElements = [];
     getNextUpdate();
   }
 }

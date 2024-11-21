@@ -28,25 +28,30 @@ class _InteractivePainterState extends State<InteractivePainter> {
       elements: drawingProvider.listOfElements, // Pass the data directly
     );
 
-    return GestureDetector(
-      onPanStart: (details) {
-        Offset lineStart =
-            coordinateSystem.screenToCoordinate(details.localPosition);
-        drawingProvider.startLine(lineStart);
-      },
-      onPanUpdate: (details) {
-        Offset lineEnd =
-            coordinateSystem.screenToCoordinate(details.localPosition);
+    bool isNavigating =
+        drawingProvider.interactionState == InteractionState.navigation;
+    return IgnorePointer(
+      ignoring: isNavigating,
+      child: GestureDetector(
+        onPanStart: (details) {
+          Offset lineStart =
+              coordinateSystem.screenToCoordinate(details.localPosition);
+          drawingProvider.startLine(lineStart);
+        },
+        onPanUpdate: (details) {
+          Offset lineEnd =
+              coordinateSystem.screenToCoordinate(details.localPosition);
 
-        drawingProvider.updateCurrentLine(lineEnd);
-      },
-      onPanEnd: (details) {
-        Offset lineEnd =
-            coordinateSystem.screenToCoordinate(details.localPosition);
-        drawingProvider.finishCurrentLine(lineEnd);
-      },
-      child: CustomPaint(
-        painter: drawingPainter,
+          drawingProvider.updateCurrentLine(lineEnd);
+        },
+        onPanEnd: (details) {
+          Offset lineEnd =
+              coordinateSystem.screenToCoordinate(details.localPosition);
+          drawingProvider.finishCurrentLine(lineEnd);
+        },
+        child: CustomPaint(
+          painter: drawingPainter,
+        ),
       ),
     );
   }

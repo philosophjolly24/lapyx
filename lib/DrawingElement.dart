@@ -13,3 +13,7 @@ class Line extends DrawingElement {
     lineEnd = endPoint;
   }
 }
+
+class FreeDrawing extends DrawingElement {
+  List<Offset> paths = [];
+}

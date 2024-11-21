@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icarus/home_view.dart';
 import 'package:icarus/interactive_map.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:provider/provider.dart';
@@ -41,19 +42,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            InteractiveMap(),
-          ],
-        ),
-      ),
-    );
+    return const HomeView();
   }
 }
