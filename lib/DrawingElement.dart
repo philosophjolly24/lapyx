@@ -15,5 +15,10 @@ class Line extends DrawingElement {
 }
 
 class FreeDrawing extends DrawingElement {
-  List<Offset> paths = [];
+  List<Offset> listOfPoints = [];
+  Path path = Path();
+
+  void updatePath(Path newPath) {
+    path = newPath;
+  }
 }

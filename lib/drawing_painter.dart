@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:icarus/DrawingElement.dart';
 import 'package:icarus/interactive_map.dart';
@@ -34,20 +36,41 @@ class _InteractivePainterState extends State<InteractivePainter> {
       ignoring: isNavigating,
       child: GestureDetector(
         onPanStart: (details) {
-          Offset lineStart =
-              coordinateSystem.screenToCoordinate(details.localPosition);
-          drawingProvider.startLine(lineStart);
+          switch (drawingProvider.interactionState) {
+            case InteractionState.drawLine:
+              Offset lineStart =
+                  coordinateSystem.screenToCoordinate(details.localPosition);
+              drawingProvider.startLine(lineStart);
+            case InteractionState.drawFreeLine:
+              drawingProvider.startFreeDrawing(
+                  details.localPosition, coordinateSystem);
+            default:
+          }
         },
         onPanUpdate: (details) {
-          Offset lineEnd =
-              coordinateSystem.screenToCoordinate(details.localPosition);
+          switch (drawingProvider.interactionState) {
+            case InteractionState.drawLine:
+              Offset lineEnd =
+                  coordinateSystem.screenToCoordinate(details.localPosition);
 
-          drawingProvider.updateCurrentLine(lineEnd);
+              drawingProvider.updateCurrentLine(lineEnd);
+            case InteractionState.drawFreeLine:
+              drawingProvider.updateFreeDrawing(
+                  details.localPosition, coordinateSystem);
+            default:
+          }
         },
         onPanEnd: (details) {
-          Offset lineEnd =
-              coordinateSystem.screenToCoordinate(details.localPosition);
-          drawingProvider.finishCurrentLine(lineEnd);
+          switch (drawingProvider.interactionState) {
+            case InteractionState.drawLine:
+              Offset lineEnd =
+                  coordinateSystem.screenToCoordinate(details.localPosition);
+              drawingProvider.finishCurrentLine(lineEnd);
+            case InteractionState.drawFreeLine:
+              drawingProvider.finishFreeDrawing(
+                  details.localPosition, coordinateSystem);
+            default:
+          }
         },
         child: CustomPaint(
           painter: drawingPainter,
@@ -83,12 +106,66 @@ class DrawingPainter extends CustomPainter {
         Offset screenEndOffset =
             coordinateSystem.coordinateToScreen(line.lineEnd);
         canvas.drawLine(screenStartOffset, screenEndOffset, paint);
+      } else if (elements[i] is FreeDrawing) {
+        FreeDrawing freeDrawing = elements[i] as FreeDrawing;
+        List<Offset> paths = freeDrawing.listOfPoints;
+        if (paths.length < 2) return;
+
+        // final freePath = Path();
+        // freePath.moveTo(coordinateSystem.coordinateToScreen(paths[0]).dx,
+        //     coordinateSystem.coordinateToScreen(paths[0]).dy);
+
+        // for (int i = 0; i < paths.length - 2; i++) {
+        //   final current = coordinateSystem.coordinateToScreen(paths[i]);
+        //   final next = coordinateSystem.coordinateToScreen(paths[i + 1]);
+
+        //   // Calculate the control point as the midpoint between points
+        //   final controlPoint = Offset(
+        //     (current.dx + next.dx) / 2,
+        //     (current.dy + next.dy) / 2,
+        //   );
+
+        //   freePath.quadraticBezierTo(
+        //     current.dx, current.dy, // control point
+        //     controlPoint.dx, controlPoint.dy, // end point
+        //   );
+        // }
+
+        // // Draw the last segment
+        // if (paths.length >= 2) {
+        //   final last = paths.length - 1;
+        //   final secondLast = paths.length - 2;
+
+        //   final lastPoint = coordinateSystem.coordinateToScreen(paths[last]);
+        //   final secondLastPoint =
+        //       coordinateSystem.coordinateToScreen(paths[secondLast]);
+
+        //   freePath.quadraticBezierTo(
+        //     secondLastPoint.dx,
+        //     secondLastPoint.dy,
+        //     lastPoint.dx,
+        //     lastPoint.dy,
+        //   );
+        // }
+
+        // //Todo:fsf
+
+        // for (int i = 1; i < paths.length; i++) {
+        //   freePath.lineTo(coordinateSystem.coordinateToScreen(paths[i]).dx,
+        //       coordinateSystem.coordinateToScreen(paths[i]).dy);
+        // }
+        canvas.drawPath(freeDrawing.path, paint);
       }
     }
   }
 
   @override
   bool shouldRepaint(DrawingPainter oldDelegate) {
+    if (oldDelegate.coordinateSystem.playAreaSize !=
+        coordinateSystem.playAreaSize) {
+      log("I updataed");
+      return true;
+    }
     return oldDelegate.updateCounter !=
         updateCounter; // Repaint when elements change
   }

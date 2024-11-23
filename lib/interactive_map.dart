@@ -9,8 +9,6 @@ class InteractiveMap extends StatefulWidget {
 
   @override
   State<InteractiveMap> createState() => _InteractiveMapState();
-
-  void screenToCoordinate() {}
 }
 
 class _InteractiveMapState extends State<InteractiveMap> {
@@ -68,7 +66,7 @@ class CoordinateSystem {
     // Normalize coordinates
     double normalizedX = (screenPoint.dx / playAreaSize.width) * 1000;
     double normalizedY = (screenPoint.dy / playAreaSize.height) * 1000;
-    dev.log("Normalized X $normalizedX \n Normalized Y $normalizedY");
+    // dev.log("Normalized X $normalizedX \n Normalized Y $normalizedY");
     return Offset(normalizedX, normalizedY);
   }
 
@@ -76,7 +74,7 @@ class CoordinateSystem {
     double screenX = (coordinates.dx / 1000) * playAreaSize.width;
     double screenY = (coordinates.dy / 1000) * playAreaSize.height;
 
-    dev.log("Raw X $screenX \n Raw Y $screenY");
+    // dev.log("Raw X $screenX \n Raw Y $screenY");
     return Offset(screenX, screenY);
   }
 }

@@ -29,13 +29,13 @@ class _BottomActionbarState extends State<BottomActionbar> {
             children: [
               IconButton(
                 onPressed: () {
-                  if (drawingProvider.interactionState ==
-                      InteractionState.drawFreeLine) {
-                    drawingProvider
-                        .updateInteractionState(InteractionState.navigation);
-                  } else {
-                    drawingProvider
-                        .updateInteractionState(InteractionState.drawFreeLine);
+                  switch (drawingProvider.interactionState) {
+                    case InteractionState.drawFreeLine:
+                      drawingProvider
+                          .updateInteractionState(InteractionState.navigation);
+                    default:
+                      drawingProvider.updateInteractionState(
+                          InteractionState.drawFreeLine);
                   }
                 },
                 icon: const Icon(Icons.draw),
