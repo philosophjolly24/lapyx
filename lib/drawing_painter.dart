@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:icarus/DrawingElement.dart';
 import 'package:icarus/interactive_map.dart';
-import 'package:icarus/main.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -25,10 +24,10 @@ class _InteractivePainterState extends State<InteractivePainter> {
     final drawingProvider = context.watch<DrawingProvider>();
 
     CustomPainter drawingPainter = DrawingPainter(
-      updateCounter: drawingProvider.updateCounter,
-      coordinateSystem: coordinateSystem,
-      elements: drawingProvider.listOfElements, // Pass the data directly
-    );
+        updateCounter: drawingProvider.updateCounter,
+        coordinateSystem: coordinateSystem,
+        elements: drawingProvider.listOfElements, // Pass the data directly
+        drawingProvider: drawingProvider);
 
     bool isNavigating =
         drawingProvider.interactionState == InteractionState.navigation;
@@ -84,19 +83,23 @@ class DrawingPainter extends CustomPainter {
   final CoordinateSystem coordinateSystem;
   final List<DrawingElement> elements; // Store the drawing elements
   final int updateCounter;
+  final DrawingProvider drawingProvider;
 
-  DrawingPainter({
-    required this.updateCounter,
-    required this.coordinateSystem,
-    required this.elements,
-  });
+  DrawingPainter(
+      {required this.updateCounter,
+      required this.coordinateSystem,
+      required this.elements,
+      required this.drawingProvider});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.white
       ..strokeWidth = 2.0
-      ..style = PaintingStyle.stroke;
+      ..style = PaintingStyle.stroke
+      ..strokeJoin = StrokeJoin.round
+      ..isAntiAlias = true
+      ..strokeCap = StrokeCap.round;
 
     for (int i = 0; i < elements.length; i++) {
       if (elements[i] is Line) {
@@ -111,49 +114,6 @@ class DrawingPainter extends CustomPainter {
         List<Offset> paths = freeDrawing.listOfPoints;
         if (paths.length < 2) return;
 
-        // final freePath = Path();
-        // freePath.moveTo(coordinateSystem.coordinateToScreen(paths[0]).dx,
-        //     coordinateSystem.coordinateToScreen(paths[0]).dy);
-
-        // for (int i = 0; i < paths.length - 2; i++) {
-        //   final current = coordinateSystem.coordinateToScreen(paths[i]);
-        //   final next = coordinateSystem.coordinateToScreen(paths[i + 1]);
-
-        //   // Calculate the control point as the midpoint between points
-        //   final controlPoint = Offset(
-        //     (current.dx + next.dx) / 2,
-        //     (current.dy + next.dy) / 2,
-        //   );
-
-        //   freePath.quadraticBezierTo(
-        //     current.dx, current.dy, // control point
-        //     controlPoint.dx, controlPoint.dy, // end point
-        //   );
-        // }
-
-        // // Draw the last segment
-        // if (paths.length >= 2) {
-        //   final last = paths.length - 1;
-        //   final secondLast = paths.length - 2;
-
-        //   final lastPoint = coordinateSystem.coordinateToScreen(paths[last]);
-        //   final secondLastPoint =
-        //       coordinateSystem.coordinateToScreen(paths[secondLast]);
-
-        //   freePath.quadraticBezierTo(
-        //     secondLastPoint.dx,
-        //     secondLastPoint.dy,
-        //     lastPoint.dx,
-        //     lastPoint.dy,
-        //   );
-        // }
-
-        // //Todo:fsf
-
-        // for (int i = 1; i < paths.length; i++) {
-        //   freePath.lineTo(coordinateSystem.coordinateToScreen(paths[i]).dx,
-        //       coordinateSystem.coordinateToScreen(paths[i]).dy);
-        // }
         canvas.drawPath(freeDrawing.path, paint);
       }
     }
@@ -164,6 +124,7 @@ class DrawingPainter extends CustomPainter {
     if (oldDelegate.coordinateSystem.playAreaSize !=
         coordinateSystem.playAreaSize) {
       log("I updataed");
+      drawingProvider.rebuildAllPaths(coordinateSystem);
       return true;
     }
     return oldDelegate.updateCounter !=

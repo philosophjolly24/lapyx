@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:icarus/DrawingElement.dart';
 import 'package:icarus/interactive_map.dart';
@@ -86,6 +87,9 @@ class DrawingProvider extends ChangeNotifier {
     (listOfElements[indexOfCurrentEdit] as FreeDrawing)
         .listOfPoints
         .add(coordinateSystem.screenToCoordinate(offset));
+    (listOfElements[indexOfCurrentEdit] as FreeDrawing)
+        .rebuildPath(coordinateSystem);
+
     indexOfCurrentEdit = -1;
     getNextUpdate();
   }
@@ -100,6 +104,14 @@ class DrawingProvider extends ChangeNotifier {
     (listOfElements[indexOfCurrentEdit] as Line).updateEndPoint(endpoint);
     indexOfCurrentEdit = -1;
     getNextUpdate();
+  }
+
+  void rebuildAllPaths(CoordinateSystem coordinateSystem) {
+    for (DrawingElement drawingElement in listOfElements) {
+      if (drawingElement is FreeDrawing) {
+        drawingElement.rebuildPath(coordinateSystem);
+      }
+    }
   }
 
   void clearAll() {
