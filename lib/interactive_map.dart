@@ -45,6 +45,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
             Positioned.fill(
               child: InteractivePainter(playAreaSize: playAreaSize),
             ),
+            
           ],
         ),
       ),
