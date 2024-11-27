@@ -30,6 +30,7 @@ flutter:
 
   assets:
     - assets/maps/
+    - assets/agents/Jett/
 
   uses-material-design: true
 

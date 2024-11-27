@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:icarus/agents.dart';
+import 'package:icarus/agents.dart';
 import 'dart:developer' as dev;
 
 import 'package:icarus/drawing_painter.dart';
@@ -23,32 +25,49 @@ class _InteractiveMapState extends State<InteractiveMap> {
         60.0; // -60 adjusts for app bar height. I'm not sure if app bar will be included so this would be modified accordingly
     Size playAreaSize = Size(height * 1.24, height);
 
-    return InteractiveViewer(
-      scaleEnabled: true,
-      transformationController: transformationController,
-      child: Container(
-        width: playAreaSize.width,
-        height: height,
-        color: const Color(0xFF1B1B1B),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 55.0, top: 8),
-                child: SvgPicture.asset(
-                  assetName,
-                  semanticsLabel: 'Map',
-                  fit: BoxFit.contain,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        InteractiveViewer(
+          scaleEnabled: true,
+          transformationController: transformationController,
+          child: Container(
+            width: playAreaSize.width,
+            height: height,
+            color: const Color(0xFF1B1B1B),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 55.0, top: 8),
+                    child: SvgPicture.asset(
+                      assetName,
+                      semanticsLabel: 'Map',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
-              ),
+                Positioned.fill(
+                  child: InteractivePainter(playAreaSize: playAreaSize),
+                ),
+              ],
             ),
-            Positioned.fill(
-              child: InteractivePainter(playAreaSize: playAreaSize),
-            ),
-            
-          ],
+          ),
         ),
-      ),
+        Container(
+          height: height,
+          width: 200,
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2),
+            itemCount: AgentType.values.length,
+            itemBuilder: (context, index) {
+              return Image.asset(
+                  AgentData.agents[AgentType.values[index]]!.iconPath);
+            },
+          ),
+        )
+      ],
     );
   }
 }
