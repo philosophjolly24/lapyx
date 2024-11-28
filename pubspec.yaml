@@ -30,7 +30,25 @@ flutter:
 
   assets:
     - assets/maps/
+    - assets/agents/Omen/
+    - assets/agents/Killjoy/
+    - assets/agents/Sova/
+    - assets/agents/Skye/
+    - assets/agents/Phoenix/
+    - assets/agents/Fade/
+    - assets/agents/Yoru/
+    - assets/agents/Chamber/
+    - assets/agents/Cypher/
+    - assets/agents/Raze/
+    - assets/agents/Brimstone/
     - assets/agents/Jett/
+    - assets/agents/Reyna/
+    - assets/agents/Viper/
+    - assets/agents/Neon/
+    - assets/agents/Astra/
+    - assets/agents/Kayo/
+    - assets/agents/Breach/
+    - assets/agents/Sage/
 
   uses-material-design: true
 

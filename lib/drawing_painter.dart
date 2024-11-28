@@ -95,7 +95,7 @@ class DrawingPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.white
-      ..strokeWidth = 2.0
+      ..strokeWidth = 5.0
       ..style = PaintingStyle.stroke
       ..strokeJoin = StrokeJoin.round
       ..isAntiAlias = true
