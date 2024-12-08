@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:icarus/DrawingElement.dart';
 import 'package:icarus/interactive_map.dart';

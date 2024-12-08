@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icarus/home_view.dart';
 import 'package:icarus/interactive_map.dart';
+import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +9,7 @@ void main() {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => DrawingProvider()),
+      ChangeNotifierProvider(create: (_) => AgentProvider()),
     ],
     child: const MyApp(),
   ));

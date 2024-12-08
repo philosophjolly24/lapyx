@@ -128,7 +128,7 @@ class AgentData {
     AgentType.kayo: AgentData(
       type: AgentType.kayo,
       role: AgentRole.initiator,
-      name: "KAY/O",
+      name: "Kayo",
     ),
     AgentType.killjoy: AgentData(
       type: AgentType.killjoy,
