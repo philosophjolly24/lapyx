@@ -94,7 +94,7 @@ class DrawingPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.white
-      ..strokeWidth = 5.0
+      ..strokeWidth = coordinateSystem.scale(5)
       ..style = PaintingStyle.stroke
       ..strokeJoin = StrokeJoin.round
       ..isAntiAlias = true
@@ -105,8 +105,23 @@ class DrawingPainter extends CustomPainter {
         Line line = elements[i] as Line;
         Offset screenStartOffset =
             coordinateSystem.coordinateToScreen(line.lineStart);
+
         Offset screenEndOffset =
             coordinateSystem.coordinateToScreen(line.lineEnd);
+
+        log('''
+        Coordinate to Screen:
+        Input coordinates: ${line.lineStart.dx}, ${line.lineStart.dy}
+        PlayAreaSize: ${coordinateSystem.playAreaSize.width}, ${coordinateSystem.playAreaSize.height}
+        Output screen pos: ${screenStartOffset.dx}, ${screenStartOffset.dy}
+    ''');
+
+        log('''
+        Coordinate to Screen:
+        Input coordinates: ${line.lineEnd.dx}, ${line.lineEnd.dy}
+        PlayAreaSize: ${coordinateSystem.playAreaSize.width}, ${coordinateSystem.playAreaSize.height}
+        Output screen pos: ${screenEndOffset.dx}, ${screenEndOffset.dy}
+    ''');
         canvas.drawLine(screenStartOffset, screenEndOffset, paint);
       } else if (elements[i] is FreeDrawing) {
         FreeDrawing freeDrawing = elements[i] as FreeDrawing;

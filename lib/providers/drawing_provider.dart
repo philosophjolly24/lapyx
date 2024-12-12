@@ -15,8 +15,8 @@ class DrawingProvider extends ChangeNotifier {
   int updateCounter = 0;
   int indexOfCurrentEdit = -1;
   List<DrawingElement> listOfElements = [
-    Line(null,
-        lineStart: const Offset(300, 300), lineEnd: const Offset(300, 900))
+    // Line(null,
+    //     lineStart: const Offset(300, 300), lineEnd: const Offset(300, 900))
   ];
 
   Offset? lineStart;

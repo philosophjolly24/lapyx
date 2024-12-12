@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:icarus/interactive_map.dart';
 
 enum AgentType {
   jett,
@@ -187,4 +188,24 @@ class PlacedAgent {
   void updatePosition(Offset newPosition) {
     position = newPosition;
   }
+}
+
+Widget agentWidget(AgentData agent, CoordinateSystem coordinateSystem) {
+  return ClipRRect(
+    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+    child: Container(
+      color: Colors.grey,
+      width: coordinateSystem.scale(30),
+      child: Image.asset(agent.iconPath),
+    ),
+  );
+}
+
+Widget draggableAgentWidget(Widget widget, CoordinateSystem coordinateSystem) {
+  return SizedBox(
+    width:
+        coordinateSystem.scale(30), // Set a consistent size for placed agents
+    height: coordinateSystem.scale(30),
+    child: widget,
+  );
 }

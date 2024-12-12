@@ -4,11 +4,19 @@ import 'package:icarus/agents.dart';
 class AgentProvider extends ChangeNotifier {
   List<PlacedAgent> placedAgents = [
     PlacedAgent(
-        data: AgentData.agents[AgentType.breach]!, position: Offset(500, 500))
+        data: AgentData.agents[AgentType.breach]!,
+        position: const Offset(500, 500))
   ];
 
   void addAgent(PlacedAgent placedAgent) {
     placedAgents.add(placedAgent);
+    notifyListeners();
+  }
+
+  void bringAgentFoward(int index) {
+    PlacedAgent tempPlacedAgent = placedAgents[index];
+    placedAgents.removeAt(index);
+    placedAgents.add(tempPlacedAgent);
     notifyListeners();
   }
 }

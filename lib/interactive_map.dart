@@ -1,13 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:icarus/agents.dart';
 import 'package:icarus/agents.dart';
 import 'dart:developer' as dev;
 
 import 'package:icarus/drawing_painter.dart';
-import 'package:icarus/main.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -47,13 +43,10 @@ class _InteractiveMapState extends State<InteractiveMap> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 55.0, top: 8),
-                    child: SvgPicture.asset(
-                      assetName,
-                      semanticsLabel: 'Map',
-                      fit: BoxFit.contain,
-                    ),
+                  child: SvgPicture.asset(
+                    assetName,
+                    semanticsLabel: 'Map',
+                    fit: BoxFit.contain,
                   ),
                 ),
                 Positioned.fill(
@@ -65,28 +58,41 @@ class _InteractiveMapState extends State<InteractiveMap> {
                       builder: (context, candidateData, rejectedData) {
                         return Stack(
                           children: [
-                            ...agentProvider.placedAgents.map(
-                              (agent) => Positioned(
-                                left: coordinateSystem
-                                    .coordinateToScreen(agent.position)
-                                    .dx,
-                                top: coordinateSystem
-                                    .coordinateToScreen(agent.position)
-                                    .dy,
-                                child: SizedBox(
-                                  // Container helps us control the image size and add visual feedback
-                                  width:
-                                      60, // Set a consistent size for placed agents
-                                  height: 60,
-                                  child: Image.asset(
-                                    agent.data
-                                        .iconPath, // Use the path from agent data
-                                    fit: BoxFit
-                                        .contain, // Make sure image fits in container
-                                  ),
-                                ),
-                              ),
-                            ),
+                            ...List.generate(agentProvider.placedAgents.length,
+                                (index) {
+                              final agent = agentProvider.placedAgents[index];
+                              return Positioned(
+                                  left: coordinateSystem
+                                      .coordinateToScreen(agent.position)
+                                      .dx,
+                                  top: coordinateSystem
+                                      .coordinateToScreen(agent.position)
+                                      .dy,
+                                  child: draggableAgentWidget(
+                                      Draggable(
+                                        feedback: agentWidget(
+                                            agent.data, coordinateSystem),
+                                        childWhenDragging:
+                                            const SizedBox.shrink(),
+                                        onDragEnd: (details) {
+                                          //TODO: Account for out of bounds acceptance
+                                          RenderBox renderBox = context
+                                              .findRenderObject() as RenderBox;
+                                          Offset localOffset = renderBox
+                                              .globalToLocal(details.offset);
+                                          // Updating info
+                                          agent.updatePosition(coordinateSystem
+                                              .screenToCoordinate(localOffset));
+
+                                          agentProvider.bringAgentFoward(index);
+                                          dev.log(coordinateSystem.playAreaSize
+                                              .toString());
+                                        },
+                                        child: agentWidget(
+                                            agent.data, coordinateSystem),
+                                      ),
+                                      coordinateSystem));
+                            }),
                           ],
                         );
                       },
@@ -99,7 +105,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
                             coordinateSystem.screenToCoordinate(localOffset);
 
                         PlacedAgent placedAgent = PlacedAgent(
-                          data: details.data as AgentData,
+                          data: details.data,
                           position: normalizedPosition,
                         );
 
@@ -125,13 +131,10 @@ class _InteractiveMapState extends State<InteractiveMap> {
                   width: 60,
                   child: Draggable(
                     data: AgentData.agents[AgentType.values[index]],
-                    feedback: SizedBox(
-                      width: 60,
-                      child: Image.asset(
-                        AgentData.agents[AgentType.values[index]]!.iconPath,
-                      ),
-                    ),
-                    dragAnchorStrategy: childDragAnchorStrategy,
+                    feedback: agentWidget(
+                        AgentData.agents[AgentType.values[index]]!,
+                        coordinateSystem),
+                    dragAnchorStrategy: pointerDragAnchorStrategy,
                     child: SizedBox(
                       width: 60,
                       child: Image.asset(
@@ -154,22 +157,63 @@ class CoordinateSystem {
 
   CoordinateSystem({required this.playAreaSize});
 
-  // Methods
-  Offset screenToCoordinate(Offset screenPoint) {
-    // Get current scale from transformation matrix
+  // The normalized coordinate space will maintain this aspect ratio
+  final double normalizedHeight = 1000.0;
+  late final double normalizedWidth = normalizedHeight * 1.24;
 
-    // Normalize coordinates
-    double normalizedX = (screenPoint.dx / playAreaSize.width) * 1000;
-    double normalizedY = (screenPoint.dy / playAreaSize.height) * 1000;
-    // dev.log("Normalized X $normalizedX \n Normalized Y $normalizedY");
+  Offset screenToCoordinate(Offset screenPoint) {
+    // Convert screen points to the normalized space while maintaining aspect ratio
+    double normalizedX =
+        (screenPoint.dx / playAreaSize.width) * normalizedWidth;
+    double normalizedY =
+        (screenPoint.dy / playAreaSize.height) * normalizedHeight;
+
+    //   dev.log('''
+    // Screen to Coordinate:
+    // Input Screen Positon: ${screenPoint.dx}, ${screenPoint.dy}
+    // PlayAreaSize: ${playAreaSize.width}, ${playAreaSize.height}
+    // Output screen pos: $normalizedX, $normalizedY
+    // ''');
     return Offset(normalizedX, normalizedY);
   }
 
   Offset coordinateToScreen(Offset coordinates) {
-    double screenX = (coordinates.dx / 1000) * playAreaSize.width;
-    double screenY = (coordinates.dy / 1000) * playAreaSize.height;
+    // Convert from normalized space back to screen space while maintaining aspect ratio
+    double screenX = (coordinates.dx / normalizedWidth) * playAreaSize.width;
+    double screenY = (coordinates.dy / normalizedHeight) * playAreaSize.height;
 
-    // dev.log("Raw X $screenX \n Raw Y $screenY");
+    //   dev.log('''
+    // Coordinate to Screen:
+    // Input coordinates: ${coordinates.dx}, ${coordinates.dy}
+    // PlayAreaSize: ${playAreaSize.width}, ${playAreaSize.height}
+    // Output screen pos: $screenX, $screenY
+    // ''');
     return Offset(screenX, screenY);
+  }
+
+  double _baseHeight = 831.0;
+  // Get the scale factor based on screen height
+  double get scaleFactor => playAreaSize.height / _baseHeight;
+
+  // Scale any dimension based on height
+  double scale(double size) => size * scaleFactor;
+
+  // Scale a size maintaining aspect ratio
+  Size scaleSize(Size size) => Size(
+        size.width * scaleFactor,
+        size.height * scaleFactor,
+      );
+
+  // Convenience method to wrap a widget with scaled dimensions
+  Widget scaleWidget({
+    required Widget child,
+    required Size originalSize,
+  }) {
+    Size scaledSize = scaleSize(originalSize);
+    return SizedBox(
+      width: scaledSize.width,
+      height: scaledSize.height,
+      child: child,
+    );
   }
 }
