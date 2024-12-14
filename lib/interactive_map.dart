@@ -24,7 +24,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height -
         60.0; // -60 adjusts for app bar height. I'm not sure if app bar will be included so this would be modified accordingly
-    Size playAreaSize = Size(height * 1.24, height);
+    Size playAreaSize = Size(height * 1.2, height);
     AgentProvider agentProvider = context.watch<AgentProvider>();
 
     CoordinateSystem coordinateSystem =
@@ -118,33 +118,6 @@ class _InteractiveMapState extends State<InteractiveMap> {
             ),
           ),
         ),
-        Container(
-          color: Colors.grey,
-          height: height,
-          width: 120,
-          child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2),
-              itemCount: AgentType.values.length,
-              itemBuilder: (context, index) {
-                return SizedBox(
-                  width: 60,
-                  child: Draggable(
-                    data: AgentData.agents[AgentType.values[index]],
-                    feedback: agentWidget(
-                        AgentData.agents[AgentType.values[index]]!,
-                        coordinateSystem),
-                    dragAnchorStrategy: pointerDragAnchorStrategy,
-                    child: SizedBox(
-                      width: 60,
-                      child: Image.asset(
-                        AgentData.agents[AgentType.values[index]]!.iconPath,
-                      ),
-                    ),
-                  ),
-                );
-              }),
-        )
       ],
     );
   }

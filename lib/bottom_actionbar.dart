@@ -30,12 +30,12 @@ class _BottomActionbarState extends State<BottomActionbar> {
               IconButton(
                 onPressed: () {
                   switch (drawingProvider.interactionState) {
-                    case InteractionState.drawLine:
+                    case InteractionState.drawFreeLine:
                       drawingProvider
                           .updateInteractionState(InteractionState.navigation);
                     default:
-                      drawingProvider
-                          .updateInteractionState(InteractionState.drawLine);
+                      drawingProvider.updateInteractionState(
+                          InteractionState.drawFreeLine);
                   }
                 },
                 icon: const Icon(Icons.draw),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icarus/bottom_actionbar.dart';
 import 'package:icarus/interactive_map.dart';
+import 'package:icarus/outer_ui.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -25,6 +26,7 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           BottomActionbar(),
+          OuterUi()
         ],
       ),
     );
