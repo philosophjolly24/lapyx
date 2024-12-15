@@ -16,9 +16,7 @@ dependencies:
 
   cupertino_icons: ^1.0.6
   flutter_svg: ^2.0.14
-  vector_math: ^2.1.4
   provider: ^6.1.2
-  scribble: ^0.10.0+1
 
 dev_dependencies:
   flutter_test:
