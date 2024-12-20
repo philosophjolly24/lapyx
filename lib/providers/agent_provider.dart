@@ -3,6 +3,7 @@ import 'package:icarus/agents.dart';
 
 class AgentProvider extends ChangeNotifier {
   AgentData? activeAgent;
+
   List<PlacedAgent> placedAgents = [
     PlacedAgent(
         data: AgentData.agents[AgentType.breach]!,

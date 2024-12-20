@@ -32,7 +32,9 @@ enum AgentType {
 
 enum AgentRole { controller, duelist, initiator, sentinel }
 
-class AbilityInfo {
+abstract class DraggableData {}
+
+class AbilityInfo implements DraggableData {
   final String name;
   final bool hasSpecialInteraction;
   final String iconPath;
@@ -55,7 +57,7 @@ class AbilityWidgets {
   }
 }
 
-class AgentData {
+class AgentData implements DraggableData {
   final AgentType type;
   final AgentRole role;
   final List<AbilityInfo> abilities;
@@ -179,29 +181,55 @@ class AgentData {
   };
 }
 
-class PlacedAgent {
-  final AgentData data;
+class PlacedWidget {
   Offset position;
 
-  PlacedAgent({required this.data, required this.position});
+  PlacedWidget({required this.position});
 
   void updatePosition(Offset newPosition) {
     position = newPosition;
   }
 }
 
+class PlacedAgent extends PlacedWidget {
+  final AgentData data;
+
+  PlacedAgent({required this.data, required super.position});
+}
+
+class PlacedAbility extends PlacedWidget {
+  final AbilityInfo data;
+
+  PlacedAbility({required this.data, required super.position});
+}
+
 Widget agentWidget(AgentData agent, CoordinateSystem coordinateSystem) {
   return ClipRRect(
     borderRadius: const BorderRadius.all(Radius.circular(8.0)),
     child: Container(
-      color: Colors.grey,
+      color: const Color.fromARGB(255, 56, 56, 56),
       width: coordinateSystem.scale(30),
       child: Image.asset(agent.iconPath),
     ),
   );
 }
 
-Widget draggableAgentWidget(Widget widget, CoordinateSystem coordinateSystem) {
+Widget defaultAbilityWidget(
+    AbilityInfo ability, CoordinateSystem coordinateSystem) {
+  return ClipRRect(
+    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+    child: Container(
+      color: const Color.fromARGB(255, 56, 56, 56),
+      width: coordinateSystem.scale(30),
+      child: Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: Image.asset(ability.iconPath),
+      ),
+    ),
+  );
+}
+
+Widget scaledContainer(Widget widget, CoordinateSystem coordinateSystem) {
   return SizedBox(
     width:
         coordinateSystem.scale(30), // Set a consistent size for placed agents

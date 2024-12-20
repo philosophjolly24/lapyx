@@ -4,6 +4,7 @@ import 'package:icarus/agents.dart';
 import 'dart:developer' as dev;
 
 import 'package:icarus/drawing_painter.dart';
+import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +26,6 @@ class _InteractiveMapState extends State<InteractiveMap> {
     double height = MediaQuery.of(context).size.height -
         60.0; // -60 adjusts for app bar height. I'm not sure if app bar will be included so this would be modified accordingly
     Size playAreaSize = Size(height * 1.2, height);
-    AgentProvider agentProvider = context.watch<AgentProvider>();
 
     CoordinateSystem coordinateSystem =
         CoordinateSystem(playAreaSize: playAreaSize);
@@ -54,46 +54,90 @@ class _InteractiveMapState extends State<InteractiveMap> {
                 ),
                 Positioned.fill(
                   child: LayoutBuilder(builder: (context, constraints) {
-                    return DragTarget<AgentData>(
+                    return DragTarget<DraggableData>(
                       builder: (context, candidateData, rejectedData) {
-                        return Stack(
-                          children: [
-                            ...List.generate(agentProvider.placedAgents.length,
+                        return Consumer2<AgentProvider, AbilityProvider>(
+                          builder:
+                              (context, agentProvider, abilityProvider, child) {
+                            return Stack(children: [
+                              ...List.generate(
+                                abilityProvider.placedAbilities.length,
                                 (index) {
-                              final agent = agentProvider.placedAgents[index];
-                              return Positioned(
-                                  left: coordinateSystem
-                                      .coordinateToScreen(agent.position)
-                                      .dx,
-                                  top: coordinateSystem
-                                      .coordinateToScreen(agent.position)
-                                      .dy,
-                                  child: draggableAgentWidget(
-                                      Draggable(
-                                        feedback: agentWidget(
-                                            agent.data, coordinateSystem),
-                                        childWhenDragging:
-                                            const SizedBox.shrink(),
-                                        onDragEnd: (details) {
-                                          //TODO: Account for out of bounds acceptance
-                                          RenderBox renderBox = context
-                                              .findRenderObject() as RenderBox;
-                                          Offset localOffset = renderBox
-                                              .globalToLocal(details.offset);
-                                          // Updating info
-                                          agent.updatePosition(coordinateSystem
-                                              .screenToCoordinate(localOffset));
+                                  final ability =
+                                      abilityProvider.placedAbilities[index];
 
-                                          agentProvider.bringAgentFoward(index);
-                                          dev.log(coordinateSystem.playAreaSize
-                                              .toString());
-                                        },
-                                        child: agentWidget(
-                                            agent.data, coordinateSystem),
-                                      ),
-                                      coordinateSystem));
-                            }),
-                          ],
+                                  return Positioned(
+                                    left: coordinateSystem
+                                        .coordinateToScreen(ability.position)
+                                        .dx,
+                                    top: coordinateSystem
+                                        .coordinateToScreen(ability.position)
+                                        .dy,
+                                    child: Draggable(
+                                      feedback: defaultAbilityWidget(
+                                          ability.data, coordinateSystem),
+                                      childWhenDragging:
+                                          const SizedBox.shrink(),
+                                      onDragEnd: (details) {
+                                        RenderBox renderBox = context
+                                            .findRenderObject() as RenderBox;
+                                        Offset localOffset = renderBox
+                                            .globalToLocal(details.offset);
+                                        // Updating info
+
+                                        ability.updatePosition(coordinateSystem
+                                            .screenToCoordinate(localOffset));
+
+                                        // ability.bringFoward(index);
+                                        dev.log(coordinateSystem.playAreaSize
+                                            .toString());
+                                      },
+                                      child: defaultAbilityWidget(
+                                          ability.data, coordinateSystem),
+                                    ),
+                                  );
+                                },
+                              ),
+                              ...List.generate(
+                                agentProvider.placedAgents.length,
+                                (index) {
+                                  final agent =
+                                      agentProvider.placedAgents[index];
+
+                                  return Positioned(
+                                    left: coordinateSystem
+                                        .coordinateToScreen(agent.position)
+                                        .dx,
+                                    top: coordinateSystem
+                                        .coordinateToScreen(agent.position)
+                                        .dy,
+                                    child: Draggable(
+                                      feedback: agentWidget(
+                                          agent.data, coordinateSystem),
+                                      childWhenDragging:
+                                          const SizedBox.shrink(),
+                                      onDragEnd: (details) {
+                                        RenderBox renderBox = context
+                                            .findRenderObject() as RenderBox;
+                                        Offset localOffset = renderBox
+                                            .globalToLocal(details.offset);
+                                        // Updating info
+
+                                        agent.updatePosition(coordinateSystem
+                                            .screenToCoordinate(localOffset));
+
+                                        agentProvider.bringAgentFoward(index);
+                                        dev.log(coordinateSystem.playAreaSize
+                                            .toString());
+                                      },
+                                      child: agentWidget(
+                                          agent.data, coordinateSystem),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ]);
+                          },
                         );
                       },
                       onAcceptWithDetails: (details) {
@@ -104,12 +148,26 @@ class _InteractiveMapState extends State<InteractiveMap> {
                         Offset normalizedPosition =
                             coordinateSystem.screenToCoordinate(localOffset);
 
-                        PlacedAgent placedAgent = PlacedAgent(
-                          data: details.data,
-                          position: normalizedPosition,
-                        );
+                        if (details.data is AgentData) {
+                          PlacedAgent placedAgent = PlacedAgent(
+                            data: details.data as AgentData,
+                            position: normalizedPosition,
+                          );
 
-                        agentProvider.addAgent(placedAgent);
+                          AgentProvider agentProvider =
+                              Provider.of<AgentProvider>(
+                                  listen: false, context);
+                          agentProvider.addAgent(placedAgent);
+                        } else if (details.data is AbilityInfo) {
+                          PlacedAbility placedAbility = PlacedAbility(
+                              data: details.data as AbilityInfo,
+                              position: normalizedPosition);
+                          AbilityProvider abilityProvider =
+                              Provider.of<AbilityProvider>(
+                                  listen: false, context);
+
+                          abilityProvider.addAbility(placedAbility);
+                        }
                       },
                     );
                   }),

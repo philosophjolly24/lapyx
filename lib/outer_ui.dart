@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:icarus/agents.dart';
 import 'package:icarus/interactive_map.dart';
@@ -39,20 +37,35 @@ class _OuterUiState extends State<OuterUi> {
                 AgentData activeAgent = agentProivder.activeAgent!;
                 return Container(
                   width: 90,
-                  height: 400,
+                  height: 350,
                   decoration: const BoxDecoration(
                       color: Color(0xFF100D10),
                       borderRadius:
                           BorderRadius.horizontal(left: Radius.circular(24))),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ...List.generate(
                         activeAgent.abilities.length,
                         (index) {
-                          return draggableAgentWidget(
-                              Image.asset(
-                                  activeAgent.abilities[index].iconPath),
-                              coordinateSystem);
+                          return Draggable(
+                            data: activeAgent.abilities[index],
+                            feedback: defaultAbilityWidget(
+                                activeAgent.abilities[index], coordinateSystem),
+                            dragAnchorStrategy: pointerDragAnchorStrategy,
+                            child: InkWell(
+                              onTap: () {},
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  height: 55,
+                                  width: 55,
+                                  child: Image.asset(
+                                      activeAgent.abilities[index].iconPath),
+                                ),
+                              ),
+                            ),
+                          );
                         },
                       )
                     ],
