@@ -1,9 +1,9 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:icarus/DrawingElement.dart';
-import 'package:icarus/interactive_map.dart';
+import 'package:icarus/const/drawing_element.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:icarus/const/coordinate_system.dart';
 
 class InteractivePainter extends StatefulWidget {
   final Size playAreaSize;

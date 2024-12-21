@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icarus/agents.dart';
+import 'package:icarus/const/agents.dart';
 
 class AbilityProvider extends ChangeNotifier {
   List<PlacedAbility> placedAbilities = [];

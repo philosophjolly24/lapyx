@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:icarus/interactive_map.dart';
+import 'package:icarus/const/coordinate_system.dart';
 
 enum AgentType {
   jett,

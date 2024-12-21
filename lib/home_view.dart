@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icarus/bottom_actionbar.dart';
+import 'package:icarus/widgets/bottom_actionbar.dart';
 import 'package:icarus/interactive_map.dart';
 import 'package:icarus/outer_ui.dart';
 
@@ -20,7 +20,7 @@ class _HomeViewState extends State<HomeView> {
       body: const Stack(
         children: [
           Align(
-            alignment: Alignment.center,
+            alignment: Alignment.centerLeft,
             child: Column(
               children: [InteractiveMap()],
             ),

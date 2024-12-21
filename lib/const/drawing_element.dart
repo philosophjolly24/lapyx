@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icarus/interactive_map.dart';
+import 'package:icarus/const/coordinate_system.dart';
 
 abstract class DrawingElement {}
 

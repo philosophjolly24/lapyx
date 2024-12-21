@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:icarus/agents.dart';
-import 'package:icarus/interactive_map.dart';
+import 'package:icarus/const/agents.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:icarus/const/coordinate_system.dart';
 
 class OuterUi extends StatefulWidget {
   const OuterUi({super.key});
