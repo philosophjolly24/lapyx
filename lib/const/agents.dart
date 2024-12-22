@@ -37,21 +37,48 @@ class AbilityInfo implements DraggableData {
   final String name;
   final bool hasSpecialInteraction;
   final String iconPath;
-  final Widget abilityWidget;
+  Widget? abilityWidget;
+  String? imagePath;
+  double? width;
 
-  AbilityInfo({
-    required this.name,
-    required this.hasSpecialInteraction,
-    required this.iconPath,
-    required this.abilityWidget,
-  });
+  AbilityInfo(
+      {required this.name,
+      required this.hasSpecialInteraction,
+      required this.iconPath,
+      this.imagePath,
+      this.abilityWidget,
+      required this.width});
 }
 
 class AbilityWidgets {
-  static Widget defaultWidget(String iconPath) {
-    return Container(
-      color: Colors.black,
-      child: Image.asset(iconPath),
+  Widget defaultAbilityWidget(
+      AbilityInfo ability, CoordinateSystem coordinateSystem) {
+    if (ability.imagePath != null) {
+      return SizedBox(
+        width: coordinateSystem.scale(ability.width!),
+        height: coordinateSystem.scale(ability.width!),
+        child: Image.asset(ability.imagePath!),
+      );
+    }
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+      child: Container(
+        color: const Color.fromARGB(255, 56, 56, 56),
+        width: coordinateSystem.scale(30),
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Image.asset(ability.imagePath ?? ability.iconPath),
+        ),
+      ),
+    );
+  }
+
+  Widget scaledContainer(Widget widget, CoordinateSystem coordinateSystem) {
+    return SizedBox(
+      width:
+          coordinateSystem.scale(30), // Set a consistent size for placed agents
+      height: coordinateSystem.scale(30),
+      child: widget,
     );
   }
 }
@@ -59,11 +86,9 @@ class AbilityWidgets {
 class AgentData implements DraggableData {
   final AgentType type;
   final AgentRole role;
-  final List<AbilityInfo> abilities;
+  List<AbilityInfo> abilities;
   final String name;
   late final String iconPath;
-
-  //TODO:Abilities should be widgets as they are far more complicated than initially thought
 
   AgentData({
     required this.type,
@@ -76,8 +101,8 @@ class AgentData implements DraggableData {
             name: 'Ability ${index + 1}', // You can override this later
             hasSpecialInteraction: false, // Default value, override as needed
             iconPath: 'assets/agents/$name/${index + 1}.png',
-            abilityWidget: AbilityWidgets.defaultWidget(
-                'assets/agents/$name/${index + 1}.png'),
+            imagePath: null,
+            width: null,
           ),
         );
 
@@ -86,7 +111,15 @@ class AgentData implements DraggableData {
       type: AgentType.jett,
       role: AgentRole.duelist,
       name: "Jett",
-    ),
+    )..abilities[0] =
+          // Override the default abilities
+          AbilityInfo(
+        name: "Cloudburst",
+        hasSpecialInteraction: false,
+        iconPath: 'assets/agents/Jett/1.png',
+        imagePath: 'assets/agents/Jett/Smoke.png', // Custom image for smoke
+        width: 30,
+      ),
     AgentType.raze: AgentData(
       type: AgentType.raze,
       role: AgentRole.duelist,
@@ -215,6 +248,13 @@ Widget agentWidget(AgentData agent, CoordinateSystem coordinateSystem) {
 
 Widget defaultAbilityWidget(
     AbilityInfo ability, CoordinateSystem coordinateSystem) {
+  if (ability.imagePath != null) {
+    return SizedBox(
+      width: coordinateSystem.scale(ability.width!),
+      height: coordinateSystem.scale(ability.width!),
+      child: Image.asset(ability.imagePath!),
+    );
+  }
   return ClipRRect(
     borderRadius: const BorderRadius.all(Radius.circular(8.0)),
     child: Container(
@@ -222,7 +262,7 @@ Widget defaultAbilityWidget(
       width: coordinateSystem.scale(30),
       child: Padding(
         padding: const EdgeInsets.all(2.0),
-        child: Image.asset(ability.iconPath),
+        child: Image.asset(ability.imagePath ?? ability.iconPath),
       ),
     ),
   );

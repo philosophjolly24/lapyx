@@ -169,6 +169,9 @@ class _InteractiveMapState extends State<InteractiveMap> {
                           abilityProvider.addAbility(placedAbility);
                         }
                       },
+                      onLeave: (data) {
+                        dev.log("I have left");
+                      },
                     );
                   }),
                 ),

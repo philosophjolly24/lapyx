@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/providers/agent_provider.dart';
@@ -65,6 +67,9 @@ class _OuterUiState extends State<OuterUi> {
                                 ),
                               ),
                             ),
+                            onDraggableCanceled: (velocity, offset) {
+                              log("I oops");
+                            },
                           );
                         },
                       )

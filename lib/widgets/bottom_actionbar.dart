@@ -2,14 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:provider/provider.dart';
 
-class BottomActionbar extends StatefulWidget {
+class BottomActionbar extends StatelessWidget {
   const BottomActionbar({super.key});
 
-  @override
-  State<BottomActionbar> createState() => _BottomActionbarState();
-}
-
-class _BottomActionbarState extends State<BottomActionbar> {
   @override
   Widget build(BuildContext context) {
     DrawingProvider drawingProvider = context.watch<DrawingProvider>();
