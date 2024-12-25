@@ -74,8 +74,9 @@ class _InteractiveMapState extends State<InteractiveMap> {
                                         .coordinateToScreen(ability.position)
                                         .dy,
                                     child: Draggable(
-                                      feedback: defaultAbilityWidget(
-                                          ability.data, coordinateSystem),
+                                      feedback:
+                                          AbilityWidgets.defaultAbilityWidget(
+                                              ability.data, coordinateSystem),
                                       childWhenDragging:
                                           const SizedBox.shrink(),
                                       onDragEnd: (details) {
@@ -92,8 +93,9 @@ class _InteractiveMapState extends State<InteractiveMap> {
                                         dev.log(coordinateSystem.playAreaSize
                                             .toString());
                                       },
-                                      child: defaultAbilityWidget(
-                                          ability.data, coordinateSystem),
+                                      child:
+                                          AbilityWidgets.defaultAbilityWidget(
+                                              ability.data, coordinateSystem),
                                     ),
                                   );
                                 },
@@ -112,7 +114,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
                                         .coordinateToScreen(agent.position)
                                         .dy,
                                     child: Draggable(
-                                      feedback: agentWidget(
+                                      feedback: AbilityWidgets.agentWidget(
                                           agent.data, coordinateSystem),
                                       childWhenDragging:
                                           const SizedBox.shrink(),
@@ -130,7 +132,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
                                         dev.log(coordinateSystem.playAreaSize
                                             .toString());
                                       },
-                                      child: agentWidget(
+                                      child: AbilityWidgets.agentWidget(
                                           agent.data, coordinateSystem),
                                     ),
                                   );

@@ -51,7 +51,19 @@ class AbilityInfo implements DraggableData {
 }
 
 class AbilityWidgets {
-  Widget defaultAbilityWidget(
+  static Widget agentWidget(
+      AgentData agent, CoordinateSystem coordinateSystem) {
+    return ClipRRect(
+      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+      child: Container(
+        color: const Color.fromARGB(255, 56, 56, 56),
+        width: coordinateSystem.scale(30),
+        child: Image.asset(agent.iconPath),
+      ),
+    );
+  }
+
+  static Widget defaultAbilityWidget(
       AbilityInfo ability, CoordinateSystem coordinateSystem) {
     if (ability.imagePath != null) {
       return SizedBox(
@@ -73,7 +85,8 @@ class AbilityWidgets {
     );
   }
 
-  Widget scaledContainer(Widget widget, CoordinateSystem coordinateSystem) {
+  static Widget scaledContainer(
+      Widget widget, CoordinateSystem coordinateSystem) {
     return SizedBox(
       width:
           coordinateSystem.scale(30), // Set a consistent size for placed agents
@@ -233,46 +246,4 @@ class PlacedAbility extends PlacedWidget {
   final AbilityInfo data;
 
   PlacedAbility({required this.data, required super.position});
-}
-
-Widget agentWidget(AgentData agent, CoordinateSystem coordinateSystem) {
-  return ClipRRect(
-    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-    child: Container(
-      color: const Color.fromARGB(255, 56, 56, 56),
-      width: coordinateSystem.scale(30),
-      child: Image.asset(agent.iconPath),
-    ),
-  );
-}
-
-Widget defaultAbilityWidget(
-    AbilityInfo ability, CoordinateSystem coordinateSystem) {
-  if (ability.imagePath != null) {
-    return SizedBox(
-      width: coordinateSystem.scale(ability.width!),
-      height: coordinateSystem.scale(ability.width!),
-      child: Image.asset(ability.imagePath!),
-    );
-  }
-  return ClipRRect(
-    borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-    child: Container(
-      color: const Color.fromARGB(255, 56, 56, 56),
-      width: coordinateSystem.scale(30),
-      child: Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Image.asset(ability.imagePath ?? ability.iconPath),
-      ),
-    ),
-  );
-}
-
-Widget scaledContainer(Widget widget, CoordinateSystem coordinateSystem) {
-  return SizedBox(
-    width:
-        coordinateSystem.scale(30), // Set a consistent size for placed agents
-    height: coordinateSystem.scale(30),
-    child: widget,
-  );
 }

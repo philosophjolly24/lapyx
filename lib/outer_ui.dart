@@ -52,7 +52,7 @@ class _OuterUiState extends State<OuterUi> {
                         (index) {
                           return Draggable(
                             data: activeAgent.abilities[index],
-                            feedback: defaultAbilityWidget(
+                            feedback: AbilityWidgets.defaultAbilityWidget(
                                 activeAgent.abilities[index], coordinateSystem),
                             dragAnchorStrategy: pointerDragAnchorStrategy,
                             child: InkWell(
@@ -127,7 +127,7 @@ class _OuterUiState extends State<OuterUi> {
                                       child: Draggable(
                                         data: AgentData
                                             .agents[AgentType.values[index]],
-                                        feedback: agentWidget(
+                                        feedback: AbilityWidgets.agentWidget(
                                             AgentData.agents[
                                                 AgentType.values[index]]!,
                                             coordinateSystem),
