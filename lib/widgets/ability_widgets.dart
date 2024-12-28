@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:icarus/const/agents.dart';
 
@@ -19,7 +21,7 @@ class AbilityWidgets {
   static Widget defaultAbilityWidget(
       AbilityInfo ability, CoordinateSystem coordinateSystem) {
     if (ability.abilityWidgetBuilder != null) {
-      return ability.abilityWidgetBuilder!(coordinateSystem);
+      return ability.abilityWidgetBuilder!(coordinateSystem, ability);
     }
     if (ability.imagePath != null) {
       return SizedBox(
@@ -28,6 +30,8 @@ class AbilityWidgets {
         child: Image.asset(ability.imagePath!),
       );
     }
+    ability.updateCenterPoint(
+        Offset(coordinateSystem.scale(30) / 2, coordinateSystem.scale(30) / 2));
     return ClipRRect(
       borderRadius: const BorderRadius.all(Radius.circular(8.0)),
       child: Container(
@@ -51,27 +55,13 @@ class AbilityWidgets {
     );
   }
 
-  static Widget Function(CoordinateSystem) brimstoneAbility4Builder() {
-    return (CoordinateSystem coordinateSystem) {
-      double size = coordinateSystem.scale(80);
-      return Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-            color: const Color.fromARGB(135, 244, 67, 54),
-            shape: BoxShape.circle,
-            border: Border.all(
-                color: Colors.red, width: coordinateSystem.scale(2))),
-      );
-    };
-  }
-
-  static Widget Function(CoordinateSystem) customCircleAbility(
+  static Widget Function(CoordinateSystem, AbilityInfo) customCircleAbility(
       double size, Color innerColor, Color outlineColor, bool hasCenterDot,
       [int? opactiy]) {
-    return (CoordinateSystem coordinateSystem) {
-      double scaleSize = coordinateSystem.scale(size);
+    return (CoordinateSystem coordinateSystem, AbilityInfo abilityInfo) {
+      double scaleSize = coordinateSystem.scale(size - 5);
 
+      abilityInfo.updateCenterPoint(Offset(scaleSize / 2, scaleSize / 2));
       if (hasCenterDot) {
         return Container(
           width: scaleSize,
@@ -92,6 +82,7 @@ class AbilityWidgets {
           ),
         );
       }
+
       return Container(
         width: scaleSize,
         height: scaleSize,
@@ -100,7 +91,7 @@ class AbilityWidgets {
                 135, innerColor.red, innerColor.green, innerColor.blue),
             shape: BoxShape.circle,
             border: Border.all(
-                color: outlineColor, width: coordinateSystem.scale(2))),
+                color: outlineColor, width: coordinateSystem.scale(5))),
       );
     };
   }

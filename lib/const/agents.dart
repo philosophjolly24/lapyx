@@ -38,9 +38,10 @@ class AbilityInfo implements DraggableData {
   final String name;
   final bool hasSpecialInteraction;
   final String iconPath;
-  Widget Function(CoordinateSystem)? abilityWidgetBuilder;
+  Widget Function(CoordinateSystem, AbilityInfo)? abilityWidgetBuilder;
   String? imagePath;
   double? width;
+  Offset? centerPoint;
 
   AbilityInfo(
       {required this.name,
@@ -48,7 +49,12 @@ class AbilityInfo implements DraggableData {
       required this.iconPath,
       this.imagePath,
       this.abilityWidgetBuilder,
+      this.centerPoint,
       required this.width});
+
+  void updateCenterPoint(Offset centerPoint) {
+    this.centerPoint = centerPoint;
+  }
 }
 
 class AgentData implements DraggableData {
@@ -123,10 +129,11 @@ class AgentData implements DraggableData {
       role: AgentRole.initiator,
       name: "Sova",
     )..abilities[2].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
-        247,
+        250,
         const Color.fromARGB(255, 1, 131, 237),
         const Color.fromARGB(255, 1, 131, 237),
-        true),
+        true,
+      ),
     AgentType.skye: AgentData(
       type: AgentType.skye,
       role: AgentRole.initiator,
@@ -147,7 +154,7 @@ class AgentData implements DraggableData {
       role: AgentRole.controller,
       name: "Brimstone",
     )..abilities[3].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
-        67, Colors.red, Colors.red, false, 135),
+        72, Colors.red, Colors.red, false, 135),
     AgentType.cypher: AgentData(
       type: AgentType.cypher,
       role: AgentRole.sentinel,
