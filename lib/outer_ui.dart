@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:icarus/widgets/ability_widgets.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,25 @@ class OuterUi extends StatefulWidget {
 class _OuterUiState extends State<OuterUi> {
   ScrollController gridScrollController = ScrollController();
   double sideBarSize = 270;
+
+  Offset absoluteDragAnchorStrategy(
+    Draggable<Object> draggable,
+    BuildContext context,
+    Offset position,
+  ) {
+    // Force the pointer to always be at the center of the feedback widget,
+    // regardless of where the user touched on the child
+    final RenderBox renderObject = context.findRenderObject()! as RenderBox;
+
+    // We use getSize() in case the widget hasn't been laid out yet
+    final Size feedbackSize = renderObject.hasSize
+        ? renderObject.size
+        : renderObject.constraints.biggest;
+
+    // Always return an offset that will place the pointer at the center,
+    // ignoring the input position completely
+    return Offset((feedbackSize.width / 2), (feedbackSize.height / 2));
+  }
 
   @override
   Widget build(BuildContext context) {

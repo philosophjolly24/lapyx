@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icarus/widgets/ability_widgets.dart';
 import 'package:icarus/const/coordinate_system.dart';
 
 enum AgentType {
@@ -37,7 +38,7 @@ class AbilityInfo implements DraggableData {
   final String name;
   final bool hasSpecialInteraction;
   final String iconPath;
-  Widget? abilityWidget;
+  Widget Function(CoordinateSystem)? abilityWidgetBuilder;
   String? imagePath;
   double? width;
 
@@ -46,54 +47,8 @@ class AbilityInfo implements DraggableData {
       required this.hasSpecialInteraction,
       required this.iconPath,
       this.imagePath,
-      this.abilityWidget,
+      this.abilityWidgetBuilder,
       required this.width});
-}
-
-class AbilityWidgets {
-  static Widget agentWidget(
-      AgentData agent, CoordinateSystem coordinateSystem) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-      child: Container(
-        color: const Color.fromARGB(255, 56, 56, 56),
-        width: coordinateSystem.scale(30),
-        child: Image.asset(agent.iconPath),
-      ),
-    );
-  }
-
-  static Widget defaultAbilityWidget(
-      AbilityInfo ability, CoordinateSystem coordinateSystem) {
-    if (ability.imagePath != null) {
-      return SizedBox(
-        width: coordinateSystem.scale(ability.width!),
-        height: coordinateSystem.scale(ability.width!),
-        child: Image.asset(ability.imagePath!),
-      );
-    }
-    return ClipRRect(
-      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-      child: Container(
-        color: const Color.fromARGB(255, 56, 56, 56),
-        width: coordinateSystem.scale(30),
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: Image.asset(ability.imagePath ?? ability.iconPath),
-        ),
-      ),
-    );
-  }
-
-  static Widget scaledContainer(
-      Widget widget, CoordinateSystem coordinateSystem) {
-    return SizedBox(
-      width:
-          coordinateSystem.scale(30), // Set a consistent size for placed agents
-      height: coordinateSystem.scale(30),
-      child: widget,
-    );
-  }
 }
 
 class AgentData implements DraggableData {
@@ -167,7 +122,11 @@ class AgentData implements DraggableData {
       type: AgentType.sova,
       role: AgentRole.initiator,
       name: "Sova",
-    ),
+    )..abilities[2].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
+        247,
+        const Color.fromARGB(255, 1, 131, 237),
+        const Color.fromARGB(255, 1, 131, 237),
+        true),
     AgentType.skye: AgentData(
       type: AgentType.skye,
       role: AgentRole.initiator,
@@ -187,7 +146,8 @@ class AgentData implements DraggableData {
       type: AgentType.brimstone,
       role: AgentRole.controller,
       name: "Brimstone",
-    ),
+    )..abilities[3].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
+        67, Colors.red, Colors.red, false, 135),
     AgentType.cypher: AgentData(
       type: AgentType.cypher,
       role: AgentRole.sentinel,
