@@ -34,23 +34,42 @@ enum AgentRole { controller, duelist, initiator, sentinel }
 
 abstract class DraggableData {}
 
+// Virtual distance to valorant distance is valmeters * 4.952941176470588 = vitual distance
 class AbilityInfo implements DraggableData {
   final String name;
-  final bool hasSpecialInteraction;
   final String iconPath;
   Widget Function(CoordinateSystem, AbilityInfo)? abilityWidgetBuilder;
-  String? imagePath;
-  double? width;
+  final String? imagePath;
+  final double? width;
   Offset? centerPoint;
 
-  AbilityInfo(
-      {required this.name,
-      required this.hasSpecialInteraction,
-      required this.iconPath,
-      this.imagePath,
-      this.abilityWidgetBuilder,
-      this.centerPoint,
-      required this.width});
+  AbilityInfo({
+    required this.name,
+    required this.iconPath,
+    this.imagePath,
+    this.abilityWidgetBuilder,
+    this.centerPoint,
+    this.width,
+  });
+
+  AbilityInfo copyWith({
+    String? name,
+    bool? hasSpecialInteraction,
+    String? iconPath,
+    Widget Function(CoordinateSystem, AbilityInfo)? abilityWidgetBuilder,
+    String? imagePath,
+    double? width,
+    Offset? centerPoint,
+  }) {
+    return AbilityInfo(
+      name: name ?? this.name,
+      iconPath: iconPath ?? this.iconPath,
+      imagePath: imagePath ?? this.imagePath,
+      abilityWidgetBuilder: abilityWidgetBuilder ?? this.abilityWidgetBuilder,
+      centerPoint: centerPoint ?? this.centerPoint,
+      width: width ?? this.width,
+    );
+  }
 
   void updateCenterPoint(Offset centerPoint) {
     this.centerPoint = centerPoint;
@@ -62,7 +81,7 @@ class AgentData implements DraggableData {
   final AgentRole role;
   List<AbilityInfo> abilities;
   final String name;
-  late final String iconPath;
+  final String iconPath;
 
   AgentData({
     required this.type,
@@ -73,10 +92,7 @@ class AgentData implements DraggableData {
           4,
           (index) => AbilityInfo(
             name: 'Ability ${index + 1}', // You can override this later
-            hasSpecialInteraction: false, // Default value, override as needed
             iconPath: 'assets/agents/$name/${index + 1}.png',
-            imagePath: null,
-            width: null,
           ),
         );
 
@@ -89,7 +105,6 @@ class AgentData implements DraggableData {
           // Override the default abilities
           AbilityInfo(
         name: "Cloudburst",
-        hasSpecialInteraction: false,
         iconPath: 'assets/agents/Jett/1.png',
         imagePath: 'assets/agents/Jett/Smoke.png', // Custom image for smoke
         width: 30,
@@ -129,10 +144,10 @@ class AgentData implements DraggableData {
       role: AgentRole.initiator,
       name: "Sova",
     )..abilities[2].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
-        250,
-        const Color.fromARGB(255, 1, 131, 237),
+        297.17,
         const Color.fromARGB(255, 1, 131, 237),
         true,
+        false,
       ),
     AgentType.skye: AgentData(
       type: AgentType.skye,
@@ -143,18 +158,23 @@ class AgentData implements DraggableData {
       type: AgentType.kayo,
       role: AgentRole.initiator,
       name: "Kayo",
-    ),
+    )
+      ..abilities[3].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
+          421, const Color.fromARGB(255, 140, 6, 163), true, false)
+      ..abilities[2].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
+          148.59, const Color.fromARGB(255, 106, 14, 182), true, false),
     AgentType.killjoy: AgentData(
       type: AgentType.killjoy,
       role: AgentRole.sentinel,
       name: "Killjoy",
-    ),
+    )..abilities[3].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
+        321.94, const Color.fromARGB(255, 106, 14, 182), true, false),
     AgentType.brimstone: AgentData(
       type: AgentType.brimstone,
       role: AgentRole.controller,
       name: "Brimstone",
-    )..abilities[3].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
-        72, Colors.red, Colors.red, false, 135),
+    )..abilities[3].abilityWidgetBuilder =
+        AbilityWidgets.customCircleAbility(72, Colors.red, false, false, 135),
     AgentType.cypher: AgentData(
       type: AgentType.cypher,
       role: AgentRole.sentinel,

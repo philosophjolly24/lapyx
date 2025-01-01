@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:icarus/widgets/ability/ability_widget.dart';
+import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/widgets/ability_widgets.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/providers/agent_provider.dart';
@@ -26,11 +28,11 @@ class _OuterUiState extends State<OuterUi> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height -
-        60.0; // -60 adjusts for app bar height. I'm not sure if app bar will be included so this would be modified accordingly
+    double height = MediaQuery.of(context).size.height - kToolbarHeight;
+    // final double height =
+    //     MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).top;
     Size playAreaSize = Size(height * 1.24, height);
-    CoordinateSystem coordinateSystem =
-        CoordinateSystem(playAreaSize: playAreaSize);
+    final coordinateSystem = CoordinateSystem(playAreaSize: playAreaSize);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -39,8 +41,7 @@ class _OuterUiState extends State<OuterUi> {
           children: [
             Consumer<AgentProvider>(
               builder: (context, agentProivder, child) {
-                if (agentProivder.activeAgent == null)
-                  // ignore: curly_braces_in_flow_control_structures
+                if (agentProivder.activeAgent == null) //
                   return const SizedBox.shrink();
 
                 AgentData activeAgent = agentProivder.activeAgent!;
@@ -59,8 +60,10 @@ class _OuterUiState extends State<OuterUi> {
                         (index) {
                           return Draggable(
                             data: activeAgent.abilities[index],
-                            feedback: AbilityWidgets.defaultAbilityWidget(
-                                activeAgent.abilities[index], coordinateSystem),
+                            feedback: AbilityWidget(
+                              ability: activeAgent.abilities[index],
+                              coordinateSystem: coordinateSystem,
+                            ),
                             dragAnchorStrategy: centerDragStrategy,
                             child: InkWell(
                               onTap: () {},
@@ -87,7 +90,6 @@ class _OuterUiState extends State<OuterUi> {
             ),
             Container(
               color: const Color(0xFF141114),
-              height: height,
               width: sideBarSize + 20,
               child: Column(
                 children: [
@@ -96,8 +98,7 @@ class _OuterUiState extends State<OuterUi> {
                     height: 50,
                     width: sideBarSize + 20,
                   ),
-                  SizedBox(
-                    height: height - 50,
+                  Expanded(
                     child: RawScrollbar(
                       trackVisibility: true,
                       thumbVisibility: true,
@@ -113,53 +114,53 @@ class _OuterUiState extends State<OuterUi> {
                         child: SizedBox(
                           width: sideBarSize,
                           child: GridView.builder(
-                              scrollDirection: Axis.vertical,
-                              padding: const EdgeInsets.only(top: 10),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisExtent: 100,
-                                crossAxisSpacing: 0,
-                                mainAxisSpacing: 15,
-                              ),
-                              controller: gridScrollController,
-                              // padding: const EdgeInsets.only(right: 8),
-                              physics: const BouncingScrollPhysics(),
-                              itemCount: AgentType.values.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(1.0),
-                                  child: Center(
-                                    child: SizedBox(
-                                      child: Draggable(
-                                        data: AgentData
-                                            .agents[AgentType.values[index]],
-                                        feedback: AbilityWidgets.agentWidget(
-                                            AgentData.agents[
-                                                AgentType.values[index]]!,
-                                            coordinateSystem),
-                                        dragAnchorStrategy:
-                                            pointerDragAnchorStrategy,
-                                        child: InkWell(
-                                          onTap: () {
-                                            Provider.of<AgentProvider>(
-                                                    listen: false, context)
-                                                .setActiveAgent(AgentData
-                                                        .agents[
-                                                    AgentType.values[index]]!);
-                                          },
-                                          child: Image.asset(
-                                              AgentData
-                                                  .agents[
-                                                      AgentType.values[index]]!
-                                                  .iconPath,
-                                              fit: BoxFit.contain),
+                            scrollDirection: Axis.vertical,
+                            padding: const EdgeInsets.only(top: 10),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              mainAxisExtent: 100,
+                              crossAxisSpacing: 0,
+                              mainAxisSpacing: 15,
+                            ),
+                            controller: gridScrollController,
+                            // padding: const EdgeInsets.only(right: 8),
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: AgentType.values.length,
+                            itemBuilder: (context, index) {
+                              final agent =
+                                  AgentData.agents[AgentType.values[index]]!;
+
+                              return Padding(
+                                padding: const EdgeInsets.all(1.0),
+                                child: Center(
+                                  child: SizedBox(
+                                    child: Draggable(
+                                      data: agent,
+                                      feedback: AgentWidget(
+                                        agent: agent,
+                                        coordinateSystem: coordinateSystem,
+                                      ),
+                                      dragAnchorStrategy:
+                                          pointerDragAnchorStrategy,
+                                      child: InkWell(
+                                        onTap: () {
+                                          Provider.of<AgentProvider>(
+                                            listen: false,
+                                            context,
+                                          ).setActiveAgent(agent);
+                                        },
+                                        child: Image.asset(
+                                          agent.iconPath,
+                                          fit: BoxFit.contain,
                                         ),
                                       ),
                                     ),
                                   ),
-                                );
-                              }),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
