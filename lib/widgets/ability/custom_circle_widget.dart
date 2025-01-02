@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:icarus/const/agents.dart';
+import 'package:icarus/const/coordinate_system.dart';
 
-import '../const/coordinate_system.dart';
+class CustomCircleWidget extends StatelessWidget {
+  const CustomCircleWidget({super.key, required this.coordinateSystem, required this.customCircleAbility});
 
-class AbilityWidgets {
-  static Widget scaledContainer(
-      Widget widget, CoordinateSystem coordinateSystem) {
-    return SizedBox(
-      width:
-          coordinateSystem.scale(30), // Set a consistent size for placed agents
-      height: coordinateSystem.scale(30),
-      child: widget,
-    );
+  final CoordinateSystem coordinateSystem;
+  final AbilityInfo customCircleAbility;
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 
   static Widget Function(CoordinateSystem, AbilityInfo) customCircleAbility(
