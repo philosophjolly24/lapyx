@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icarus/widgets/ability_widgets.dart';
+import 'package:icarus/widgets/ability/custom_circle_widget.dart';
 import 'package:icarus/const/coordinate_system.dart';
 
 enum AgentType {
@@ -38,7 +38,7 @@ abstract class DraggableData {}
 class AbilityInfo implements DraggableData {
   final String name;
   final String iconPath;
-  Widget Function(CoordinateSystem, AbilityInfo)? abilityWidgetBuilder;
+  Widget Function()? abilityWidget;
   final String? imagePath;
   final double? width;
   Offset? centerPoint;
@@ -47,8 +47,7 @@ class AbilityInfo implements DraggableData {
     required this.name,
     required this.iconPath,
     this.imagePath,
-    this.abilityWidgetBuilder,
-    this.centerPoint,
+    this.abilityWidget,
     this.width,
   });
 
@@ -56,7 +55,7 @@ class AbilityInfo implements DraggableData {
     String? name,
     bool? hasSpecialInteraction,
     String? iconPath,
-    Widget Function(CoordinateSystem, AbilityInfo)? abilityWidgetBuilder,
+    Widget Function()? abilityWidget,
     String? imagePath,
     double? width,
     Offset? centerPoint,
@@ -65,8 +64,7 @@ class AbilityInfo implements DraggableData {
       name: name ?? this.name,
       iconPath: iconPath ?? this.iconPath,
       imagePath: imagePath ?? this.imagePath,
-      abilityWidgetBuilder: abilityWidgetBuilder ?? this.abilityWidgetBuilder,
-      centerPoint: centerPoint ?? this.centerPoint,
+      abilityWidget: abilityWidget ?? this.abilityWidget,
       width: width ?? this.width,
     );
   }
@@ -83,6 +81,8 @@ class AgentData implements DraggableData {
   final String name;
   final String iconPath;
 
+  static const double inGameMeters = 4.952941176470588;
+  static const double inGameMetersDiameter = inGameMeters * 2;
   AgentData({
     required this.type,
     required this.role,
@@ -139,52 +139,169 @@ class AgentData implements DraggableData {
       role: AgentRole.duelist,
       name: "Yoru",
     ),
-    AgentType.sova: AgentData(
-      type: AgentType.sova,
-      role: AgentRole.initiator,
-      name: "Sova",
-    )..abilities[2].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
-        297.17,
-        const Color.fromARGB(255, 1, 131, 237),
-        true,
-        false,
-      ),
+    AgentType.sova: (() {
+      final coordinateSystem = CoordinateSystem.instance;
+      AgentData agent = AgentData(
+        type: AgentType.sova,
+        role: AgentRole.initiator,
+        name: "Sova",
+      );
+
+      const double size = 30 * inGameMetersDiameter;
+      double scaleSize = coordinateSystem.scale(size);
+      Offset centerPoint = Offset(scaleSize / 2, scaleSize / 2);
+
+      agent.abilities[2].centerPoint = centerPoint;
+
+      agent.abilities[2].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[2],
+            size: size,
+            outlineColor: const Color.fromARGB(255, 1, 131, 237),
+            hasCenterDot: true,
+            isDouble: false,
+          );
+      return agent;
+    })(),
+
+    // CustomCircleWidget(
+    //     297.17,
+    //     const Color.fromARGB(255, 1, 131, 237),
+    //     true,
+    //     false,
+    //   ),
     AgentType.skye: AgentData(
       type: AgentType.skye,
       role: AgentRole.initiator,
       name: "Skye",
     ),
-    AgentType.kayo: AgentData(
-      type: AgentType.kayo,
-      role: AgentRole.initiator,
-      name: "Kayo",
-    )
-      ..abilities[3].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
-          421, const Color.fromARGB(255, 140, 6, 163), true, false)
-      ..abilities[2].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
-          148.59, const Color.fromARGB(255, 106, 14, 182), true, false),
-    AgentType.killjoy: AgentData(
-      type: AgentType.killjoy,
-      role: AgentRole.sentinel,
-      name: "Killjoy",
-    )..abilities[3].abilityWidgetBuilder = AbilityWidgets.customCircleAbility(
-        321.94, const Color.fromARGB(255, 106, 14, 182), true, false),
-    AgentType.brimstone: AgentData(
-      type: AgentType.brimstone,
-      role: AgentRole.controller,
-      name: "Brimstone",
-    )..abilities[3].abilityWidgetBuilder =
-        AbilityWidgets.customCircleAbility(72, Colors.red, false, false, 135),
-    AgentType.cypher: AgentData(
-      type: AgentType.cypher,
-      role: AgentRole.sentinel,
-      name: "Cypher",
-    ),
-    AgentType.chamber: AgentData(
-      type: AgentType.chamber,
-      role: AgentRole.sentinel,
-      name: "Chamber",
-    ),
+    AgentType.kayo: (() {
+      AgentData agent = AgentData(
+        type: AgentType.kayo,
+        role: AgentRole.initiator,
+        name: "Kayo",
+      );
+
+      //Ultimate
+      agent.abilities[3].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[3],
+            size: 42.5 * inGameMetersDiameter,
+            outlineColor: const Color.fromARGB(255, 140, 6, 163),
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      agent.abilities[2].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[2],
+            size: 15 * inGameMetersDiameter,
+            outlineColor: const Color.fromARGB(255, 106, 14, 182),
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      // CustomCircleWidget(
+      //     148.59, const Color.fromARGB(255, 106, 14, 182), true, false);
+      return agent;
+    })(),
+
+    AgentType.killjoy: (() {
+      AgentData agent = AgentData(
+        type: AgentType.killjoy,
+        role: AgentRole.sentinel,
+        name: "Killjoy",
+      );
+
+      //Ultimate
+      agent.abilities[3].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[3],
+            size: 32.5 * inGameMetersDiameter,
+            outlineColor: const Color.fromARGB(255, 106, 14, 182),
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      //(40*2) * inGameMeters
+      //Alarmbot
+      agent.abilities[1].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[1],
+            size: 40 * inGameMetersDiameter,
+            outlineColor: Colors.white,
+            hasCenterDot: true,
+            isDouble: true,
+            innerSize: 54.48,
+            innerColor: const Color.fromARGB(255, 106, 14, 182),
+          );
+      return agent;
+    })(),
+
+    AgentType.brimstone: (() {
+      final agent = AgentData(
+        type: AgentType.brimstone,
+        role: AgentRole.controller,
+        name: "Brimstone",
+      );
+
+      //Ultimate
+      agent.abilities[3].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[3],
+            size: 9 * inGameMetersDiameter,
+            outlineColor: Colors.red,
+            hasCenterDot: false,
+            isDouble: false,
+          );
+
+      //Stim Beacon
+      agent.abilities[0].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[0],
+            size: 6 * inGameMetersDiameter,
+            outlineColor: const Color.fromARGB(255, 97, 253, 131),
+            hasCenterDot: false,
+            isDouble: false,
+          );
+      return agent;
+    })(),
+
+    AgentType.cypher: (() {
+      final agent = AgentData(
+        type: AgentType.cypher,
+        role: AgentRole.sentinel,
+        name: "Cypher",
+      );
+
+      agent.abilities[1].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[1],
+            size: 3.72 * inGameMetersDiameter,
+            outlineColor: Colors.white,
+            hasCenterDot: false,
+            isDouble: false,
+          );
+      return agent;
+    })(),
+    AgentType.chamber: (() {
+      final agent = AgentData(
+        type: AgentType.fade,
+        role: AgentRole.initiator,
+        name: "Chamber",
+      );
+
+      agent.abilities[0].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[0],
+            size: 50 * inGameMetersDiameter,
+            outlineColor: Colors.white,
+            hasCenterDot: true,
+            isDouble: true,
+            innerSize: 10 * inGameMetersDiameter,
+            innerColor: Colors.amber,
+          );
+
+      agent.abilities[2].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[2],
+            size: 18 * inGameMetersDiameter,
+            outlineColor: Colors.amber,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+      return agent;
+    })(),
     AgentType.fade: AgentData(
       type: AgentType.fade,
       role: AgentRole.initiator,

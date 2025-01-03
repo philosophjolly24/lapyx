@@ -14,8 +14,8 @@ class AbilityWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (ability.abilityWidgetBuilder != null) {
-      return ability.abilityWidgetBuilder!(coordinateSystem, ability);
+    if (ability.abilityWidget != null) {
+      return ability.abilityWidget!();
     }
 
     if (ability.imagePath != null) {

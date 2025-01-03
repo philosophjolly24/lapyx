@@ -3,13 +3,27 @@ import 'package:flutter/material.dart';
 class CoordinateSystem {
   // System parameters
 
-  final Size playAreaSize;
+  CoordinateSystem._({required this.playAreaSize});
 
-  CoordinateSystem({required this.playAreaSize});
+  final Size playAreaSize;
+  static CoordinateSystem? _instance;
 
   // The normalized coordinate space will maintain this aspect ratio
   final double normalizedHeight = 1000.0;
   late final double normalizedWidth = normalizedHeight * 1.24;
+
+  factory CoordinateSystem({required Size playAreaSize}) {
+    _instance = CoordinateSystem._(playAreaSize: playAreaSize);
+    return _instance!;
+  }
+
+  static CoordinateSystem get instance {
+    if (_instance == null) {
+      throw StateError(
+          "CoordinateSystem must be initialized with playAreaSize first");
+    }
+    return _instance!;
+  }
 
   Offset screenToCoordinate(Offset screenPoint) {
     // Convert screen points to the normalized space while maintaining aspect ratio

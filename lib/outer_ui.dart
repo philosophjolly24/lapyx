@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
-import 'package:icarus/widgets/ability_widgets.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:provider/provider.dart';
@@ -31,8 +30,8 @@ class _OuterUiState extends State<OuterUi> {
     double height = MediaQuery.of(context).size.height - kToolbarHeight;
     // final double height =
     //     MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).top;
-    Size playAreaSize = Size(height * 1.24, height);
-    final coordinateSystem = CoordinateSystem(playAreaSize: playAreaSize);
+    Size playAreaSize = Size(height * 1.2, height);
+    final coordinateSystem = CoordinateSystem.instance;
 
     return LayoutBuilder(
       builder: (context, constraints) {

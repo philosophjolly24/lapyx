@@ -16,8 +16,7 @@ class InteractivePainter extends StatefulWidget {
 class _InteractivePainterState extends State<InteractivePainter> {
   @override
   Widget build(BuildContext context) {
-    CoordinateSystem coordinateSystem =
-        CoordinateSystem(playAreaSize: widget.playAreaSize);
+    CoordinateSystem coordinateSystem = CoordinateSystem.instance;
 
     // Get the drawing data here in the widget
     final drawingProvider = context.watch<DrawingProvider>();
