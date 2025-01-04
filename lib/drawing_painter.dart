@@ -22,10 +22,11 @@ class _InteractivePainterState extends State<InteractivePainter> {
     final drawingProvider = context.watch<DrawingProvider>();
 
     CustomPainter drawingPainter = DrawingPainter(
-        updateCounter: drawingProvider.updateCounter,
-        coordinateSystem: coordinateSystem,
-        elements: drawingProvider.listOfElements, // Pass the data directly
-        drawingProvider: drawingProvider);
+      updateCounter: drawingProvider.updateCounter,
+      coordinateSystem: coordinateSystem,
+      elements: drawingProvider.listOfElements, // Pass the data directly
+      drawingProvider: drawingProvider,
+    );
 
     bool isNavigating =
         drawingProvider.interactionState == InteractionState.navigation;

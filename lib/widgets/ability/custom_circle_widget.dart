@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 
-class CustomCircleWidget extends StatefulWidget {
+class CustomCircleWidget extends StatelessWidget {
   const CustomCircleWidget({
     super.key,
     required this.abilityInfo,
@@ -28,23 +28,16 @@ class CustomCircleWidget extends StatefulWidget {
   final Color? innerColor;
 
   @override
-  State<CustomCircleWidget> createState() => _CustomCircleWidgetState();
-}
-
-class _CustomCircleWidgetState extends State<CustomCircleWidget> {
-  @override
   Widget build(BuildContext context) {
-    CoordinateSystem coordinateSystem = CoordinateSystem.instance;
-
-    double scaleSize =
-        coordinateSystem.scale(widget.size) - coordinateSystem.scale(5);
-    log(widget.innerSize.toString());
-    double secondaryScaleSize = coordinateSystem.scale(widget.innerSize ?? 2) -
-        coordinateSystem.scale(2);
+    final CoordinateSystem coordinateSystem = CoordinateSystem.instance;
+    double scaleSize = coordinateSystem.scale(size) - coordinateSystem.scale(5);
+    log(innerSize.toString());
+    double secondaryScaleSize =
+        coordinateSystem.scale(innerSize ?? 2) - coordinateSystem.scale(2);
     log(secondaryScaleSize.toString());
     // abilityInfo.updateCenterPoint(Offset(scaleSize / 2, scaleSize / 2));
-    if (widget.hasCenterDot) {
-      return !widget.isDouble
+    if (hasCenterDot) {
+      return !isDouble
           ? Stack(
               children: [
                 IgnorePointer(
@@ -52,11 +45,10 @@ class _CustomCircleWidgetState extends State<CustomCircleWidget> {
                     width: scaleSize,
                     height: scaleSize,
                     decoration: BoxDecoration(
-                      color:
-                          widget.outlineColor.withAlpha(widget.opacity ?? 70),
+                      color: outlineColor.withAlpha(opacity ?? 70),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: widget.outlineColor,
+                        color: outlineColor,
                         width: coordinateSystem.scale(5),
                       ),
                     ),
@@ -75,7 +67,7 @@ class _CustomCircleWidgetState extends State<CustomCircleWidget> {
                           color: Color(0xFF1B1B1B),
                         ),
                         child: Image.asset(
-                          widget.abilityInfo.iconPath,
+                          abilityInfo.iconPath,
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -93,7 +85,7 @@ class _CustomCircleWidgetState extends State<CustomCircleWidget> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                          color: widget.outlineColor,
+                          color: outlineColor,
                           width: coordinateSystem.scale(5)),
                     ),
                   ),
@@ -108,10 +100,9 @@ class _CustomCircleWidgetState extends State<CustomCircleWidget> {
                           height: secondaryScaleSize,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: widget.innerColor!
-                                .withAlpha(widget.opacity ?? 70),
+                            color: innerColor!.withAlpha(opacity ?? 70),
                             border: Border.all(
-                              color: widget.innerColor!,
+                              color: innerColor!,
                               width: coordinateSystem.scale(2),
                             ),
                           ),
@@ -133,7 +124,7 @@ class _CustomCircleWidgetState extends State<CustomCircleWidget> {
                           color: Color(0xFF1B1B1B),
                         ),
                         child: Image.asset(
-                          widget.abilityInfo.iconPath,
+                          abilityInfo.iconPath,
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -148,12 +139,13 @@ class _CustomCircleWidgetState extends State<CustomCircleWidget> {
       width: scaleSize,
       height: scaleSize,
       decoration: BoxDecoration(
-          color: widget.outlineColor.withAlpha(widget.opacity ?? 70),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: widget.outlineColor,
-            width: coordinateSystem.scale(5),
-          )),
+        color: outlineColor.withAlpha(opacity ?? 70),
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: outlineColor,
+          width: coordinateSystem.scale(5),
+        ),
+      ),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:icarus/const/coordinate_system.dart';
 
 enum InteractionState {
   navigation,
+  drag,
   drawLine,
   drawFreeLine,
 }

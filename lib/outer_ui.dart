@@ -27,10 +27,6 @@ class _OuterUiState extends State<OuterUi> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height - kToolbarHeight;
-    // final double height =
-    //     MediaQuery.sizeOf(context).height - MediaQuery.paddingOf(context).top;
-    Size playAreaSize = Size(height * 1.2, height);
     final coordinateSystem = CoordinateSystem.instance;
 
     return LayoutBuilder(

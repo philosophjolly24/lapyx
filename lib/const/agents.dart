@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icarus/widgets/ability/custom_circle_widget.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/widgets/ability/custom_square_widget.dart';
 
 enum AgentType {
   jett,
@@ -292,6 +293,9 @@ class AgentData implements DraggableData {
             innerSize: 10 * inGameMetersDiameter,
             innerColor: Colors.amber,
           );
+
+      agent.abilities[1].abilityWidget = () => CustomSquareWidget(
+          color: Colors.white, abilityInfo: agent.abilities[1]);
 
       agent.abilities[2].abilityWidget = () => CustomCircleWidget(
             abilityInfo: agent.abilities[2],
