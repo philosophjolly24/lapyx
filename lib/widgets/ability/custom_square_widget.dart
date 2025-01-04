@@ -17,22 +17,6 @@ class CustomSquareWidget extends StatelessWidget {
 
     return Column(
       children: [
-        SizedBox(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            child: Container(
-              width: 20,
-              height: 20,
-              color: Colors.white,
-            ),
-            onTap: () {
-              log("u");
-            },
-            onPanStart: (details) => {},
-            onPanEnd: (details) => {},
-            onPanUpdate: (details) => {},
-          ),
-        ),
         IgnorePointer(
           child: Container(
             width: 200,

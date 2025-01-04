@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:icarus/widgets/ability/ability_widget.dart';
@@ -21,9 +23,6 @@ class InteractiveMap extends StatefulWidget {
 class _InteractiveMapState extends State<InteractiveMap> {
   String assetName = 'assets/maps/ascent_map.svg';
 
-  TransformationController transformationController =
-      TransformationController();
-
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.sizeOf(context).height - kToolbarHeight;
@@ -39,7 +38,6 @@ class _InteractiveMapState extends State<InteractiveMap> {
           color: const Color(0xFF1B1B1B),
           child: InteractiveViewer(
             scaleEnabled: true,
-            transformationController: transformationController,
             child: Stack(
               children: [
                 Positioned.fill(
@@ -71,32 +69,102 @@ class _InteractiveMapState extends State<InteractiveMap> {
                                       top: coordinateSystem
                                           .coordinateToScreen(ability.position)
                                           .dy,
-                                      child: Draggable(
-                                        feedback: AbilityWidget(
-                                            ability: ability.data,
-                                            coordinateSystem: coordinateSystem),
-                                        childWhenDragging:
-                                            const SizedBox.shrink(),
-                                        onDragEnd: (details) {
-                                          RenderBox renderBox = context
-                                              .findRenderObject() as RenderBox;
-                                          Offset localOffset = renderBox
-                                              .globalToLocal(details.offset);
-                                          // Updating info
+                                      child: !ability.data.isTransformable
+                                          ? Draggable(
+                                              feedback: AbilityWidget(
+                                                  ability: ability.data,
+                                                  coordinateSystem:
+                                                      coordinateSystem),
+                                              childWhenDragging:
+                                                  const SizedBox.shrink(),
+                                              onDragEnd: (details) {
+                                                RenderBox renderBox =
+                                                    context.findRenderObject()
+                                                        as RenderBox;
+                                                Offset localOffset =
+                                                    renderBox.globalToLocal(
+                                                        details.offset);
+                                                // Updating info
 
-                                          ability.updatePosition(
-                                              coordinateSystem
-                                                  .screenToCoordinate(
-                                                      localOffset));
+                                                ability.updatePosition(
+                                                    coordinateSystem
+                                                        .screenToCoordinate(
+                                                            localOffset));
 
-                                          // ability.bringFoward(index);
-                                          dev.log(coordinateSystem.playAreaSize
-                                              .toString());
-                                        },
-                                        child: AbilityWidget(
-                                            ability: ability.data,
-                                            coordinateSystem: coordinateSystem),
-                                      ),
+                                                // ability.bringFoward(index);
+                                                dev.log(coordinateSystem
+                                                    .playAreaSize
+                                                    .toString());
+                                              },
+                                              child: AbilityWidget(
+                                                ability: ability.data,
+                                                coordinateSystem:
+                                                    coordinateSystem,
+                                              ),
+                                            )
+                                          : Stack(
+                                              children: [
+                                                Positioned(
+                                                  child: Draggable(
+                                                    feedback: AbilityWidget(
+                                                        ability: ability.data,
+                                                        coordinateSystem:
+                                                            coordinateSystem),
+                                                    childWhenDragging:
+                                                        const SizedBox.shrink(),
+                                                    onDragEnd: (details) {
+                                                      RenderBox renderBox =
+                                                          context.findRenderObject()
+                                                              as RenderBox;
+                                                      Offset localOffset =
+                                                          renderBox
+                                                              .globalToLocal(
+                                                                  details
+                                                                      .offset);
+                                                      // Updating info
+
+                                                      ability.updatePosition(
+                                                          coordinateSystem
+                                                              .screenToCoordinate(
+                                                                  localOffset));
+
+                                                      // ability.bringFoward(index);
+                                                      dev.log(coordinateSystem
+                                                          .playAreaSize
+                                                          .toString());
+                                                    },
+                                                    child: AbilityWidget(
+                                                      ability: ability.data,
+                                                      coordinateSystem:
+                                                          coordinateSystem,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  child: Align(
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    child: GestureDetector(
+                                                      behavior: HitTestBehavior
+                                                          .opaque,
+                                                      child: Container(
+                                                        width: 20,
+                                                        height: 20,
+                                                        color: Colors.white,
+                                                      ),
+                                                      onTap: () {
+                                                        log("u");
+                                                      },
+                                                      onPanStart: (details) =>
+                                                          {},
+                                                      onPanEnd: (details) => {},
+                                                      onPanUpdate: (details) =>
+                                                          {},
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                     )
                                 ],
                                 ...[

@@ -42,6 +42,7 @@ class AbilityInfo implements DraggableData {
   Widget Function()? abilityWidget;
   final String? imagePath;
   final double? width;
+  bool isTransformable = false;
   Offset? centerPoint;
 
   AbilityInfo({
@@ -294,8 +295,11 @@ class AgentData implements DraggableData {
             innerColor: Colors.amber,
           );
 
+      agent.abilities[1].isTransformable = true;
       agent.abilities[1].abilityWidget = () => CustomSquareWidget(
-          color: Colors.white, abilityInfo: agent.abilities[1]);
+            color: Colors.white,
+            abilityInfo: agent.abilities[1],
+          );
 
       agent.abilities[2].abilityWidget = () => CustomCircleWidget(
             abilityInfo: agent.abilities[2],
