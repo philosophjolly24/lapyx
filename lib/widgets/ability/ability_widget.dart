@@ -6,14 +6,13 @@ class AbilityWidget extends StatelessWidget {
   const AbilityWidget({
     super.key,
     required this.ability,
-    required this.coordinateSystem,
   });
 
   final AbilityInfo ability;
-  final CoordinateSystem coordinateSystem;
 
   @override
   Widget build(BuildContext context) {
+    final coordinateSystem = CoordinateSystem.instance;
     if (ability.abilityWidget != null) {
       return ability.abilityWidget!();
     }

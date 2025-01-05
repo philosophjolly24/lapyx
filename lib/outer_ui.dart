@@ -44,9 +44,10 @@ class _OuterUiState extends State<OuterUi> {
                   width: 90,
                   height: 350,
                   decoration: const BoxDecoration(
-                      color: Color(0xFF100D10),
-                      borderRadius:
-                          BorderRadius.horizontal(left: Radius.circular(24))),
+                    color: Color(0xFF100D10),
+                    borderRadius:
+                        BorderRadius.horizontal(left: Radius.circular(24)),
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -57,7 +58,6 @@ class _OuterUiState extends State<OuterUi> {
                             data: activeAgent.abilities[index],
                             feedback: AbilityWidget(
                               ability: activeAgent.abilities[index],
-                              coordinateSystem: coordinateSystem,
                             ),
                             dragAnchorStrategy: centerDragStrategy,
                             child: InkWell(
