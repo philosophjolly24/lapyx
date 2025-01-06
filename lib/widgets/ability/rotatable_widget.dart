@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 
@@ -14,7 +14,6 @@ class RotatableWidget extends StatefulWidget {
   State<RotatableWidget> createState() => _RotatableWidgetState();
 }
 
-//TODO: Will fix this mess later
 class _RotatableWidgetState extends State<RotatableWidget> {
   double _rotation = 0.0;
   Offset _rotationOrigin = Offset.zero;
@@ -51,16 +50,17 @@ class _RotatableWidgetState extends State<RotatableWidget> {
                   if (_rotationOrigin == Offset.zero) return;
 
                   final currentPosition = details.globalPosition;
-                  final previousPosition = currentPosition - details.delta;
 
                   // Calculate angles
-                  double previousAngle =
-                      (previousPosition - _rotationOrigin).direction;
-                  double currentAngle =
-                      (currentPosition - _rotationOrigin).direction;
 
-                  if (previousAngle < 0) previousAngle += (2 * pi);
-                  if (currentAngle < 0) currentAngle += (2 * pi);
+                  final Offset currentPositionNormalized =
+                      (currentPosition - _rotationOrigin);
+
+                  double currentAngle = math.atan2(currentPositionNormalized.dy,
+                      currentPositionNormalized.dx);
+
+                  // if (previousAngle < 0) previousAngle += (2 * math.pi);
+                  // if (currentAngle < 0) currentAngle += (2 * math.pi);
                   // if (previousAngle < 0 != currentAngle > 0) {
                   //   if (previousAngle < 0)
                   //     previousAngle += 2 * pi;
@@ -69,20 +69,20 @@ class _RotatableWidgetState extends State<RotatableWidget> {
                   // }
                   // // Update rotation
                   setState(() {
-                    _rotation += (currentAngle - previousAngle);
+                    _rotation = (currentAngle) + (math.pi / 2);
 
-                    dev.log("======");
-                    dev.log("Rotation:${_rotation.toString()}");
-                    dev.log("previousPosition:${previousPosition.toString()}");
-                    dev.log("currentPosition:${currentPosition.toString()}");
+                    // dev.log("======");
+                    // dev.log("Rotation:${_rotation.toString()}");
+                    // dev.log("previousPosition:${previousPosition.toString()}");
+                    // dev.log("currentPosition:${currentPosition.toString()}");
 
-                    dev.log("Previous Angle:${previousAngle.toString()}");
-                    dev.log("Current Angle:${currentAngle.toString()}");
-                    dev.log("======");
+                    // dev.log("Previous Angle:${previousAngle.toString()}");
+                    // dev.log("Current Angle:${currentAngle.toString()}");
+                    // dev.log("======");
                   });
                 },
                 onPanEnd: (details) {
-                  _rotationOrigin = Offset.zero;
+                  // _rotationOrigin = Offset.zero;
                 },
               ),
             ),
