@@ -151,18 +151,21 @@ class AgentData implements DraggableData {
       );
 
       const double size = 30 * inGameMetersDiameter;
-      double scaleSize = coordinateSystem.scale(size);
-      Offset centerPoint = Offset(scaleSize / 2, scaleSize / 2);
 
-      agent.abilities[2].centerPoint = centerPoint;
+      agent.abilities[2].abilityWidget = () {
+        double scaleSize = coordinateSystem.scale(size);
+        Offset centerPoint = Offset(scaleSize / 2, scaleSize / 2);
 
-      agent.abilities[2].abilityWidget = () => CustomCircleWidget(
-            abilityInfo: agent.abilities[2],
-            size: size,
-            outlineColor: const Color.fromARGB(255, 1, 131, 237),
-            hasCenterDot: true,
-            isDouble: false,
-          );
+        agent.abilities[2].centerPoint = centerPoint;
+
+        return CustomCircleWidget(
+          abilityInfo: agent.abilities[2],
+          size: size,
+          outlineColor: const Color.fromARGB(255, 1, 131, 237),
+          hasCenterDot: true,
+          isDouble: false,
+        );
+      };
       return agent;
     })(),
 

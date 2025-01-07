@@ -6,14 +6,13 @@ class AgentWidget extends StatelessWidget {
   const AgentWidget({
     super.key,
     required this.agent,
-    required this.coordinateSystem,
   });
 
   final AgentData agent;
-  final CoordinateSystem coordinateSystem;
 
   @override
   Widget build(BuildContext context) {
+    final coordinateSystem = CoordinateSystem.instance;
     return ClipRRect(
       borderRadius: const BorderRadius.all(Radius.circular(8.0)),
       child: Container(

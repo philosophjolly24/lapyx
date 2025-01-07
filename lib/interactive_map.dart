@@ -147,8 +147,8 @@ class _InteractiveMapState extends State<InteractiveMap> {
                                           .dy,
                                       child: Draggable(
                                         feedback: AgentWidget(
-                                            agent: agent.data,
-                                            coordinateSystem: coordinateSystem),
+                                          agent: agent.data,
+                                        ),
                                         childWhenDragging:
                                             const SizedBox.shrink(),
                                         onDragEnd: (details) {
@@ -167,7 +167,6 @@ class _InteractiveMapState extends State<InteractiveMap> {
                                         },
                                         child: AgentWidget(
                                           agent: agent.data,
-                                          coordinateSystem: coordinateSystem,
                                         ),
                                       ),
                                     )

@@ -134,7 +134,6 @@ class _OuterUiState extends State<OuterUi> {
                                       data: agent,
                                       feedback: AgentWidget(
                                         agent: agent,
-                                        coordinateSystem: coordinateSystem,
                                       ),
                                       dragAnchorStrategy:
                                           pointerDragAnchorStrategy,

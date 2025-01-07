@@ -21,7 +21,7 @@ class CustomSquareWidget extends StatelessWidget {
           child: Container(
             width: 200,
             height: 100,
-            color: Colors.red,
+            color: const Color.fromARGB(115, 244, 67, 54),
           ),
         ),
         Align(
