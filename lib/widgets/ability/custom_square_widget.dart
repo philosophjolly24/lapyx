@@ -25,7 +25,7 @@ class CustomSquareWidget extends StatelessWidget {
           child: Container(
             width: coordinateSystem.scale(width),
             height: coordinateSystem.scale(height),
-            color: color,
+            color: color.withAlpha(100),
           ),
         ),
         Align(

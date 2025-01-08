@@ -88,12 +88,9 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
               },
               child: Positioned(
                 child: Draggable(
-                  feedback: Transform.rotate(
-                    angle: rotation,
-                    child: AbilityWidget(
-                      ability: widget.ability.data,
-                      key: globalKey,
-                    ),
+                  feedback: AbilityWidget(
+                    ability: widget.ability.data,
+                    key: globalKey,
                   ),
                   childWhenDragging: const SizedBox.shrink(),
                   onDragEnd: widget.onDragEnd,
