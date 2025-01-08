@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/custom_circle_widget.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/widgets/ability/custom_square_widget.dart';
@@ -284,7 +283,7 @@ class AgentData implements DraggableData {
     })(),
     AgentType.chamber: (() {
       final agent = AgentData(
-        type: AgentType.fade,
+        type: AgentType.chamber,
         role: AgentRole.initiator,
         name: "Chamber",
       );
@@ -299,12 +298,6 @@ class AgentData implements DraggableData {
             innerColor: Colors.amber,
           );
 
-      agent.abilities[1].isTransformable = true;
-      agent.abilities[1].abilityWidget = () => CustomSquareWidget(
-            color: Colors.white,
-            abilityInfo: agent.abilities[1],
-          );
-
       agent.abilities[2].abilityWidget = () => CustomCircleWidget(
             abilityInfo: agent.abilities[2],
             size: 18 * inGameMetersDiameter,
@@ -314,11 +307,22 @@ class AgentData implements DraggableData {
           );
       return agent;
     })(),
-    AgentType.fade: AgentData(
-      type: AgentType.fade,
-      role: AgentRole.initiator,
-      name: "Fade",
-    ),
+    AgentType.fade: (() {
+      final agent = AgentData(
+        type: AgentType.fade,
+        role: AgentRole.initiator,
+        name: "Fade",
+      );
+
+      agent.abilities.last.isTransformable = true;
+      agent.abilities.last.abilityWidget = () => CustomSquareWidget(
+            color: const Color(0xFF680A79),
+            abilityInfo: agent.abilities.last,
+            height: 40 * inGameMeters,
+            width: 24 * inGameMeters,
+          );
+      return agent;
+    })(),
     AgentType.neon: AgentData(
       type: AgentType.neon,
       role: AgentRole.duelist,
@@ -360,6 +364,6 @@ class PlacedAgent extends PlacedWidget {
 
 class PlacedAbility extends PlacedWidget {
   final AbilityInfo data;
-
+  double rotaion = 0;
   PlacedAbility({required this.data, required super.position});
 }

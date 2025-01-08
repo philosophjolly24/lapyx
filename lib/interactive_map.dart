@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,6 +11,7 @@ import 'dart:developer' as dev;
 import 'package:icarus/drawing_painter.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
+import 'package:icarus/widgets/placed_ability_widget.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/ability/rotatable_widget.dart';
@@ -40,7 +40,6 @@ class _InteractiveMapState extends State<InteractiveMap> {
           height: height,
           color: const Color(0xFF1B1B1B),
           child: InteractiveViewer(
-            scaleEnabled: true,
             child: Stack(
               children: [
                 Positioned.fill(
@@ -62,117 +61,134 @@ class _InteractiveMapState extends State<InteractiveMap> {
                               (context, agentProvider, abilityProvider, child) {
                             return Stack(
                               children: [
-                                ...[
-                                  for (final ability
-                                      in abilityProvider.placedAbilities)
-                                    Positioned(
-                                      left: coordinateSystem
-                                          .coordinateToScreen(ability.position)
-                                          .dx,
-                                      top: coordinateSystem
-                                          .coordinateToScreen(ability.position)
-                                          .dy,
-                                      child: !ability.data.isTransformable
-                                          ? Draggable(
-                                              feedback: AbilityWidget(
-                                                ability: ability.data,
-                                              ),
-                                              childWhenDragging:
-                                                  const SizedBox.shrink(),
-                                              onDragEnd: (details) {
-                                                RenderBox renderBox =
-                                                    context.findRenderObject()
-                                                        as RenderBox;
-                                                Offset localOffset =
-                                                    renderBox.globalToLocal(
-                                                        details.offset);
-                                                // Updating info
+                                for (final ability
+                                    in abilityProvider.placedAbilities)
+                                  PlacedAbilityWidget(
+                                    ability: ability,
+                                    onDragEnd: (details) {
+                                      RenderBox renderBox = context
+                                          .findRenderObject() as RenderBox;
+                                      Offset localOffset = renderBox
+                                          .globalToLocal(details.offset);
+                                      // Updating info
 
-                                                ability.updatePosition(
-                                                    coordinateSystem
-                                                        .screenToCoordinate(
-                                                            localOffset));
+                                      log(coordinateSystem
+                                          .screenToCoordinate(localOffset)
+                                          .toString());
 
-                                                // ability.bringFoward(index);
-                                                dev.log(coordinateSystem
-                                                    .playAreaSize
-                                                    .toString());
-                                              },
-                                              child: AbilityWidget(
-                                                ability: ability.data,
-                                              ),
-                                            )
-                                          : RotatableWidget(
-                                              child: Positioned(
-                                                child: Draggable(
-                                                  feedback: AbilityWidget(
-                                                    ability: ability.data,
-                                                  ),
-                                                  childWhenDragging:
-                                                      const SizedBox.shrink(),
-                                                  onDragEnd: (details) {
-                                                    RenderBox renderBox = context
-                                                            .findRenderObject()
-                                                        as RenderBox;
-                                                    Offset localOffset =
-                                                        renderBox.globalToLocal(
-                                                            details.offset);
-                                                    // Updating info
+                                      ability.updatePosition(coordinateSystem
+                                          .screenToCoordinate(localOffset));
+                                    },
+                                  ),
 
-                                                    ability.updatePosition(
-                                                        coordinateSystem
-                                                            .screenToCoordinate(
-                                                                localOffset));
+                                // : RotatableWidget(
+                                //     rotation: rotation,
+                                //     onPanStart: (details) {
+                                //       final box =
+                                //           context.findRenderObject()
+                                //               as RenderBox;
+                                //       final bottomCenter = Offset(
+                                //           box.size.width / 2,
+                                //           box.size.height);
 
-                                                    // ability.bringFoward(index);
-                                                    dev.log(coordinateSystem
-                                                        .playAreaSize
-                                                        .toString());
-                                                  },
-                                                  child: AbilityWidget(
-                                                    ability: ability.data,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                    )
-                                ],
-                                ...[
-                                  for (final (index, agent)
-                                      in agentProvider.placedAgents.indexed)
-                                    Positioned(
-                                      left: coordinateSystem
-                                          .coordinateToScreen(agent.position)
-                                          .dx,
-                                      top: coordinateSystem
-                                          .coordinateToScreen(agent.position)
-                                          .dy,
-                                      child: Draggable(
-                                        feedback: AgentWidget(
-                                          agent: agent.data,
-                                        ),
-                                        childWhenDragging:
-                                            const SizedBox.shrink(),
-                                        onDragEnd: (details) {
-                                          RenderBox renderBox = context
-                                              .findRenderObject() as RenderBox;
-                                          Offset localOffset = renderBox
-                                              .globalToLocal(details.offset);
-                                          // Updating info
+                                //       rotationOrigin = box
+                                //           .localToGlobal(bottomCenter);
+                                //     },
+                                //     onPanUpdate: (details) {
+                                //       if (rotationOrigin == Offset.zero)
+                                //         return;
 
-                                          agent.updatePosition(coordinateSystem
-                                              .screenToCoordinate(localOffset));
+                                //       final currentPosition =
+                                //           details.globalPosition;
 
-                                          agentProvider.bringAgentFoward(index);
-                                          dev.log(coordinateSystem.playAreaSize
-                                              .toString());
-                                        },
-                                        child: AgentWidget(
-                                          agent: agent.data,
-                                        ),
+                                //       // Calculate angles
+                                //       final Offset
+                                //           currentPositionNormalized =
+                                //           (currentPosition -
+                                //               rotationOrigin);
+
+                                //       double currentAngle = math.atan2(
+                                //           currentPositionNormalized.dy,
+                                //           currentPositionNormalized.dx);
+
+                                //       // // Update rotation
+                                //       setState(() {
+                                //         rotation = (currentAngle) +
+                                //             (math.pi / 2);
+                                //         widget.ability.rotaion =
+                                //             rotation;
+                                //       });
+                                //     },
+                                //     onPanEnd: (details) {
+                                //       setState(() {
+                                //         rotationOrigin = Offset.zero;
+                                //       });
+                                //     },
+                                //     child: Positioned(
+                                //       child: Draggable(
+                                //         feedback: AbilityWidget(
+                                //           ability: ability.data,
+                                //         ),
+                                //         childWhenDragging:
+                                //             const SizedBox.shrink(),
+                                //         onDragEnd: (details) {
+                                //           RenderBox renderBox =
+                                //               context.findRenderObject()
+                                //                   as RenderBox;
+                                //           Offset localOffset =
+                                //               renderBox.globalToLocal(
+                                //                   details.offset);
+                                //           // Updating info
+
+                                //           ability.updatePosition(
+                                //             coordinateSystem
+                                //                 .screenToCoordinate(
+                                //                     localOffset),
+                                //           );
+
+                                //           // ability.bringFoward(index);
+                                //         },
+                                //         child: AbilityWidget(
+                                //           ability: ability.data,
+                                //         ),
+                                //       ),
+                                //     ),
+                                //   ),
+
+                                for (final (index, agent)
+                                    in agentProvider.placedAgents.indexed)
+                                  Positioned(
+                                    left: coordinateSystem
+                                        .coordinateToScreen(agent.position)
+                                        .dx,
+                                    top: coordinateSystem
+                                        .coordinateToScreen(agent.position)
+                                        .dy,
+                                    child: Draggable(
+                                      feedback: AgentWidget(
+                                        agent: agent.data,
                                       ),
-                                    )
-                                ],
+                                      childWhenDragging:
+                                          const SizedBox.shrink(),
+                                      onDragEnd: (details) {
+                                        RenderBox renderBox = context
+                                            .findRenderObject() as RenderBox;
+                                        Offset localOffset = renderBox
+                                            .globalToLocal(details.offset);
+                                        // Updating info
+
+                                        agent.updatePosition(coordinateSystem
+                                            .screenToCoordinate(localOffset));
+
+                                        agentProvider.bringAgentFoward(index);
+                                        dev.log(coordinateSystem.playAreaSize
+                                            .toString());
+                                      },
+                                      child: AgentWidget(
+                                        agent: agent.data,
+                                      ),
+                                    ),
+                                  ),
                               ],
                             );
                           },

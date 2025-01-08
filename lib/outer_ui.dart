@@ -6,7 +6,6 @@ import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:icarus/const/coordinate_system.dart';
 
 class OuterUi extends StatefulWidget {
   const OuterUi({super.key});
@@ -27,8 +26,6 @@ class _OuterUiState extends State<OuterUi> {
 
   @override
   Widget build(BuildContext context) {
-    final coordinateSystem = CoordinateSystem.instance;
-
     return LayoutBuilder(
       builder: (context, constraints) {
         return Row(

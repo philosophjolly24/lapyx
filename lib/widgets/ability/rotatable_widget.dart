@@ -1,89 +1,49 @@
-import 'dart:math' as math;
-import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
+import 'package:icarus/const/coordinate_system.dart';
 
-class RotatableWidget extends StatefulWidget {
+class RotatableWidget extends StatelessWidget {
   final Widget child;
+  final double rotation;
+  final Function(DragUpdateDetails details) onPanUpdate;
+  final Function(DragStartDetails details) onPanStart;
+
+  final Function(DragEndDetails details) onPanEnd;
 
   const RotatableWidget({
     super.key,
     required this.child,
+    required this.rotation,
+    required this.onPanUpdate,
+    required this.onPanStart,
+    required this.onPanEnd,
   });
 
   @override
-  State<RotatableWidget> createState() => _RotatableWidgetState();
-}
-
-class _RotatableWidgetState extends State<RotatableWidget> {
-  double _rotation = 0.0;
-  Offset _rotationOrigin = Offset.zero;
-
-  @override
   Widget build(BuildContext context) {
+    final coordinateSystem = CoordinateSystem.instance;
+
     return Transform(
-      transform: Matrix4.rotationZ(_rotation),
+      transform: Matrix4.rotationZ(rotation),
       alignment: Alignment.bottomCenter,
       child: Stack(
         children: [
-          widget.child,
+          child,
           Positioned.fill(
             child: Align(
               alignment: Alignment.topCenter,
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
+                onPanStart: onPanStart,
+                onPanUpdate: onPanUpdate,
+                onPanEnd: onPanEnd,
                 child: Container(
-                  width: 20,
-                  height: 20,
+                  width: coordinateSystem.scale(20),
+                  height: coordinateSystem.scale(20),
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                   ),
                 ),
-                onPanStart: (details) {
-                  final box = context.findRenderObject() as RenderBox;
-                  final bottomCenter =
-                      Offset(box.size.width / 2, box.size.height);
-
-                  _rotationOrigin = box.localToGlobal(bottomCenter);
-                },
-                onPanUpdate: (details) {
-                  if (_rotationOrigin == Offset.zero) return;
-
-                  final currentPosition = details.globalPosition;
-
-                  // Calculate angles
-
-                  final Offset currentPositionNormalized =
-                      (currentPosition - _rotationOrigin);
-
-                  double currentAngle = math.atan2(currentPositionNormalized.dy,
-                      currentPositionNormalized.dx);
-
-                  // if (previousAngle < 0) previousAngle += (2 * math.pi);
-                  // if (currentAngle < 0) currentAngle += (2 * math.pi);
-                  // if (previousAngle < 0 != currentAngle > 0) {
-                  //   if (previousAngle < 0)
-                  //     previousAngle += 2 * pi;
-                  //   else
-                  //     currentAngle += 2 * pi;
-                  // }
-                  // // Update rotation
-                  setState(() {
-                    _rotation = (currentAngle) + (math.pi / 2);
-
-                    // dev.log("======");
-                    // dev.log("Rotation:${_rotation.toString()}");
-                    // dev.log("previousPosition:${previousPosition.toString()}");
-                    // dev.log("currentPosition:${currentPosition.toString()}");
-
-                    // dev.log("Previous Angle:${previousAngle.toString()}");
-                    // dev.log("Current Angle:${currentAngle.toString()}");
-                    // dev.log("======");
-                  });
-                },
-                onPanEnd: (details) {
-                  // _rotationOrigin = Offset.zero;
-                },
               ),
             ),
           ),

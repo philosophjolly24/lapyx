@@ -57,15 +57,15 @@ class CoordinateSystem {
 
   final double _baseHeight = 831.0;
   // Get the scale factor based on screen height
-  double get scaleFactor => playAreaSize.height / _baseHeight;
+  double get _scaleFactor => playAreaSize.height / _baseHeight;
 
   // Scale any dimension based on height
-  double scale(double size) => size * scaleFactor;
+  double scale(double size) => size * _scaleFactor;
 
   // Scale a size maintaining aspect ratio
   Size scaleSize(Size size) => Size(
-        size.width * scaleFactor,
-        size.height * scaleFactor,
+        size.width * _scaleFactor,
+        size.height * _scaleFactor,
       );
 
   // Convenience method to wrap a widget with scaled dimensions

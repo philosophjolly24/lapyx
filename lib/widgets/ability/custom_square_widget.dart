@@ -1,14 +1,18 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 
 class CustomSquareWidget extends StatelessWidget {
   const CustomSquareWidget(
-      {super.key, required this.color, required this.abilityInfo});
+      {super.key,
+      required this.color,
+      required this.abilityInfo,
+      required this.width,
+      required this.height});
 
   final Color color;
+  final double width;
+  final double height;
   final AbilityInfo abilityInfo;
 
   @override
@@ -19,9 +23,9 @@ class CustomSquareWidget extends StatelessWidget {
       children: [
         IgnorePointer(
           child: Container(
-            width: 200,
-            height: 100,
-            color: const Color.fromARGB(115, 244, 67, 54),
+            width: coordinateSystem.scale(width),
+            height: coordinateSystem.scale(height),
+            color: color,
           ),
         ),
         Align(
