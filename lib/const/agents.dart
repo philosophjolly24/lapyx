@@ -8,11 +8,11 @@ enum AgentType {
   raze,
   pheonix,
   astra,
-  // clove,
+  clove,
   breach,
-  // iso,
+  iso,
   viper,
-  // deadlock,
+  deadlock,
   yoru,
   sova,
   skye,
@@ -22,13 +22,14 @@ enum AgentType {
   cypher,
   chamber,
   fade,
-  // gekko,
-  // harbor,
+  gekko,
+  harbor,
   neon,
   omen,
   reyna,
-  sage
-  // vyse,
+  sage,
+  vyse,
+  tejo,
 }
 
 enum AgentRole { controller, duelist, initiator, sentinel }
@@ -121,21 +122,84 @@ class AgentData implements DraggableData {
       role: AgentRole.duelist,
       name: "Phoenix",
     ),
-    AgentType.astra: AgentData(
-      type: AgentType.astra,
-      role: AgentRole.controller,
-      name: "Astra",
-    ),
-    AgentType.breach: AgentData(
-      type: AgentType.breach,
-      role: AgentRole.initiator,
-      name: "Breach",
-    ),
-    AgentType.viper: AgentData(
-      type: AgentType.viper,
-      role: AgentRole.controller,
-      name: "Viper",
-    ),
+    AgentType.astra: (() {
+      final agent = AgentData(
+        type: AgentType.astra,
+        role: AgentRole.controller,
+        name: "Astra",
+      )..abilities[2] = AbilityInfo(
+          name: "Nebula",
+          iconPath: 'assets/agents/Astra/1.png',
+          imagePath: 'assets/agents/Astra/Smoke.png', // Custom image for smoke
+          width: 4.75 * inGameMetersDiameter,
+        );
+
+      agent.abilities.first.abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities.first,
+            size: 4.75 * inGameMetersDiameter,
+            outlineColor: Colors.purple,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+      agent.abilities[1].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[1],
+            size: 4.75 * inGameMetersDiameter,
+            outlineColor: Colors.purple,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      return agent;
+    })(),
+    AgentType.breach: (() {
+      final agent = AgentData(
+        type: AgentType.breach,
+        role: AgentRole.initiator,
+        name: "Breach",
+      );
+
+      agent.abilities.first.isTransformable = true;
+      agent.abilities.first.abilityWidget = () => CustomSquareWidget(
+            color: Colors.orangeAccent,
+            abilityInfo: agent.abilities.first,
+            width: 3 * inGameMetersDiameter,
+            height: 10 * inGameMeters,
+          );
+
+      agent.abilities.last.isTransformable = true;
+      agent.abilities.last.abilityWidget = () => CustomSquareWidget(
+            color: Colors.orangeAccent,
+            abilityInfo: agent.abilities.last,
+            width: 23 * inGameMeters,
+            height: 32 * inGameMeters,
+            distanceBetweenAOE: 8 * inGameMeters,
+          );
+
+      return agent;
+    })(),
+    AgentType.viper: (() {
+      final agent = AgentData(
+        type: AgentType.viper,
+        role: AgentRole.controller,
+        name: "Viper",
+      )..abilities[1] =
+            // Override the default abilities
+            AbilityInfo(
+          name: "Sky Smoke",
+          iconPath: 'assets/agents/Viper/2.png',
+          imagePath: 'assets/agents/Viper/Smoke.png', // Custom image for smoke
+          width: 4.5 * inGameMetersDiameter,
+        );
+
+      agent.abilities.first.abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities.first,
+            size: 4.5 * inGameMetersDiameter,
+            outlineColor: Colors.greenAccent,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+      return agent;
+    })(),
     AgentType.yoru: AgentData(
       type: AgentType.yoru,
       role: AgentRole.duelist,
@@ -165,20 +229,34 @@ class AgentData implements DraggableData {
           isDouble: false,
         );
       };
+
+      agent.abilities.last.isTransformable = true;
+      agent.abilities.last.abilityWidget = () => CustomSquareWidget(
+            color: const Color.fromARGB(255, 1, 131, 237),
+            abilityInfo: agent.abilities.last,
+            width: 1.76 * inGameMetersDiameter,
+            height: 66 * inGameMeters,
+          );
       return agent;
     })(),
+    AgentType.skye: (() {
+      final agent = AgentData(
+        type: AgentType.skye,
+        role: AgentRole.initiator,
+        name: "Skye",
+      );
 
-    // CustomCircleWidget(
-    //     297.17,
-    //     const Color.fromARGB(255, 1, 131, 237),
-    //     true,
-    //     false,
-    //   ),
-    AgentType.skye: AgentData(
-      type: AgentType.skye,
-      role: AgentRole.initiator,
-      name: "Skye",
-    ),
+      //Heal
+      agent.abilities.first.abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities.first,
+            size: 18 * inGameMetersDiameter,
+            outlineColor: Colors.green,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      return agent;
+    })(),
     AgentType.kayo: (() {
       AgentData agent = AgentData(
         type: AgentType.kayo,
@@ -186,11 +264,18 @@ class AgentData implements DraggableData {
         name: "Kayo",
       );
 
+      agent.abilities.first.abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities.first,
+            size: 5 * inGameMetersDiameter,
+            outlineColor: const Color(0xFF8C06A3),
+            hasCenterDot: true,
+            isDouble: false,
+          );
       //Ultimate
       agent.abilities[3].abilityWidget = () => CustomCircleWidget(
             abilityInfo: agent.abilities[3],
             size: 42.5 * inGameMetersDiameter,
-            outlineColor: const Color.fromARGB(255, 140, 6, 163),
+            outlineColor: const Color(0xFF8C06A3),
             hasCenterDot: true,
             isDouble: false,
           );
@@ -207,7 +292,6 @@ class AgentData implements DraggableData {
       //     148.59, const Color.fromARGB(255, 106, 14, 182), true, false);
       return agent;
     })(),
-
     AgentType.killjoy: (() {
       AgentData agent = AgentData(
         type: AgentType.killjoy,
@@ -215,11 +299,18 @@ class AgentData implements DraggableData {
         name: "Killjoy",
       );
 
+      agent.abilities.first.abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities.first,
+            size: 4.5 * inGameMetersDiameter,
+            outlineColor: const Color(0xFF6A0EB6),
+            hasCenterDot: true,
+            isDouble: false,
+          );
       //Ultimate
       agent.abilities[3].abilityWidget = () => CustomCircleWidget(
             abilityInfo: agent.abilities[3],
             size: 32.5 * inGameMetersDiameter,
-            outlineColor: const Color.fromARGB(255, 106, 14, 182),
+            outlineColor: const Color(0xFF6A0EB6),
             hasCenterDot: true,
             isDouble: false,
           );
@@ -237,34 +328,47 @@ class AgentData implements DraggableData {
           );
       return agent;
     })(),
-
     AgentType.brimstone: (() {
       final agent = AgentData(
         type: AgentType.brimstone,
         role: AgentRole.controller,
         name: "Brimstone",
-      );
+      )..abilities[2] =
+            // Override the default abilities
+            AbilityInfo(
+          name: "Sky Smoke",
+          iconPath: 'assets/agents/Brimstone/3.png',
+          imagePath:
+              'assets/agents/Brimstone/Smoke.png', // Custom image for smoke
+          width: 4.15 * inGameMetersDiameter,
+        );
 
+      agent.abilities[1].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[1],
+            size: 4.5 * inGameMetersDiameter,
+            outlineColor: Colors.red,
+            hasCenterDot: true,
+            isDouble: false,
+          );
       //Ultimate
-      agent.abilities[3].abilityWidget = () => CustomCircleWidget(
+      agent.abilities.last.abilityWidget = () => CustomCircleWidget(
             abilityInfo: agent.abilities[3],
             size: 9 * inGameMetersDiameter,
             outlineColor: Colors.red,
-            hasCenterDot: false,
+            hasCenterDot: true,
             isDouble: false,
           );
 
       //Stim Beacon
-      agent.abilities[0].abilityWidget = () => CustomCircleWidget(
+      agent.abilities.first.abilityWidget = () => CustomCircleWidget(
             abilityInfo: agent.abilities[0],
             size: 6 * inGameMetersDiameter,
             outlineColor: const Color.fromARGB(255, 97, 253, 131),
-            hasCenterDot: false,
+            hasCenterDot: true,
             isDouble: false,
           );
       return agent;
     })(),
-
     AgentType.cypher: (() {
       final agent = AgentData(
         type: AgentType.cypher,
@@ -314,6 +418,23 @@ class AgentData implements DraggableData {
         name: "Fade",
       );
 
+      agent.abilities[1].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[1],
+            size: 6.58 * inGameMetersDiameter,
+            outlineColor: const Color(0xFF680A79),
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      agent.abilities[2].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[2],
+            size: 30 * inGameMetersDiameter,
+            outlineColor: const Color(0xFF680A79),
+            hasCenterDot: true,
+            isDouble: false,
+            opacity: 0,
+          );
+
       agent.abilities.last.isTransformable = true;
       agent.abilities.last.abilityWidget = () => CustomSquareWidget(
             color: const Color(0xFF680A79),
@@ -323,26 +444,253 @@ class AgentData implements DraggableData {
           );
       return agent;
     })(),
-    AgentType.neon: AgentData(
-      type: AgentType.neon,
-      role: AgentRole.duelist,
-      name: "Neon",
-    ),
-    AgentType.omen: AgentData(
-      type: AgentType.omen,
-      role: AgentRole.controller,
-      name: "Omen",
-    ),
-    AgentType.reyna: AgentData(
-      type: AgentType.reyna,
-      role: AgentRole.duelist,
-      name: "Reyna",
-    ),
+    AgentType.neon: (() {
+      final agent = AgentData(
+        type: AgentType.neon,
+        role: AgentRole.duelist,
+        name: "Neon",
+      );
+
+      agent.abilities[1].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[1],
+            size: 5 * inGameMetersDiameter,
+            outlineColor: Colors.blue,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+      return agent;
+    })(),
+    AgentType.omen: (() {
+      final agent = AgentData(
+        type: AgentType.omen,
+        role: AgentRole.controller,
+        name: "Omen",
+      )..abilities[2] =
+            // Override the default abilities
+            AbilityInfo(
+          name: "Smoke",
+          iconPath: 'assets/agents/Omen/3.png',
+          imagePath: 'assets/agents/Omen/Smoke.png', // Custom image for smoke
+          width: 4.1 * inGameMetersDiameter,
+        );
+      //Blind
+      agent.abilities[1].isTransformable = true;
+      agent.abilities[1].abilityWidget = () => CustomSquareWidget(
+            color: Colors.deepPurple,
+            abilityInfo: agent.abilities[1],
+            width: 4.3 * inGameMetersDiameter,
+            height: 32.5 * inGameMeters,
+          );
+
+      return agent;
+    })(),
+    AgentType.reyna: (() {
+      final agent = AgentData(
+        type: AgentType.reyna,
+        role: AgentRole.duelist,
+        name: "Reyna",
+      );
+
+      return agent;
+    })(),
     AgentType.sage: AgentData(
       type: AgentType.sage,
       role: AgentRole.sentinel,
       name: "Sage",
     ),
+
+    //TODO Update new additions
+    AgentType.clove: (() {
+      final agent = AgentData(
+        type: AgentType.clove,
+        role: AgentRole.controller,
+        name: "Clove",
+      );
+
+      agent.abilities[1].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[1],
+            size: 6 * inGameMetersDiameter,
+            outlineColor: const Color.fromARGB(255, 251, 106, 154),
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      return agent;
+    })(),
+    AgentType.iso: (() {
+      final agent = AgentData(
+        type: AgentType.iso,
+        role: AgentRole.duelist,
+        name: "Iso",
+      );
+
+      agent.abilities.first.isTransformable = true;
+      agent.abilities.first.abilityWidget = () => CustomSquareWidget(
+            color: Colors.indigo,
+            abilityInfo: agent.abilities.first,
+            width: 4.5 * inGameMeters,
+            height: 27.5 * inGameMeters,
+            distanceBetweenAOE: 5 * inGameMeters,
+          );
+
+      agent.abilities[1].isTransformable = true;
+      agent.abilities[1].abilityWidget = () => CustomSquareWidget(
+            color: Colors.indigo,
+            abilityInfo: agent.abilities[1],
+            width: 3 * inGameMetersDiameter,
+            height: 34.875 * inGameMeters,
+          );
+
+      agent.abilities[3].isTransformable = true;
+      agent.abilities[3].abilityWidget = () => CustomSquareWidget(
+            color: Colors.indigo,
+            abilityInfo: agent.abilities[3],
+            width: 15 * inGameMeters,
+            height: 48 * inGameMeters,
+          );
+
+      return agent;
+    })(),
+    AgentType.deadlock: (() {
+      final agent = AgentData(
+        type: AgentType.deadlock,
+        role: AgentRole.duelist,
+        name: "Deadlock",
+      );
+
+      //TODO: Two custom widgets for her wall and ult
+
+      agent.abilities.first.abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities.first,
+            size: 8 * inGameMetersDiameter,
+            outlineColor: Colors.blue,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      agent.abilities[1].isTransformable = true;
+      agent.abilities[1].abilityWidget = () => CustomSquareWidget(
+            color: Colors.blue,
+            abilityInfo: agent.abilities[1],
+            width: 8 * inGameMeters,
+            height: 9 * inGameMeters,
+          );
+
+      return agent;
+    })(),
+    AgentType.gekko: (() {
+      final agent = AgentData(
+        type: AgentType.gekko,
+        role: AgentRole.initiator,
+        name: "Gekko",
+      );
+
+      agent.abilities.first.abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities.first,
+            size: 6.2 * inGameMetersDiameter,
+            outlineColor: Colors.greenAccent,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      return agent;
+    })(),
+    AgentType.harbor: (() {
+      final agent = AgentData(
+        type: AgentType.harbor,
+        role: AgentRole.controller,
+        name: "Harbor",
+      );
+
+      agent.abilities.first.isTransformable = true;
+      agent.abilities.first.abilityWidget = () => CustomSquareWidget(
+            color: Colors.lightBlue,
+            abilityInfo: agent.abilities.first,
+            width: 9.75 * inGameMeters,
+            height: 35 * inGameMeters,
+          );
+      agent.abilities.last.abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities.last,
+            size: 21.25 * inGameMetersDiameter,
+            outlineColor: Colors.lightBlue,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      return agent;
+    })(),
+    AgentType.vyse: (() {
+      final agent = AgentData(
+        type: AgentType.vyse,
+        role: AgentRole.sentinel,
+        name: "Vyse",
+      );
+
+      agent.abilities.first.isTransformable = true;
+      agent.abilities.first.abilityWidget = () => CustomSquareWidget(
+            color: Colors.deepPurple,
+            abilityInfo: agent.abilities.first,
+            width: 1 * inGameMeters,
+            height: 12 * inGameMeters,
+          );
+
+      agent.abilities[1].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[1],
+            size: 6.25 * inGameMetersDiameter,
+            outlineColor: Colors.deepPurple,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      agent.abilities.last.abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities.last,
+            size: 32.5 * inGameMetersDiameter,
+            outlineColor: Colors.deepPurple,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      return agent;
+    })(),
+    AgentType.tejo: (() {
+      final agent = AgentData(
+        type: AgentType.tejo,
+        role: AgentRole.initiator,
+        name: "Tejo",
+      );
+
+      agent.abilities.first.abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities.first,
+            size: 30 * inGameMetersDiameter,
+            outlineColor: Colors.orangeAccent,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+      agent.abilities[1].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[1],
+            size: 5.25 * inGameMetersDiameter,
+            outlineColor: Colors.orangeAccent,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      agent.abilities[2].abilityWidget = () => CustomCircleWidget(
+            abilityInfo: agent.abilities[2],
+            size: 4.5 * inGameMetersDiameter,
+            outlineColor: Colors.orangeAccent,
+            hasCenterDot: true,
+            isDouble: false,
+          );
+
+      agent.abilities.last.isTransformable = true;
+      agent.abilities.last.abilityWidget = () => CustomSquareWidget(
+            color: Colors.orangeAccent,
+            abilityInfo: agent.abilities.last,
+            width: 10 * inGameMeters,
+            height: 32 * inGameMeters,
+          );
+      return agent;
+    })()
   };
 }
 

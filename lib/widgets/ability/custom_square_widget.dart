@@ -8,12 +8,14 @@ class CustomSquareWidget extends StatelessWidget {
       required this.color,
       required this.abilityInfo,
       required this.width,
-      required this.height});
+      required this.height,
+      this.distanceBetweenAOE});
 
   final Color color;
   final double width;
   final double height;
   final AbilityInfo abilityInfo;
+  final double? distanceBetweenAOE;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +30,40 @@ class CustomSquareWidget extends StatelessWidget {
             color: color.withAlpha(100),
           ),
         ),
+        IgnorePointer(
+          child: SizedBox(
+            height: coordinateSystem.scale(distanceBetweenAOE ?? 0),
+          ),
+        ),
         Align(
           alignment: Alignment.bottomCenter,
+          child: Container(
+            width: coordinateSystem.scale(25),
+            height: coordinateSystem.scale(25),
+            padding: EdgeInsets.all(coordinateSystem.scale(3)),
+            decoration: const BoxDecoration(
+              color: Color(0xFF1B1B1B),
+            ),
+            child: Image.asset(
+              abilityInfo.iconPath,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ],
+    );
+
+    return Stack(
+      children: [
+        IgnorePointer(
+          child: Container(
+            width: coordinateSystem.scale(width),
+            height: coordinateSystem.scale(height),
+            color: color.withAlpha(100),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
           child: Container(
             width: coordinateSystem.scale(25),
             height: coordinateSystem.scale(25),

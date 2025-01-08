@@ -47,6 +47,13 @@ flutter:
     - assets/agents/Kayo/
     - assets/agents/Breach/
     - assets/agents/Sage/
+    - assets/agents/Clove/
+    - assets/agents/Iso/
+    - assets/agents/Tejo/
+    - assets/agents/Vyse/
+    - assets/agents/Deadlock/
+    - assets/agents/Gekko/
+    - assets/agents/Harbor/
 
   uses-material-design: true
 
