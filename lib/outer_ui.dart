@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
@@ -85,10 +86,20 @@ class _OuterUiState extends State<OuterUi> {
               width: sideBarSize + 20,
               child: Column(
                 children: [
-                  Container(
-                    color: Colors.red,
+                  SizedBox(
                     height: 50,
                     width: sideBarSize + 20,
+                    child: Row(
+                      children: [
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        IconButton(
+                          icon: const Icon(CupertinoIcons.sidebar_right),
+                          onPressed: () {},
+                        )
+                      ],
+                    ),
                   ),
                   Expanded(
                     child: RawScrollbar(
