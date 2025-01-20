@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 class CoordinateSystem {
   // System parameters
 
-  CoordinateSystem._({required this.playAreaSize});
+  CoordinateSystem._({required Size playAreaSize})
+      : _playAreaSize = playAreaSize;
 
-  final Size playAreaSize;
+  final Size _playAreaSize;
+  Size get playAreaSize => _playAreaSize;
+
   static CoordinateSystem? _instance;
 
   // The normalized coordinate space will maintain this aspect ratio
@@ -28,9 +31,9 @@ class CoordinateSystem {
   Offset screenToCoordinate(Offset screenPoint) {
     // Convert screen points to the normalized space while maintaining aspect ratio
     double normalizedX =
-        (screenPoint.dx / playAreaSize.width) * normalizedWidth;
+        (screenPoint.dx / _playAreaSize.width) * normalizedWidth;
     double normalizedY =
-        (screenPoint.dy / playAreaSize.height) * normalizedHeight;
+        (screenPoint.dy / _playAreaSize.height) * normalizedHeight;
 
     //   dev.log('''
     // Screen to Coordinate:
@@ -43,8 +46,8 @@ class CoordinateSystem {
 
   Offset coordinateToScreen(Offset coordinates) {
     // Convert from normalized space back to screen space while maintaining aspect ratio
-    double screenX = (coordinates.dx / normalizedWidth) * playAreaSize.width;
-    double screenY = (coordinates.dy / normalizedHeight) * playAreaSize.height;
+    double screenX = (coordinates.dx / normalizedWidth) * _playAreaSize.width;
+    double screenY = (coordinates.dy / normalizedHeight) * _playAreaSize.height;
 
     //   dev.log('''
     // Coordinate to Screen:
@@ -57,7 +60,7 @@ class CoordinateSystem {
 
   final double _baseHeight = 831.0;
   // Get the scale factor based on screen height
-  double get _scaleFactor => playAreaSize.height / _baseHeight;
+  double get _scaleFactor => _playAreaSize.height / _baseHeight;
 
   // Scale any dimension based on height
   double scale(double size) => size * _scaleFactor;

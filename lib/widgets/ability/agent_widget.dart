@@ -14,9 +14,9 @@ class AgentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
     return ClipRRect(
-      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+      borderRadius: const BorderRadius.all(Radius.circular(3.0)),
       child: Container(
-        color: const Color.fromARGB(255, 56, 56, 56),
+        color: const Color(0xFF1B1B1B),
         width: coordinateSystem.scale(30),
         child: Image.asset(agent.iconPath),
       ),

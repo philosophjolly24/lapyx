@@ -28,13 +28,17 @@ class AbilityWidget extends StatelessWidget {
     ability.updateCenterPoint(
         Offset(coordinateSystem.scale(30) / 2, coordinateSystem.scale(30) / 2));
     return ClipRRect(
-      borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+      borderRadius: const BorderRadius.all(Radius.circular(3)),
       child: Container(
-        color: const Color.fromARGB(255, 56, 56, 56),
         width: coordinateSystem.scale(30),
-        child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: Image.asset(ability.imagePath ?? ability.iconPath),
+        height: coordinateSystem.scale(30),
+        padding: EdgeInsets.all(coordinateSystem.scale(3)),
+        decoration: const BoxDecoration(
+          color: Color(0xFF1B1B1B),
+        ),
+        child: Image.asset(
+          ability.iconPath,
+          fit: BoxFit.contain,
         ),
       ),
     );

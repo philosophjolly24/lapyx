@@ -2,19 +2,17 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/widgets/dot_painter.dart';
 import 'dart:developer' as dev;
 
-import 'package:icarus/drawing_painter.dart';
+import 'package:icarus/widgets/drawing_painter.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/widgets/placed_ability_widget.dart';
 import 'package:provider/provider.dart';
-
-import 'widgets/ability/rotatable_widget.dart';
 
 class InteractiveMap extends StatefulWidget {
   const InteractiveMap({super.key});
@@ -42,6 +40,11 @@ class _InteractiveMapState extends State<InteractiveMap> {
           child: InteractiveViewer(
             child: Stack(
               children: [
+                const Positioned.fill(
+                    child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: DotGrid(),
+                )),
                 Positioned.fill(
                   child: SvgPicture.asset(
                     assetName,
@@ -80,81 +83,6 @@ class _InteractiveMapState extends State<InteractiveMap> {
                                           .screenToCoordinate(localOffset));
                                     },
                                   ),
-
-                                // : RotatableWidget(
-                                //     rotation: rotation,
-                                //     onPanStart: (details) {
-                                //       final box =
-                                //           context.findRenderObject()
-                                //               as RenderBox;
-                                //       final bottomCenter = Offset(
-                                //           box.size.width / 2,
-                                //           box.size.height);
-
-                                //       rotationOrigin = box
-                                //           .localToGlobal(bottomCenter);
-                                //     },
-                                //     onPanUpdate: (details) {
-                                //       if (rotationOrigin == Offset.zero)
-                                //         return;
-
-                                //       final currentPosition =
-                                //           details.globalPosition;
-
-                                //       // Calculate angles
-                                //       final Offset
-                                //           currentPositionNormalized =
-                                //           (currentPosition -
-                                //               rotationOrigin);
-
-                                //       double currentAngle = math.atan2(
-                                //           currentPositionNormalized.dy,
-                                //           currentPositionNormalized.dx);
-
-                                //       // // Update rotation
-                                //       setState(() {
-                                //         rotation = (currentAngle) +
-                                //             (math.pi / 2);
-                                //         widget.ability.rotaion =
-                                //             rotation;
-                                //       });
-                                //     },
-                                //     onPanEnd: (details) {
-                                //       setState(() {
-                                //         rotationOrigin = Offset.zero;
-                                //       });
-                                //     },
-                                //     child: Positioned(
-                                //       child: Draggable(
-                                //         feedback: AbilityWidget(
-                                //           ability: ability.data,
-                                //         ),
-                                //         childWhenDragging:
-                                //             const SizedBox.shrink(),
-                                //         onDragEnd: (details) {
-                                //           RenderBox renderBox =
-                                //               context.findRenderObject()
-                                //                   as RenderBox;
-                                //           Offset localOffset =
-                                //               renderBox.globalToLocal(
-                                //                   details.offset);
-                                //           // Updating info
-
-                                //           ability.updatePosition(
-                                //             coordinateSystem
-                                //                 .screenToCoordinate(
-                                //                     localOffset),
-                                //           );
-
-                                //           // ability.bringFoward(index);
-                                //         },
-                                //         child: AbilityWidget(
-                                //           ability: ability.data,
-                                //         ),
-                                //       ),
-                                //     ),
-                                //   ),
-
                                 for (final (index, agent)
                                     in agentProvider.placedAgents.indexed)
                                   Positioned(

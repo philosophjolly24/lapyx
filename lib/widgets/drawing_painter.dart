@@ -5,15 +5,10 @@ import 'package:icarus/providers/drawing_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:icarus/const/coordinate_system.dart';
 
-class InteractivePainter extends StatefulWidget {
+class InteractivePainter extends StatelessWidget {
   final Size playAreaSize;
   const InteractivePainter({super.key, required this.playAreaSize});
 
-  @override
-  State<InteractivePainter> createState() => _InteractivePainterState();
-}
-
-class _InteractivePainterState extends State<InteractivePainter> {
   @override
   Widget build(BuildContext context) {
     CoordinateSystem coordinateSystem = CoordinateSystem.instance;
@@ -109,19 +104,6 @@ class DrawingPainter extends CustomPainter {
         Offset screenEndOffset =
             coordinateSystem.coordinateToScreen(line.lineEnd);
 
-        log('''
-        Coordinate to Screen:
-        Input coordinates: ${line.lineStart.dx}, ${line.lineStart.dy}
-        PlayAreaSize: ${coordinateSystem.playAreaSize.width}, ${coordinateSystem.playAreaSize.height}
-        Output screen pos: ${screenStartOffset.dx}, ${screenStartOffset.dy}
-    ''');
-
-        log('''
-        Coordinate to Screen:
-        Input coordinates: ${line.lineEnd.dx}, ${line.lineEnd.dy}
-        PlayAreaSize: ${coordinateSystem.playAreaSize.width}, ${coordinateSystem.playAreaSize.height}
-        Output screen pos: ${screenEndOffset.dx}, ${screenEndOffset.dy}
-    ''');
         canvas.drawLine(screenStartOffset, screenEndOffset, paint);
       } else if (elements[i] is FreeDrawing) {
         FreeDrawing freeDrawing = elements[i] as FreeDrawing;
