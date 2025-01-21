@@ -1,18 +1,12 @@
-import 'dart:developer';
+// ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:icarus/widgets/ability/agent_widget.dart';
-import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/widgets/dot_painter.dart';
-import 'dart:developer' as dev;
 
 import 'package:icarus/widgets/drawing_painter.dart';
-import 'package:icarus/providers/ability_provider.dart';
-import 'package:icarus/providers/agent_provider.dart';
-import 'package:icarus/widgets/placed_ability_widget.dart';
-import 'package:provider/provider.dart';
+import 'package:icarus/widgets/placed_agent_builder.dart';
 
 class InteractiveMap extends StatefulWidget {
   const InteractiveMap({super.key});
@@ -28,9 +22,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.sizeOf(context).height - kToolbarHeight;
     final Size playAreaSize = Size(height * 1.2, height);
-
-    final coordinateSystem = CoordinateSystem(playAreaSize: playAreaSize);
-
+    CoordinateSystem(playAreaSize: playAreaSize);
     return Row(
       children: [
         Container(
@@ -53,109 +45,10 @@ class _InteractiveMapState extends State<InteractiveMap> {
                   ),
                 ),
                 Positioned.fill(
-                  child: InteractivePainter(playAreaSize: playAreaSize),
+                  child: InteractivePainter(),
                 ),
                 Positioned.fill(
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    return DragTarget<DraggableData>(
-                      builder: (context, candidateData, rejectedData) {
-                        return Consumer2<AgentProvider, AbilityProvider>(
-                          builder:
-                              (context, agentProvider, abilityProvider, child) {
-                            return Stack(
-                              children: [
-                                for (final ability
-                                    in abilityProvider.placedAbilities)
-                                  PlacedAbilityWidget(
-                                    ability: ability,
-                                    onDragEnd: (details) {
-                                      RenderBox renderBox = context
-                                          .findRenderObject() as RenderBox;
-                                      Offset localOffset = renderBox
-                                          .globalToLocal(details.offset);
-                                      // Updating info
-
-                                      log(coordinateSystem
-                                          .screenToCoordinate(localOffset)
-                                          .toString());
-
-                                      ability.updatePosition(coordinateSystem
-                                          .screenToCoordinate(localOffset));
-                                    },
-                                  ),
-                                for (final (index, agent)
-                                    in agentProvider.placedAgents.indexed)
-                                  Positioned(
-                                    left: coordinateSystem
-                                        .coordinateToScreen(agent.position)
-                                        .dx,
-                                    top: coordinateSystem
-                                        .coordinateToScreen(agent.position)
-                                        .dy,
-                                    child: Draggable(
-                                      feedback: AgentWidget(
-                                        agent: agent.data,
-                                      ),
-                                      childWhenDragging:
-                                          const SizedBox.shrink(),
-                                      onDragEnd: (details) {
-                                        RenderBox renderBox = context
-                                            .findRenderObject() as RenderBox;
-                                        Offset localOffset = renderBox
-                                            .globalToLocal(details.offset);
-                                        // Updating info
-
-                                        agent.updatePosition(coordinateSystem
-                                            .screenToCoordinate(localOffset));
-
-                                        agentProvider.bringAgentFoward(index);
-                                        dev.log(coordinateSystem.playAreaSize
-                                            .toString());
-                                      },
-                                      child: AgentWidget(
-                                        agent: agent.data,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      onAcceptWithDetails: (details) {
-                        RenderBox renderBox =
-                            context.findRenderObject() as RenderBox;
-                        Offset localOffset =
-                            renderBox.globalToLocal(details.offset);
-                        Offset normalizedPosition =
-                            coordinateSystem.screenToCoordinate(localOffset);
-
-                        if (details.data is AgentData) {
-                          PlacedAgent placedAgent = PlacedAgent(
-                            data: details.data as AgentData,
-                            position: normalizedPosition,
-                          );
-
-                          AgentProvider agentProvider =
-                              Provider.of<AgentProvider>(
-                                  listen: false, context);
-                          agentProvider.addAgent(placedAgent);
-                        } else if (details.data is AbilityInfo) {
-                          PlacedAbility placedAbility = PlacedAbility(
-                              data: details.data as AbilityInfo,
-                              position: normalizedPosition);
-                          AbilityProvider abilityProvider =
-                              Provider.of<AbilityProvider>(
-                                  listen: false, context);
-
-                          abilityProvider.addAbility(placedAbility);
-                        }
-                      },
-                      onLeave: (data) {
-                        dev.log("I have left");
-                      },
-                    );
-                  }),
+                  child: PlacedWidgetBuilder(),
                 ),
               ],
             ),

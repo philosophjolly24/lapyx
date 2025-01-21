@@ -1,54 +1,47 @@
 import 'dart:developer';
-import 'package:flutter/material.dart';
-import 'package:icarus/const/drawing_element.dart';
-import 'package:icarus/const/coordinate_system.dart';
+import 'dart:ui';
 
-enum InteractionState {
-  navigation,
-  drag,
-  drawLine,
-  drawFreeLine,
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/const/drawing_element.dart';
+
+class DrawingState {
+  final List<DrawingElement> elements;
+  final int updateCounter; // Keep this!
+
+  DrawingState({
+    required this.elements,
+    this.updateCounter = 0,
+  });
+
+  DrawingState copyWith({
+    List<DrawingElement>? elements,
+    int? updateCounter,
+    int? indexOfCurrentEdit,
+  }) {
+    return DrawingState(
+      elements: elements ?? this.elements,
+      updateCounter: updateCounter ?? this.updateCounter,
+    );
+  }
 }
 
-class DrawingProvider extends ChangeNotifier {
-  InteractionState interactionState = InteractionState.navigation;
-  bool isDrawing = false;
-  int updateCounter = 0;
-  int indexOfCurrentEdit = -1;
-  List<DrawingElement> listOfElements = [
-    // Line(null,
-    //     lineStart: const Offset(300, 300), lineEnd: const Offset(300, 900))
-  ];
+final drawingProvider =
+    NotifierProvider<DrawingProvider, DrawingState>(DrawingProvider.new);
 
-  Offset? lineStart;
-  Offset? currentEndPoint;
-
-  int getNextUpdate() {
-    updateCounter = (updateCounter + 1) % 3;
-    notifyListeners();
-    return updateCounter;
+class DrawingProvider extends Notifier<DrawingState> {
+  int _indexOfCurrentEdit = -1;
+  @override
+  DrawingState build() {
+    return DrawingState(elements: []);
   }
 
-  void updateInteractionState(InteractionState interactionState) {
-    this.interactionState = interactionState;
-    notifyListeners();
-  }
-
-  void startLine(Offset start) {
-    if (indexOfCurrentEdit > 0) {
-      log("An error occured the gesture detecture is attempting to draw while another line is active");
-      return;
-    }
-    Line newLine = Line(null, lineStart: start, lineEnd: start);
-
-    listOfElements.add(newLine);
-    indexOfCurrentEdit = listOfElements.length - 1;
-
-    getNextUpdate();
+  void _triggerRepaint() {
+    state = state.copyWith(updateCounter: (state.updateCounter + 1) % 3);
   }
 
   void startFreeDrawing(Offset start, CoordinateSystem coordinateSystem) {
-    if (indexOfCurrentEdit > 0) {
+    if (_indexOfCurrentEdit > 0) {
       log("An error occured the gesture detecture is attempting to draw while another line is active");
       return;
     }
@@ -59,63 +52,96 @@ class DrawingProvider extends ChangeNotifier {
 
     freeDrawing.listOfPoints.add(coordinateSystem.screenToCoordinate(start));
 
-    listOfElements.add(freeDrawing);
-    indexOfCurrentEdit = listOfElements.length - 1;
+    state = state.copyWith(elements: [...state.elements, freeDrawing]);
 
-    getNextUpdate();
+    _indexOfCurrentEdit = state.elements.length - 1;
+    _triggerRepaint();
   }
 
   void updateFreeDrawing(Offset offset, CoordinateSystem coordinateSystem) {
+    final listOfElements = state.elements;
+
     List<Offset> currentFreeDrawing =
-        (listOfElements[indexOfCurrentEdit] as FreeDrawing).listOfPoints;
+        (listOfElements[_indexOfCurrentEdit] as FreeDrawing).listOfPoints;
+
     Offset lastPoint = currentFreeDrawing[currentFreeDrawing.length - 1];
     if (((lastPoint - offset).distance) < 2) return;
 
-    (listOfElements[indexOfCurrentEdit] as FreeDrawing)
+    (listOfElements[_indexOfCurrentEdit] as FreeDrawing)
         .path
         .lineTo(offset.dx, offset.dy);
-    (listOfElements[indexOfCurrentEdit] as FreeDrawing)
+    (listOfElements[_indexOfCurrentEdit] as FreeDrawing)
         .listOfPoints
         .add(coordinateSystem.screenToCoordinate(offset));
-    getNextUpdate();
+
+    state = state.copyWith(elements: listOfElements);
+    _triggerRepaint();
   }
 
   void finishFreeDrawing(Offset offset, CoordinateSystem coordinateSystem) {
-    (listOfElements[indexOfCurrentEdit] as FreeDrawing)
+    final listOfElements = state.elements;
+
+    (listOfElements[_indexOfCurrentEdit] as FreeDrawing)
         .path
         .lineTo(offset.dx, offset.dy);
-    (listOfElements[indexOfCurrentEdit] as FreeDrawing)
+    (listOfElements[_indexOfCurrentEdit] as FreeDrawing)
         .listOfPoints
         .add(coordinateSystem.screenToCoordinate(offset));
-    (listOfElements[indexOfCurrentEdit] as FreeDrawing)
+    (listOfElements[_indexOfCurrentEdit] as FreeDrawing)
         .rebuildPath(coordinateSystem);
 
-    indexOfCurrentEdit = -1;
-    getNextUpdate();
+    _indexOfCurrentEdit = -1;
+    state = state.copyWith(elements: listOfElements);
+    _triggerRepaint();
+  }
+
+  void startLine(Offset start) {
+    final listOfElements = state.elements;
+
+    if (_indexOfCurrentEdit > 0) {
+      log("An error occured the gesture detecture is attempting to draw while another line is active");
+      return;
+    }
+    Line newLine = Line(null, lineStart: start, lineEnd: start);
+    listOfElements.add(newLine);
+
+    state = state.copyWith(elements: listOfElements);
+    _indexOfCurrentEdit = listOfElements.length - 1;
+    _triggerRepaint();
   }
 
   void updateCurrentLine(Offset endpoint) {
-    (listOfElements[indexOfCurrentEdit] as Line).updateEndPoint(endpoint);
+    final listOfElements = state.elements;
+    (listOfElements[_indexOfCurrentEdit] as Line).updateEndPoint(endpoint);
 
-    getNextUpdate();
+    state = state.copyWith(elements: listOfElements);
+    _triggerRepaint();
   }
 
   void finishCurrentLine(Offset endpoint) {
-    (listOfElements[indexOfCurrentEdit] as Line).updateEndPoint(endpoint);
-    indexOfCurrentEdit = -1;
-    getNextUpdate();
+    final listOfElements = state.elements;
+
+    (listOfElements[_indexOfCurrentEdit] as Line).updateEndPoint(endpoint);
+    _indexOfCurrentEdit = -1;
+
+    state = state.copyWith(elements: listOfElements);
+    _triggerRepaint();
   }
 
   void rebuildAllPaths(CoordinateSystem coordinateSystem) {
+    final listOfElements = state.elements;
+
     for (DrawingElement drawingElement in listOfElements) {
       if (drawingElement is FreeDrawing) {
         drawingElement.rebuildPath(coordinateSystem);
       }
     }
+
+    state = state.copyWith(elements: listOfElements);
   }
 
   void clearAll() {
-    listOfElements = [];
-    getNextUpdate();
+    state = state.copyWith(elements: []);
+    _triggerRepaint();
   }
 }

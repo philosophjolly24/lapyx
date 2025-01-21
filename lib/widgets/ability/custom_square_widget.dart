@@ -52,32 +52,5 @@ class CustomSquareWidget extends StatelessWidget {
         ),
       ],
     );
-
-    return Stack(
-      children: [
-        IgnorePointer(
-          child: Container(
-            width: coordinateSystem.scale(width),
-            height: coordinateSystem.scale(height),
-            color: color.withAlpha(100),
-          ),
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: Container(
-            width: coordinateSystem.scale(25),
-            height: coordinateSystem.scale(25),
-            padding: EdgeInsets.all(coordinateSystem.scale(3)),
-            decoration: const BoxDecoration(
-              color: Color(0xFF1B1B1B),
-            ),
-            child: Image.asset(
-              abilityInfo.iconPath,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }

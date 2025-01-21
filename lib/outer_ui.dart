@@ -2,11 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/const/agents.dart';
-import 'package:icarus/providers/agent_provider.dart';
-import 'package:provider/provider.dart';
 
 class OuterUi extends StatefulWidget {
   const OuterUi({super.key});
@@ -25,6 +24,10 @@ class _OuterUiState extends State<OuterUi> {
     return abilityInfo.centerPoint ?? Offset.zero;
   }
 
+  final activeAgentProvider = StateProvider<AgentData?>((ref) {
+    return null;
+  });
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -32,12 +35,12 @@ class _OuterUiState extends State<OuterUi> {
         return Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Consumer<AgentProvider>(
-              builder: (context, agentProivder, child) {
-                if (agentProivder.activeAgent == null) //
+            Consumer(
+              builder: (context, ref, child) {
+                if (ref.watch(activeAgentProvider) == null) //
                   return const SizedBox.shrink();
 
-                AgentData activeAgent = agentProivder.activeAgent!;
+                AgentData activeAgent = ref.watch(activeAgentProvider)!;
                 return Container(
                   width: 90,
                   height: 350,
@@ -145,18 +148,21 @@ class _OuterUiState extends State<OuterUi> {
                                       ),
                                       dragAnchorStrategy:
                                           pointerDragAnchorStrategy,
-                                      child: InkWell(
-                                        onTap: () {
-                                          Provider.of<AgentProvider>(
-                                            listen: false,
-                                            context,
-                                          ).setActiveAgent(agent);
-                                        },
-                                        child: Image.asset(
-                                          agent.iconPath,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
+                                      child: Consumer(
+                                          builder: (context, ref, child) {
+                                        return InkWell(
+                                          onTap: () {
+                                            ref
+                                                .read(activeAgentProvider
+                                                    .notifier)
+                                                .state = agent;
+                                          },
+                                          child: Image.asset(
+                                            agent.iconPath,
+                                            fit: BoxFit.contain,
+                                          ),
+                                        );
+                                      }),
                                     ),
                                   ),
                                 ),
