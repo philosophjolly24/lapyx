@@ -498,8 +498,6 @@ class AgentData implements DraggableData {
       role: AgentRole.sentinel,
       name: "Sage",
     ),
-
-    //TODO Update new additions
     AgentType.clove: (() {
       final agent = AgentData(
         type: AgentType.clove,

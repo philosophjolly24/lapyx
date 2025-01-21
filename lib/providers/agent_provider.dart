@@ -1,29 +1,24 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 
-class AgentProvider extends ChangeNotifier {
-  AgentData? activeAgent;
+final agentProvider =
+    NotifierProvider<AgentProvider, List<PlacedAgent>>(AgentProvider.new);
 
-  List<PlacedAgent> placedAgents = [
-    PlacedAgent(
-        data: AgentData.agents[AgentType.breach]!,
-        position: const Offset(500, 500))
-  ];
+class AgentProvider extends Notifier<List<PlacedAgent>> {
+  @override
+  List<PlacedAgent> build() {
+    return [];
+  }
 
   void addAgent(PlacedAgent placedAgent) {
-    placedAgents.add(placedAgent);
-    notifyListeners();
+    state = [...state, placedAgent];
   }
 
-  void bringAgentFoward(int index) {
-    PlacedAgent tempPlacedAgent = placedAgents[index];
-    placedAgents.removeAt(index);
-    placedAgents.add(tempPlacedAgent);
-    notifyListeners();
-  }
+  void bringFoward(int index) {
+    final newState = [...state];
 
-  void setActiveAgent(AgentData agentData) {
-    activeAgent = agentData;
-    notifyListeners();
+    final temp = newState.removeAt(index);
+
+    state = [...newState, temp];
   }
 }

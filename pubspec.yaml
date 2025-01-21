@@ -17,11 +17,13 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter_svg: ^2.0.14
   provider: ^6.1.2
+  flutter_riverpod: ^2.6.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  # riverpod_generator: ^2.6.4
+  riverpod_generator: ^2.6.3
   flutter_lints: ^3.0.0
 
 flutter:

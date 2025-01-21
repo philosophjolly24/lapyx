@@ -12,6 +12,7 @@ import 'package:icarus/widgets/drawing_painter.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/widgets/placed_ability_widget.dart';
+import 'package:icarus/widgets/placed_agent_builder.dart';
 import 'package:provider/provider.dart';
 
 class InteractiveMap extends StatefulWidget {
@@ -52,110 +53,12 @@ class _InteractiveMapState extends State<InteractiveMap> {
                     fit: BoxFit.contain,
                   ),
                 ),
+                //TODO: Remove play area size parameter, not needed.
                 Positioned.fill(
                   child: InteractivePainter(playAreaSize: playAreaSize),
                 ),
                 Positioned.fill(
-                  child: LayoutBuilder(builder: (context, constraints) {
-                    return DragTarget<DraggableData>(
-                      builder: (context, candidateData, rejectedData) {
-                        return Consumer2<AgentProvider, AbilityProvider>(
-                          builder:
-                              (context, agentProvider, abilityProvider, child) {
-                            return Stack(
-                              children: [
-                                for (final ability
-                                    in abilityProvider.placedAbilities)
-                                  PlacedAbilityWidget(
-                                    ability: ability,
-                                    onDragEnd: (details) {
-                                      RenderBox renderBox = context
-                                          .findRenderObject() as RenderBox;
-                                      Offset localOffset = renderBox
-                                          .globalToLocal(details.offset);
-                                      // Updating info
-
-                                      log(coordinateSystem
-                                          .screenToCoordinate(localOffset)
-                                          .toString());
-
-                                      ability.updatePosition(coordinateSystem
-                                          .screenToCoordinate(localOffset));
-                                    },
-                                  ),
-                                for (final (index, agent)
-                                    in agentProvider.placedAgents.indexed)
-                                  Positioned(
-                                    left: coordinateSystem
-                                        .coordinateToScreen(agent.position)
-                                        .dx,
-                                    top: coordinateSystem
-                                        .coordinateToScreen(agent.position)
-                                        .dy,
-                                    child: Draggable(
-                                      feedback: AgentWidget(
-                                        agent: agent.data,
-                                      ),
-                                      childWhenDragging:
-                                          const SizedBox.shrink(),
-                                      onDragEnd: (details) {
-                                        RenderBox renderBox = context
-                                            .findRenderObject() as RenderBox;
-                                        Offset localOffset = renderBox
-                                            .globalToLocal(details.offset);
-                                        // Updating info
-
-                                        agent.updatePosition(coordinateSystem
-                                            .screenToCoordinate(localOffset));
-
-                                        agentProvider.bringAgentFoward(index);
-                                        dev.log(coordinateSystem.playAreaSize
-                                            .toString());
-                                      },
-                                      child: AgentWidget(
-                                        agent: agent.data,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      onAcceptWithDetails: (details) {
-                        RenderBox renderBox =
-                            context.findRenderObject() as RenderBox;
-                        Offset localOffset =
-                            renderBox.globalToLocal(details.offset);
-                        Offset normalizedPosition =
-                            coordinateSystem.screenToCoordinate(localOffset);
-
-                        if (details.data is AgentData) {
-                          PlacedAgent placedAgent = PlacedAgent(
-                            data: details.data as AgentData,
-                            position: normalizedPosition,
-                          );
-
-                          AgentProvider agentProvider =
-                              Provider.of<AgentProvider>(
-                                  listen: false, context);
-                          agentProvider.addAgent(placedAgent);
-                        } else if (details.data is AbilityInfo) {
-                          PlacedAbility placedAbility = PlacedAbility(
-                              data: details.data as AbilityInfo,
-                              position: normalizedPosition);
-                          AbilityProvider abilityProvider =
-                              Provider.of<AbilityProvider>(
-                                  listen: false, context);
-
-                          abilityProvider.addAbility(placedAbility);
-                        }
-                      },
-                      onLeave: (data) {
-                        dev.log("I have left");
-                      },
-                    );
-                  }),
+                  child: PlacedWidgetBuilder(),
                 ),
               ],
             ),

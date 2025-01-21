@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/home_view.dart';
-import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/drawing_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 
 void main() {
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => DrawingProvider()),
-      ChangeNotifierProvider(create: (_) => AgentProvider()),
-      ChangeNotifierProvider(create: (_) => AbilityProvider()),
-    ],
-    child: const MyApp(),
-  ));
+  runApp(
+    ProviderScope(
+      child: provider.MultiProvider(
+        providers: [
+          provider.ChangeNotifierProvider(create: (_) => DrawingProvider()),
+        ],
+        child: const MyApp(),
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
