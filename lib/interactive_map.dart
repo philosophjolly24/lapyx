@@ -1,19 +1,12 @@
-import 'dart:developer';
+// ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:icarus/widgets/ability/agent_widget.dart';
-import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/widgets/dot_painter.dart';
-import 'dart:developer' as dev;
 
 import 'package:icarus/widgets/drawing_painter.dart';
-import 'package:icarus/providers/ability_provider.dart';
-import 'package:icarus/providers/agent_provider.dart';
-import 'package:icarus/widgets/placed_ability_widget.dart';
 import 'package:icarus/widgets/placed_agent_builder.dart';
-import 'package:provider/provider.dart';
 
 class InteractiveMap extends StatefulWidget {
   const InteractiveMap({super.key});
@@ -29,9 +22,7 @@ class _InteractiveMapState extends State<InteractiveMap> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.sizeOf(context).height - kToolbarHeight;
     final Size playAreaSize = Size(height * 1.2, height);
-
-    final coordinateSystem = CoordinateSystem(playAreaSize: playAreaSize);
-
+    CoordinateSystem(playAreaSize: playAreaSize);
     return Row(
       children: [
         Container(
@@ -53,9 +44,8 @@ class _InteractiveMapState extends State<InteractiveMap> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                //TODO: Remove play area size parameter, not needed.
                 Positioned.fill(
-                  child: InteractivePainter(playAreaSize: playAreaSize),
+                  child: InteractivePainter(),
                 ),
                 Positioned.fill(
                   child: PlacedWidgetBuilder(),

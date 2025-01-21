@@ -1,67 +1,84 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/drawing_element.dart';
 import 'package:icarus/providers/drawing_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/providers/interaction_state_provider.dart';
 
-class InteractivePainter extends StatelessWidget {
-  final Size playAreaSize;
-  const InteractivePainter({super.key, required this.playAreaSize});
+class InteractivePainter extends ConsumerStatefulWidget {
+  const InteractivePainter({super.key});
 
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _InteractivePainterState();
+}
+
+class _InteractivePainterState extends ConsumerState<InteractivePainter> {
+  Size? _previousSize;
   @override
   Widget build(BuildContext context) {
     CoordinateSystem coordinateSystem = CoordinateSystem.instance;
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_previousSize != coordinateSystem.playAreaSize) {
+        ref.read(drawingProvider.notifier).rebuildAllPaths(coordinateSystem);
+        _previousSize = coordinateSystem.playAreaSize;
+      }
+    });
     // Get the drawing data here in the widget
-    final drawingProvider = context.watch<DrawingProvider>();
+    DrawingState drawingState = ref.watch(drawingProvider);
 
     CustomPainter drawingPainter = DrawingPainter(
-      updateCounter: drawingProvider.updateCounter,
+      updateCounter: drawingState.updateCounter,
       coordinateSystem: coordinateSystem,
-      elements: drawingProvider.listOfElements, // Pass the data directly
-      drawingProvider: drawingProvider,
+      elements: drawingState.elements, // Pass the data directly
+      drawingProvider: ref.read(drawingProvider.notifier),
     );
 
-    bool isNavigating =
-        drawingProvider.interactionState == InteractionState.navigation;
+    final currentInteractionState = ref.watch(interactionStateProvider);
+
+    bool isNavigating = currentInteractionState == InteractionState.navigation;
     return IgnorePointer(
       ignoring: isNavigating,
       child: GestureDetector(
         onPanStart: (details) {
-          switch (drawingProvider.interactionState) {
+          switch (currentInteractionState) {
             case InteractionState.drawLine:
               Offset lineStart =
                   coordinateSystem.screenToCoordinate(details.localPosition);
-              drawingProvider.startLine(lineStart);
+              ref.read(drawingProvider.notifier).startLine(lineStart);
             case InteractionState.drawFreeLine:
-              drawingProvider.startFreeDrawing(
-                  details.localPosition, coordinateSystem);
+              ref
+                  .read(drawingProvider.notifier)
+                  .startFreeDrawing(details.localPosition, coordinateSystem);
             default:
           }
         },
         onPanUpdate: (details) {
-          switch (drawingProvider.interactionState) {
+          switch (currentInteractionState) {
             case InteractionState.drawLine:
               Offset lineEnd =
                   coordinateSystem.screenToCoordinate(details.localPosition);
 
-              drawingProvider.updateCurrentLine(lineEnd);
+              ref.read(drawingProvider.notifier).updateCurrentLine(lineEnd);
             case InteractionState.drawFreeLine:
-              drawingProvider.updateFreeDrawing(
-                  details.localPosition, coordinateSystem);
+              ref
+                  .read(drawingProvider.notifier)
+                  .updateFreeDrawing(details.localPosition, coordinateSystem);
             default:
           }
         },
         onPanEnd: (details) {
-          switch (drawingProvider.interactionState) {
+          switch (currentInteractionState) {
             case InteractionState.drawLine:
               Offset lineEnd =
                   coordinateSystem.screenToCoordinate(details.localPosition);
-              drawingProvider.finishCurrentLine(lineEnd);
+              ref.read(drawingProvider.notifier).finishCurrentLine(lineEnd);
             case InteractionState.drawFreeLine:
-              drawingProvider.finishFreeDrawing(
-                  details.localPosition, coordinateSystem);
+              ref
+                  .read(drawingProvider.notifier)
+                  .finishFreeDrawing(details.localPosition, coordinateSystem);
             default:
           }
         },
@@ -117,12 +134,6 @@ class DrawingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(DrawingPainter oldDelegate) {
-    if (oldDelegate.coordinateSystem.playAreaSize !=
-        coordinateSystem.playAreaSize) {
-      log("I updataed");
-      drawingProvider.rebuildAllPaths(coordinateSystem);
-      return true;
-    }
     return oldDelegate.updateCounter !=
         updateCounter; // Repaint when elements change
   }

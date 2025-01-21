@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/providers/drawing_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:icarus/providers/interaction_state_provider.dart';
 
-class BottomActionbar extends StatelessWidget {
+class BottomActionbar extends ConsumerWidget {
   const BottomActionbar({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    DrawingProvider drawingProvider = context.watch<DrawingProvider>();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentInteractionState = ref.watch(interactionStateProvider);
     return Align(
       alignment: Alignment.bottomCenter,
       child: Container(
@@ -24,22 +25,24 @@ class BottomActionbar extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {
-                  switch (drawingProvider.interactionState) {
+                  switch (currentInteractionState) {
                     case InteractionState.drawFreeLine:
-                      drawingProvider
-                          .updateInteractionState(InteractionState.navigation);
+                      ref
+                          .read(interactionStateProvider.notifier)
+                          .update(InteractionState.navigation);
                     default:
-                      drawingProvider.updateInteractionState(
-                          InteractionState.drawFreeLine);
+                      ref
+                          .read(interactionStateProvider.notifier)
+                          .update(InteractionState.drawFreeLine);
                   }
                 },
                 icon: const Icon(Icons.draw),
-                isSelected: drawingProvider.interactionState ==
-                    InteractionState.drawFreeLine,
+                isSelected:
+                    currentInteractionState == InteractionState.drawFreeLine,
               ),
               IconButton(
                   onPressed: () {
-                    drawingProvider.clearAll();
+                    ref.read(drawingProvider.notifier).clearAll();
                   },
                   icon: const Icon(Icons.delete))
             ],

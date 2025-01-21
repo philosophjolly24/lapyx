@@ -1,20 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/home_view.dart';
-import 'package:icarus/providers/agent_provider.dart';
-import 'package:icarus/providers/drawing_provider.dart';
-import 'package:provider/provider.dart' as provider;
 
 void main() {
   runApp(
-    ProviderScope(
-      child: provider.MultiProvider(
-        providers: [
-          provider.ChangeNotifierProvider(create: (_) => DrawingProvider()),
-        ],
-        child: const MyApp(),
-      ),
-    ),
+    const ProviderScope(child: MyApp()),
   );
 }
 

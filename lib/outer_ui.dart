@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/const/agents.dart';
-import 'package:icarus/providers/agent_provider.dart';
 
 class OuterUi extends StatefulWidget {
   const OuterUi({super.key});
