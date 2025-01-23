@@ -16,41 +16,51 @@ class CustomSquareWidget extends StatelessWidget {
   final double height;
   final AbilityInfo abilityInfo;
   final double? distanceBetweenAOE;
-
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
+    final scaledWidth = coordinateSystem.scale(width);
+    final scaledHeight = coordinateSystem.scale(height);
+    final scaledDistance = coordinateSystem.scale(distanceBetweenAOE ?? 0);
 
-    return Column(
-      children: [
-        IgnorePointer(
-          child: Container(
-            width: coordinateSystem.scale(width),
-            height: coordinateSystem.scale(height),
-            color: color.withAlpha(100),
+    return SizedBox(
+      width: scaledWidth,
+      height: scaledHeight + scaledDistance,
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              IgnorePointer(
+                child: Container(
+                  width: scaledWidth,
+                  height: scaledHeight,
+                  color: color.withAlpha(100),
+                ),
+              ),
+              IgnorePointer(
+                child: SizedBox(
+                  height: scaledDistance,
+                ),
+              ),
+            ],
           ),
-        ),
-        IgnorePointer(
-          child: SizedBox(
-            height: coordinateSystem.scale(distanceBetweenAOE ?? 0),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Container(
-            width: coordinateSystem.scale(25),
-            height: coordinateSystem.scale(25),
-            padding: EdgeInsets.all(coordinateSystem.scale(3)),
-            decoration: const BoxDecoration(
-              color: Color(0xFF1B1B1B),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              width: coordinateSystem.scale(25),
+              height: coordinateSystem.scale(25),
+              padding: EdgeInsets.all(coordinateSystem.scale(3)),
+              decoration: const BoxDecoration(
+                color: Color(0xFF1B1B1B),
+              ),
+              child: Image.asset(
+                abilityInfo.iconPath,
+                fit: BoxFit.contain,
+              ),
             ),
-            child: Image.asset(
-              abilityInfo.iconPath,
-              fit: BoxFit.contain,
-            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
