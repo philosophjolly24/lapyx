@@ -22,33 +22,29 @@ class RotatableWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
 
-    return Transform(
-      transform: Matrix4.rotationZ(rotation),
-      alignment: Alignment.bottomCenter,
-      child: Stack(
-        children: [
-          child,
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onPanStart: onPanStart,
-                onPanUpdate: onPanUpdate,
-                onPanEnd: onPanEnd,
-                child: Container(
-                  width: coordinateSystem.scale(20),
-                  height: coordinateSystem.scale(20),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
+    return Stack(
+      children: [
+        child,
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onPanStart: onPanStart,
+              onPanUpdate: onPanUpdate,
+              onPanEnd: onPanEnd,
+              child: Container(
+                width: coordinateSystem.scale(15),
+                height: coordinateSystem.scale(15),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

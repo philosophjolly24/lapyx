@@ -6,15 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/const/agents.dart';
+import 'package:icarus/widgets/bottom_actionbar.dart';
 
-class OuterUi extends StatefulWidget {
-  const OuterUi({super.key});
+class SideBarUI extends StatefulWidget {
+  const SideBarUI({super.key});
 
   @override
-  State<OuterUi> createState() => _OuterUiState();
+  State<SideBarUI> createState() => _SideBarUIState();
 }
 
-class _OuterUiState extends State<OuterUi> {
+class _SideBarUIState extends State<SideBarUI> {
   ScrollController gridScrollController = ScrollController();
   double sideBarSize = 270;
 
@@ -52,6 +53,7 @@ class _OuterUiState extends State<OuterUi> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      // Agent bar
                       ...List.generate(
                         activeAgent.abilities.length,
                         (index) {
@@ -89,21 +91,22 @@ class _OuterUiState extends State<OuterUi> {
               width: sideBarSize + 20,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 50,
-                    width: sideBarSize + 20,
-                    child: Row(
-                      children: [
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        IconButton(
-                          icon: const Icon(CupertinoIcons.sidebar_right),
-                          onPressed: () {},
-                        )
-                      ],
-                    ),
-                  ),
+                  // SizedBox(
+                  //   height: 50,
+                  //   width: sideBarSize + 20,
+                  //   child: Row(
+                  //     children: [
+                  //       const SizedBox(
+                  //         width: 10,
+                  //       ),
+                  //       IconButton(
+                  //         icon: const Icon(CupertinoIcons.sidebar_right),
+                  //         onPressed: () {},
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
+                  const ToolGrid(),
                   Expanded(
                     child: RawScrollbar(
                       trackVisibility: true,

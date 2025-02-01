@@ -1,8 +1,18 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/home_view.dart';
+import 'package:window_size/window_size.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    setWindowTitle('Admin Dashboard');
+    setWindowMinSize(const Size(1300, 800));
+    setWindowMaxSize(Size.infinite);
+  }
   runApp(
     const ProviderScope(child: MyApp()),
   );
@@ -17,7 +27,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.dark(
+          primary: Colors.blue,
+          secondary: Colors.teal,
+          error: Colors.red,
+          surface: Colors.grey[900]!,
+        ),
+        dividerColor: Colors.transparent,
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),

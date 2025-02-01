@@ -27,9 +27,11 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
           builder: (context, candidateData, rejectedData) {
             return Stack(
               children: [
-                for (final ability in ref.watch(abilityProvider))
+                for (final (index, ability)
+                    in ref.watch(abilityProvider).indexed)
                   PlacedAbilityWidget(
                     ability: ability,
+                    index: index,
                     onDragEnd: (details) {
                       RenderBox renderBox =
                           context.findRenderObject() as RenderBox;

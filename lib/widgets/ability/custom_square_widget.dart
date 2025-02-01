@@ -3,46 +3,47 @@ import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 
 class CustomSquareWidget extends StatelessWidget {
-  const CustomSquareWidget(
-      {super.key,
-      required this.color,
-      required this.abilityInfo,
-      required this.width,
-      required this.height,
-      this.distanceBetweenAOE});
+  //I want to be able to to pass the rotation to the CustomSquareWidget
+  //Rotation is stored in the PlacedAbility widget which is stored within the AbilityProvider
+  //Issue is that how do I access the right abilityProvider to get the correct rotation info
+
+  //Could a key be the issue?
+  const CustomSquareWidget({
+    super.key,
+    required this.color,
+    required this.abilityInfo,
+    required this.width,
+    required this.height,
+    this.distanceBetweenAOE,
+    this.rotation,
+  });
 
   final Color color;
   final double width;
   final double height;
   final AbilityInfo abilityInfo;
   final double? distanceBetweenAOE;
+  final double? rotation;
+
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
-    final scaledWidth = coordinateSystem.scale(width);
-    final scaledHeight = coordinateSystem.scale(height);
-    final scaledDistance = coordinateSystem.scale(distanceBetweenAOE ?? 0);
 
-    return SizedBox(
-      width: scaledWidth,
-      height: scaledHeight + scaledDistance,
-      child: Stack(
+    return Transform.rotate(
+      angle: rotation ?? 0,
+      child: Column(
         children: [
-          Column(
-            children: [
-              IgnorePointer(
-                child: Container(
-                  width: scaledWidth,
-                  height: scaledHeight,
-                  color: color.withAlpha(100),
-                ),
-              ),
-              IgnorePointer(
-                child: SizedBox(
-                  height: scaledDistance,
-                ),
-              ),
-            ],
+          IgnorePointer(
+            child: Container(
+              width: coordinateSystem.scale(width),
+              height: coordinateSystem.scale(height),
+              color: color.withAlpha(100),
+            ),
+          ),
+          IgnorePointer(
+            child: SizedBox(
+              height: coordinateSystem.scale(distanceBetweenAOE ?? 0),
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
