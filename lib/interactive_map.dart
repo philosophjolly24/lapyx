@@ -20,6 +20,9 @@ class _InteractiveMapState extends State<InteractiveMap> {
 
   @override
   Widget build(BuildContext context) {
+    final double height = MediaQuery.sizeOf(context).height - kToolbarHeight;
+    final Size playAreaSize = Size(height * 1.2, height);
+    CoordinateSystem(playAreaSize: playAreaSize);
     CoordinateSystem coordinateSystem = CoordinateSystem.instance;
 
     return Row(
