@@ -11,7 +11,10 @@ class ToolGrid extends ConsumerWidget {
     final currentInteractionState = ref.watch(interactionStateProvider);
 
     return ExpansionTile(
-      title: const Text("Tools"),
+      title: const Text(
+        "Tools",
+        style: TextStyle(fontSize: 20),
+      ),
       initiallyExpanded: true,
       children: [
         GridView.count(

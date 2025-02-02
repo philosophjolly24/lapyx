@@ -14,7 +14,6 @@ class SideBarUI extends StatefulWidget {
 
 class _SideBarUIState extends State<SideBarUI> {
   ScrollController gridScrollController = ScrollController();
-  double sideBarSize = 270;
 
   final activeAgentProvider = StateProvider<AgentData?>((ref) {
     return null;
@@ -22,88 +21,108 @@ class _SideBarUIState extends State<SideBarUI> {
 
   @override
   Widget build(BuildContext context) {
+    const double sideBarSize = 325;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             AbiilityBar(activeAgentProvider),
-            Container(
-              color: const Color(0xFF141114),
-              width: sideBarSize + 20,
-              child: Column(
-                children: [
-                  const ToolGrid(),
-                  Expanded(
-                    child: RawScrollbar(
-                      trackVisibility: true,
-                      thumbVisibility: true,
-                      thumbColor: const Color(0xFF353435),
-                      scrollbarOrientation: ScrollbarOrientation.left,
-                      thickness: 10,
-                      radius: const Radius.circular(10),
-                      controller: gridScrollController,
-                      crossAxisMargin: 10,
-                      mainAxisMargin: 10,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: SizedBox(
-                          width: sideBarSize,
-                          child: GridView.builder(
-                            scrollDirection: Axis.vertical,
-                            padding: const EdgeInsets.only(top: 10),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              mainAxisExtent: 100,
-                              crossAxisSpacing: 0,
-                              mainAxisSpacing: 15,
-                            ),
-                            controller: gridScrollController,
-                            // padding: const EdgeInsets.only(right: 8),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: AgentType.values.length,
-                            itemBuilder: (context, index) {
-                              final agent =
-                                  AgentData.agents[AgentType.values[index]]!;
+            Padding(
+              padding: const EdgeInsets.only(right: 8, bottom: 8),
+              child: Container(
+                width: sideBarSize + 20,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: const Color(0xFF141114),
+                  border: Border.all(
+                    color: const Color.fromRGBO(210, 214, 219, 0.1),
+                    width: 2,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const ToolGrid(),
+                    Expanded(
+                      child: RawScrollbar(
+                        trackVisibility: true,
+                        thumbVisibility: true,
+                        thumbColor: const Color(0xFF353435),
+                        scrollbarOrientation: ScrollbarOrientation.left,
+                        thickness: 10,
+                        radius: const Radius.circular(10),
+                        controller: gridScrollController,
+                        crossAxisMargin: 3,
+                        mainAxisMargin: 10,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: SizedBox(
+                            width: sideBarSize,
+                            child: ScrollConfiguration(
+                              behavior: ScrollConfiguration.of(context)
+                                  .copyWith(scrollbars: false),
+                              child: GridView.builder(
+                                scrollDirection: Axis.vertical,
 
-                              return Padding(
-                                padding: const EdgeInsets.all(1.0),
-                                child: Center(
-                                  child: SizedBox(
-                                    child: Draggable(
-                                      data: agent,
-                                      feedback: AgentWidget(
-                                        agent: agent,
-                                      ),
-                                      dragAnchorStrategy:
-                                          pointerDragAnchorStrategy,
-                                      child: Consumer(
-                                          builder: (context, ref, child) {
-                                        return InkWell(
-                                          onTap: () {
-                                            ref
-                                                .read(activeAgentProvider
-                                                    .notifier)
-                                                .state = agent;
-                                          },
-                                          child: Image.asset(
-                                            agent.iconPath,
-                                            fit: BoxFit.contain,
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                  ),
+                                padding: const EdgeInsets.only(top: 10),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 4,
+                                  mainAxisExtent: 100,
+                                  crossAxisSpacing: 4,
+                                  mainAxisSpacing: 15,
                                 ),
-                              );
-                            },
+                                controller: gridScrollController,
+                                // padding: const EdgeInsets.only(right: 8),
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: AgentType.values.length,
+                                itemBuilder: (context, index) {
+                                  final agent = AgentData
+                                      .agents[AgentType.values[index]]!;
+
+                                  return Padding(
+                                    padding: const EdgeInsets.all(1.0),
+                                    child: Center(
+                                      child: SizedBox(
+                                        child: Draggable(
+                                          data: agent,
+                                          feedback: AgentWidget(
+                                            agent: agent,
+                                          ),
+                                          dragAnchorStrategy:
+                                              pointerDragAnchorStrategy,
+                                          child: Consumer(
+                                              builder: (context, ref, child) {
+                                            return InkWell(
+                                              onTap: () {
+                                                ref
+                                                    .read(activeAgentProvider
+                                                        .notifier)
+                                                    .state = agent;
+                                              },
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                child: Image.asset(
+                                                  agent.iconPath,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                            );
+                                          }),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             )
           ],

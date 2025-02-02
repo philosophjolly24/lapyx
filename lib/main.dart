@@ -24,15 +24,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.dark(
-          primary: Colors.blue,
-          secondary: Colors.teal,
-          error: Colors.red,
-          surface: Colors.grey[900]!,
-        ),
-        dividerColor: Colors.transparent,
-        useMaterial3: true,
-      ),
+          colorScheme: ColorScheme.dark(
+            primary: Colors.blue,
+            secondary: Colors.teal,
+            error: Colors.red,
+            surface: Colors.grey[900]!,
+          ),
+          dividerColor: Colors.transparent,
+          useMaterial3: true,
+          expansionTileTheme: const ExpansionTileThemeData()),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
