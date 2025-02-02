@@ -64,7 +64,8 @@ class _SideBarUIState extends State<SideBarUI> {
                               child: GridView.builder(
                                 scrollDirection: Axis.vertical,
 
-                                padding: const EdgeInsets.only(top: 10),
+                                padding:
+                                    const EdgeInsets.only(top: 10, right: 10),
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 4,
