@@ -44,7 +44,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
     final coordinateSystem = CoordinateSystem.instance;
 
     return Consumer(builder: (context, ref, child) {
-      double rotation = ref.watch(abilityProvider)[widget.index].rotaion;
+      double rotation = ref.watch(abilityProvider)[widget.index].rotation;
       return Positioned(
         left: coordinateSystem.coordinateToScreen(widget.ability.position).dx,
         top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,

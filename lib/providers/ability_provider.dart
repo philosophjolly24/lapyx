@@ -24,7 +24,7 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
 
   void updateRotation(int index, double rotation) {
     final newState = [...state];
-    newState[index].rotaion = rotation;
+    newState[index].rotation = rotation;
     state = newState;
   }
 }

@@ -27,6 +27,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   # riverpod_generator: ^2.6.4
+  build_runner: ^2.4.14
   json_serializable: ^6.9.3
   riverpod_generator: ^2.6.3
   flutter_lints: ^3.0.0
