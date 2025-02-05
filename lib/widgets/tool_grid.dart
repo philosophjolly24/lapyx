@@ -10,43 +10,50 @@ class ToolGrid extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentInteractionState = ref.watch(interactionStateProvider);
 
-    return ExpansionTile(
-      title: const Text(
-        "Tools",
-        style: TextStyle(fontSize: 20),
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
       ),
-      initiallyExpanded: true,
-      children: [
-        GridView.count(
-          shrinkWrap: true,
-          crossAxisCount: 5,
-          children: [
-            IconButton(
-              onPressed: () {
-                switch (currentInteractionState) {
-                  case InteractionState.drawFreeLine:
-                    ref
-                        .read(interactionStateProvider.notifier)
-                        .update(InteractionState.navigation);
-                  default:
-                    ref
-                        .read(interactionStateProvider.notifier)
-                        .update(InteractionState.drawFreeLine);
-                }
-              },
-              icon: const Icon(Icons.draw),
-              isSelected:
-                  currentInteractionState == InteractionState.drawFreeLine,
-            ),
-            IconButton(
-              onPressed: () {
-                ref.read(drawingProvider.notifier).clearAll();
-              },
-              icon: const Icon(Icons.delete),
-            )
-          ],
-        )
-      ],
+      child: ExpansionTile(
+        title: const Text(
+          "Tools",
+          style: TextStyle(fontSize: 20),
+        ),
+        initiallyExpanded: true,
+        children: [
+          GridView.count(
+            shrinkWrap: true,
+            crossAxisCount: 5,
+            children: [
+              IconButton(
+                onPressed: () {
+                  switch (currentInteractionState) {
+                    case InteractionState.drawFreeLine:
+                      ref
+                          .read(interactionStateProvider.notifier)
+                          .update(InteractionState.navigation);
+                    default:
+                      ref
+                          .read(interactionStateProvider.notifier)
+                          .update(InteractionState.drawFreeLine);
+                  }
+                },
+                icon: const Icon(Icons.draw),
+                isSelected:
+                    currentInteractionState == InteractionState.drawFreeLine,
+              ),
+              IconButton(
+                onPressed: () {
+                  ref.read(drawingProvider.notifier).clearAll();
+                },
+                icon: const Icon(Icons.delete),
+              )
+            ],
+          )
+        ],
+      ),
     );
   }
 }

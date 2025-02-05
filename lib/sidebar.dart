@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/widgets/ability_bar.dart';
+import 'package:icarus/widgets/agent_filter.dart';
 import 'package:icarus/widgets/tool_grid.dart';
 
 class SideBarUI extends StatefulWidget {
@@ -43,6 +44,17 @@ class _SideBarUIState extends State<SideBarUI> {
                 child: Column(
                   children: [
                     const ToolGrid(),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          "Agents",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ),
+                    AgentFilter(),
                     Expanded(
                       child: RawScrollbar(
                         trackVisibility: true,
@@ -63,7 +75,7 @@ class _SideBarUIState extends State<SideBarUI> {
                                   .copyWith(scrollbars: false),
                               child: GridView.builder(
                                 scrollDirection: Axis.vertical,
-
+                                shrinkWrap: true,
                                 padding:
                                     const EdgeInsets.only(top: 10, right: 10),
                                 gridDelegate:
@@ -121,7 +133,7 @@ class _SideBarUIState extends State<SideBarUI> {
                           ),
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
