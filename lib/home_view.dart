@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/widgets/save_button.dart';
 import 'package:icarus/widgets/tool_grid.dart';
 import 'package:icarus/interactive_map.dart';
 import 'package:icarus/sidebar.dart';
@@ -25,6 +26,10 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               children: [InteractiveMap()],
             ),
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: SaveButton(),
           ),
           SideBarUI()
         ],

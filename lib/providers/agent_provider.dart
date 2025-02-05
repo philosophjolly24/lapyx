@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/agents.dart';
+
+import '../const/placed_classes.dart';
 
 final agentProvider =
     NotifierProvider<AgentProvider, List<PlacedAgent>>(AgentProvider.new);

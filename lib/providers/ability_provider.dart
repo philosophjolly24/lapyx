@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/agents.dart';
+import 'package:icarus/const/placed_classes.dart';
 
 final abilityProvider =
     NotifierProvider<AbilityProvider, List<PlacedAbility>>(AbilityProvider.new);

@@ -34,11 +34,14 @@ class _InteractiveMapState extends State<InteractiveMap> {
           child: InteractiveViewer(
             child: Stack(
               children: [
+                //Dot Grid
                 const Positioned.fill(
                     child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child: DotGrid(),
                 )),
+
+                // Map SVG
                 Positioned.fill(
                   child: SvgPicture.asset(
                     assetName,
@@ -46,9 +49,13 @@ class _InteractiveMapState extends State<InteractiveMap> {
                     fit: BoxFit.contain,
                   ),
                 ),
+
+                //Painting
                 Positioned.fill(
                   child: InteractivePainter(),
                 ),
+
+                //Agents
                 Positioned.fill(
                   child: PlacedWidgetBuilder(),
                 ),
