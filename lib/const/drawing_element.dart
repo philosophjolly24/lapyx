@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/const/json_converters.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part "drawing_element.g.dart";
 
 abstract class DrawingElement {}
 
@@ -15,9 +19,21 @@ class Line extends DrawingElement {
   }
 }
 
+@JsonSerializable()
 class FreeDrawing extends DrawingElement {
+  FreeDrawing();
+
+  @OffsetListConverter()
   List<Offset> listOfPoints = [];
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
   Path path = Path();
+
+  factory FreeDrawing.fromJson(Map<String, dynamic> json) =>
+      _$FreeDrawingFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$FreeDrawingToJson(this);
 
   void updatePath(Path newPath) {
     path = newPath;
@@ -64,5 +80,15 @@ class FreeDrawing extends DrawingElement {
     }
 
     path = freePath;
+  }
+
+  @override
+  String toString() {
+    String ouptut = "";
+
+    for (Offset offset in listOfPoints) {
+      ouptut += "${offset.toString()}, ";
+    }
+    return ouptut;
   }
 }

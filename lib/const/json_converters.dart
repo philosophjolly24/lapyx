@@ -32,3 +32,22 @@ class AbilityInfoConverter
     return {'type': abilityInfo.type, 'index': abilityInfo.index};
   }
 }
+
+class OffsetListConverter
+    implements JsonConverter<List<Offset>, List<dynamic>> {
+  const OffsetListConverter();
+  final _offsetConverter = const OffsetConverter();
+
+  @override
+  List<Offset> fromJson(List<dynamic> json) {
+    return json
+        .map((pointJson) =>
+            _offsetConverter.fromJson(pointJson as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  List<dynamic> toJson(List<Offset> offsets) {
+    return offsets.map(_offsetConverter.toJson).toList();
+  }
+}
