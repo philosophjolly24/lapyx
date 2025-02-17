@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/placed_classes.dart';
 
@@ -24,7 +27,20 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
 
   void updateRotation(int index, double rotation) {
     final newState = [...state];
-    newState[index].rotaion = rotation;
+    newState[index].rotation = rotation;
     state = newState;
+  }
+
+  String toJson() {
+    final List<Map<String, dynamic>> jsonList =
+        state.map((ability) => ability.toJson()).toList();
+    return jsonEncode(jsonList);
+  }
+
+  void fromJson(String jsonString) {
+    final List<dynamic> jsonList = jsonDecode(jsonString);
+    state = jsonList
+        .map((json) => PlacedAbility.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 }

@@ -18,6 +18,7 @@ dependencies:
   flutter_svg: ^2.0.14
   flutter_riverpod: ^2.6.1
   json_annotation: ^4.9.0
+  file_picker: ^9.0.0
   # window_size:
   #   git:
   #     url: https://github.com/google/flutter-desktop-embedding.git
@@ -27,6 +28,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   # riverpod_generator: ^2.6.4
+  build_runner: ^2.4.14
   json_serializable: ^6.9.3
   riverpod_generator: ^2.6.3
   flutter_lints: ^3.0.0

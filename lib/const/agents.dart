@@ -40,6 +40,8 @@ abstract class DraggableData {}
 class AbilityInfo implements DraggableData {
   final String name;
   final String iconPath;
+  final AgentType type;
+  final int index;
   Widget Function([double rotation])? abilityWidget;
   final String? imagePath;
   final double? width;
@@ -49,6 +51,8 @@ class AbilityInfo implements DraggableData {
   AbilityInfo({
     required this.name,
     required this.iconPath,
+    required this.type,
+    required this.index,
     this.imagePath,
     this.abilityWidget,
     this.width,
@@ -62,6 +66,8 @@ class AbilityInfo implements DraggableData {
     String? imagePath,
     double? width,
     Offset? centerPoint,
+    AgentType? type,
+    int? index,
   }) {
     return AbilityInfo(
       name: name ?? this.name,
@@ -69,6 +75,8 @@ class AbilityInfo implements DraggableData {
       imagePath: imagePath ?? this.imagePath,
       abilityWidget: abilityWidget ?? this.abilityWidget,
       width: width ?? this.width,
+      type: type ?? this.type,
+      index: index ?? this.index,
     );
   }
 
@@ -94,9 +102,10 @@ class AgentData implements DraggableData {
         abilities = List.generate(
           4,
           (index) => AbilityInfo(
-            name: 'Ability ${index + 1}', // You can override this later
-            iconPath: 'assets/agents/$name/${index + 1}.png',
-          ),
+              name: 'Ability ${index + 1}', // You can override this later
+              iconPath: 'assets/agents/$name/${index + 1}.png',
+              type: type,
+              index: index),
         );
 
   static Map<AgentType, AgentData> agents = {
@@ -107,6 +116,8 @@ class AgentData implements DraggableData {
     )..abilities[0] =
           // Override the default abilities
           AbilityInfo(
+        type: AgentType.jett,
+        index: 0,
         name: "Cloudburst",
         iconPath: 'assets/agents/Jett/1.png',
         imagePath: 'assets/agents/Jett/Smoke.png', // Custom image for smoke
@@ -128,6 +139,8 @@ class AgentData implements DraggableData {
         role: AgentRole.controller,
         name: "Astra",
       )..abilities[2] = AbilityInfo(
+          type: AgentType.astra,
+          index: 2,
           name: "Nebula",
           iconPath: 'assets/agents/Astra/1.png',
           imagePath: 'assets/agents/Astra/Smoke.png', // Custom image for smoke
@@ -190,6 +203,8 @@ class AgentData implements DraggableData {
       )..abilities[1] =
             // Override the default abilities
             AbilityInfo(
+          type: AgentType.viper,
+          index: 1,
           name: "Sky Smoke",
           iconPath: 'assets/agents/Viper/2.png',
           imagePath: 'assets/agents/Viper/Smoke.png', // Custom image for smoke
@@ -350,6 +365,8 @@ class AgentData implements DraggableData {
       )..abilities[2] =
             // Override the default abilities
             AbilityInfo(
+          type: AgentType.brimstone,
+          index: 2,
           name: "Sky Smoke",
           iconPath: 'assets/agents/Brimstone/3.png',
           imagePath:
@@ -492,6 +509,8 @@ class AgentData implements DraggableData {
       )..abilities[2] =
             // Override the default abilities
             AbilityInfo(
+          type: AgentType.omen,
+          index: 2,
           name: "Smoke",
           iconPath: 'assets/agents/Omen/3.png',
           imagePath: 'assets/agents/Omen/Smoke.png', // Custom image for smoke

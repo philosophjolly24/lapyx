@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:ui';
 
@@ -34,6 +35,29 @@ class DrawingProvider extends Notifier<DrawingState> {
   @override
   DrawingState build() {
     return DrawingState(elements: []);
+  }
+
+  String toJson() {
+    final List<Map<String, dynamic>> jsonList = state.elements
+        .whereType<FreeDrawing>()
+        .map((element) => element.toJson())
+        .toList();
+    return jsonEncode(jsonList);
+  }
+
+  void fromJson(String jsonString) {
+    final List<dynamic> jsonList = jsonDecode(jsonString);
+    final coordinateSystem = CoordinateSystem.instance;
+
+    state = state.copyWith(
+        elements: jsonList.map((json) {
+      final drawing = FreeDrawing.fromJson(json as Map<String, dynamic>);
+      drawing.rebuildPath(coordinateSystem);
+
+      return drawing;
+    }).toList());
+
+    _triggerRepaint();
   }
 
   void _triggerRepaint() {
