@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:icarus/interactive_map.dart';
 import 'package:icarus/sidebar.dart';
-import 'package:icarus/widgets/save_button.dart';
+import 'package:icarus/widgets/save_and_load_button.dart';
 
 class StrategyView extends StatelessWidget {
   const StrategyView({super.key});
@@ -16,7 +16,7 @@ class StrategyView extends StatelessWidget {
         ),
         Align(
           alignment: Alignment.topLeft,
-          child: SaveButton(),
+          child: SaveButtonAndLoad(),
         ),
         SideBarUI()
       ],
