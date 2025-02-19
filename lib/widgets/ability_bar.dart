@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/abiities.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
-import 'package:icarus/widgets/ability/ability_widget.dart';
 
 class AbiilityBar extends ConsumerWidget {
   const AbiilityBar(this.activeAgentProvider, {super.key});
@@ -32,16 +30,15 @@ class AbiilityBar extends ConsumerWidget {
                 data: activeAgent.abilities[index],
                 dragAnchorStrategy: (draggable, context, position) {
                   final info = draggable.data as AbilityInfo;
-                  if (info.abilityData == null) return Offset.zero;
 
                   double scaleFactor = CoordinateSystem.instance.scaleFactor;
-                  return info.abilityData!
+                  return info.abilityData
                       .getAnchorPoint()
                       .scale(scaleFactor, scaleFactor);
                 },
-                feedback: AbilityWidget(
-                  ability: activeAgent.abilities[index],
-                ),
+                feedback:
+                    activeAgent.abilities[index].abilityData.createWidget(),
+
                 // dragAnchorStrategy: centerDragStrategy,
                 child: InkWell(
                   onTap: () {},

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/ability_provider.dart';
-import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/rotatable_widget.dart';
 import 'dart:math' as math;
 
@@ -50,14 +49,10 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
         top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
         child: !widget.ability.data.isTransformable
             ? Draggable(
-                feedback: AbilityWidget(
-                  ability: widget.ability.data,
-                ),
+                feedback: widget.ability.data.abilityData.createWidget(),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
-                child: AbilityWidget(
-                  ability: widget.ability.data,
-                ),
+                child: widget.ability.data.abilityData.createWidget(),
               )
             : RotatableWidget(
                 rotation: rotation,
@@ -96,7 +91,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     feedback: ref
                         .watch(abilityProvider)[widget.index]
                         .data
-                        .abilityData!
+                        .abilityData
                         .createWidget(),
                     childWhenDragging: const SizedBox.shrink(),
                     onDragEnd: widget.onDragEnd,
@@ -104,7 +99,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     child: ref
                         .watch(abilityProvider)[widget.index]
                         .data
-                        .abilityData!
+                        .abilityData
                         .createWidget(),
                   ),
                 ),

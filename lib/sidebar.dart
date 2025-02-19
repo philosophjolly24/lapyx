@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/settings.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/widgets/ability_bar.dart';
@@ -103,7 +104,11 @@ class _SideBarUIState extends State<SideBarUI> {
                                             agent: agent,
                                           ),
                                           dragAnchorStrategy:
-                                              pointerDragAnchorStrategy,
+                                              (draggable, context, position) =>
+                                                  const Offset(
+                                            Settings.agentSize / 2,
+                                            Settings.agentSize / 2,
+                                          ),
                                           child: Consumer(
                                               builder: (context, ref, child) {
                                             return InkWell(

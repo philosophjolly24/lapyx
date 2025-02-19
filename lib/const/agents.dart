@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icarus/const/abiities.dart';
-import 'package:icarus/widgets/ability/ability_widget.dart';
-import 'package:icarus/widgets/ability/custom_circle_widget.dart';
-import 'package:icarus/const/coordinate_system.dart';
-import 'package:icarus/widgets/ability/custom_square_widget.dart';
+import 'package:icarus/const/abilities.dart';
 
 enum AgentType {
   jett,
@@ -44,9 +40,7 @@ class AbilityInfo implements DraggableData {
   final String iconPath;
   final AgentType type;
   final int index;
-  Ability? abilityData;
-  final String? imagePath;
-  final double? width;
+  Ability abilityData;
   bool isTransformable = false;
   Offset? centerPoint;
 
@@ -55,9 +49,7 @@ class AbilityInfo implements DraggableData {
     required this.iconPath,
     required this.type,
     required this.index,
-    this.imagePath,
-    this.abilityData,
-    this.width,
+    required this.abilityData,
   });
 
   AbilityInfo copyWith({
@@ -74,9 +66,7 @@ class AbilityInfo implements DraggableData {
     return AbilityInfo(
       name: name ?? this.name,
       iconPath: iconPath ?? this.iconPath,
-      imagePath: imagePath ?? this.imagePath,
       abilityData: abilityData ?? this.abilityData,
-      width: width ?? this.width,
       type: type ?? this.type,
       index: index ?? this.index,
     );
@@ -107,7 +97,9 @@ class AgentData implements DraggableData {
               name: 'Ability ${index + 1}', // You can override this later
               iconPath: 'assets/agents/$name/${index + 1}.png',
               type: type,
-              index: index),
+              index: index,
+              abilityData: BaseAbility(
+                  iconPath: 'assets/agents/$name/${index + 1}.png')),
         );
 
   static Map<AgentType, AgentData> agents = {
@@ -122,8 +114,8 @@ class AgentData implements DraggableData {
         index: 0,
         name: "Cloudburst",
         iconPath: 'assets/agents/Jett/1.png',
-        imagePath: 'assets/agents/Jett/Smoke.png', // Custom image for smoke
-        width: 30,
+        abilityData:
+            ImageAbility(imagePath: 'assets/agents/Jett/Smoke.png', size: 30),
       ),
     AgentType.raze: AgentData(
       type: AgentType.raze,
@@ -145,8 +137,10 @@ class AgentData implements DraggableData {
           index: 2,
           name: "Nebula",
           iconPath: 'assets/agents/Astra/1.png',
-          imagePath: 'assets/agents/Astra/Smoke.png', // Custom image for smoke
-          width: 4.75 * inGameMetersDiameter,
+          abilityData: ImageAbility(
+            imagePath: 'assets/agents/Astra/Smoke.png',
+            size: 4.75 * inGameMetersDiameter,
+          ),
         );
 
       agent.abilities.first.abilityData = CircleAbility(
@@ -196,8 +190,10 @@ class AgentData implements DraggableData {
           index: 1,
           name: "Sky Smoke",
           iconPath: 'assets/agents/Viper/2.png',
-          imagePath: 'assets/agents/Viper/Smoke.png',
-          width: 4.5 * inGameMetersDiameter,
+          abilityData: ImageAbility(
+            imagePath: 'assets/agents/Viper/Smoke.png',
+            size: 4.5 * inGameMetersDiameter,
+          ),
         );
 
       agent.abilities.first.abilityData = CircleAbility(
@@ -331,8 +327,10 @@ class AgentData implements DraggableData {
           index: 2,
           name: "Sky Smoke",
           iconPath: 'assets/agents/Brimstone/3.png',
-          imagePath: 'assets/agents/Brimstone/Smoke.png',
-          width: 4.15 * inGameMetersDiameter,
+          abilityData: ImageAbility(
+            imagePath: 'assets/agents/Brimstone/Smoke.png',
+            size: 4.15 * inGameMetersDiameter,
+          ),
         );
 
       agent.abilities[1].abilityData = CircleAbility(
@@ -459,8 +457,10 @@ class AgentData implements DraggableData {
           index: 2,
           name: "Smoke",
           iconPath: 'assets/agents/Omen/3.png',
-          imagePath: 'assets/agents/Omen/Smoke.png',
-          width: 4.1 * inGameMetersDiameter,
+          abilityData: ImageAbility(
+            imagePath: 'assets/agents/Omen/Smoke.png',
+            size: 4.1 * inGameMetersDiameter,
+          ),
         );
 
       agent.abilities[1].abilityData = SquareAbility(

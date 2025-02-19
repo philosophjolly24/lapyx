@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 
 class CustomSquareWidget extends StatelessWidget {
@@ -11,17 +10,17 @@ class CustomSquareWidget extends StatelessWidget {
   const CustomSquareWidget({
     super.key,
     required this.color,
-    required this.abilityInfo,
     required this.width,
     required this.height,
     this.distanceBetweenAOE,
     this.rotation,
+    required this.iconPath,
   });
 
   final Color color;
   final double width;
   final double height;
-  final AbilityInfo abilityInfo;
+  final String iconPath;
   final double? distanceBetweenAOE;
   final double? rotation;
 
@@ -55,7 +54,7 @@ class CustomSquareWidget extends StatelessWidget {
                 color: Color(0xFF1B1B1B),
               ),
               child: Image.asset(
-                abilityInfo.iconPath,
+                iconPath,
                 fit: BoxFit.contain,
               ),
             ),

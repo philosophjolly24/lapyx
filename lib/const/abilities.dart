@@ -1,11 +1,46 @@
 import 'package:flutter/widgets.dart';
 import 'package:icarus/const/agents.dart';
-import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/const/settings.dart';
+import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/custom_circle_widget.dart';
+import 'package:icarus/widgets/ability/custom_square_widget.dart';
+import 'package:icarus/widgets/ability/image_widget.dart';
 
 abstract class Ability {
   Offset getAnchorPoint();
   Widget createWidget();
+}
+
+class BaseAbility extends Ability {
+  final String iconPath;
+
+  BaseAbility({required this.iconPath});
+
+  @override
+  Widget createWidget() {
+    return AbilityWidget(iconPath: iconPath);
+  }
+
+  @override
+  Offset getAnchorPoint() {
+    return const Offset(Settings.abilitySize / 2, Settings.abilitySize / 2);
+  }
+}
+
+class ImageAbility extends Ability {
+  final String imagePath;
+  final double size;
+
+  ImageAbility({required this.imagePath, required this.size});
+  @override
+  Widget createWidget() {
+    return ImageWidget(imagePath: imagePath, size: size);
+  }
+
+  @override
+  Offset getAnchorPoint() {
+    return Offset(size / 2, size / 2);
+  }
 }
 
 class CircleAbility extends Ability {
@@ -32,10 +67,10 @@ class CircleAbility extends Ability {
 
   @override
   Offset getAnchorPoint() {
-    CoordinateSystem.instance;
     return Offset(size / 2, size / 2);
   }
 
+  @override
   Widget createWidget() {
     return CustomCircleWidget(
       iconPath: iconPath,
@@ -43,6 +78,9 @@ class CircleAbility extends Ability {
       outlineColor: outlineColor,
       hasCenterDot: hasCenterDot ?? true,
       hasPerimeter: hasPerimeter ?? false,
+      opacity: opacity,
+      fillColor: fillColor,
+      innerSize: perimeterSize,
     );
   }
 }
@@ -67,13 +105,21 @@ class SquareAbility extends Ability {
 
   @override
   Offset getAnchorPoint() {
-    // TODO: implement getAnchorPoint
-    throw UnimplementedError();
+    return Offset(
+      width / 2,
+      height + (distanceBetweenAOE ?? 0) + (Settings.abilitySize / 2),
+    );
   }
 
   @override
   Widget createWidget() {
-    // TODO: implement createWidget
-    throw UnimplementedError();
+    return CustomSquareWidget(
+      color: color,
+      width: width,
+      height: height,
+      iconPath: iconPath,
+      distanceBetweenAOE: distanceBetweenAOE,
+      rotation: rotation,
+    );
   }
 }

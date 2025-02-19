@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 
 class CustomCircleWidget extends StatelessWidget {
