@@ -50,6 +50,7 @@ class CoordinateSystem {
   // Get the scale factor based on screen height
   double get _scaleFactor => _playAreaSize.height / _baseHeight;
 
+  double get scaleFactor => _scaleFactor;
   // Scale any dimension based on height
   double scale(double size) => size * _scaleFactor;
 

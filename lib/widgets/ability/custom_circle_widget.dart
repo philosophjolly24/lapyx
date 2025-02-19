@@ -7,25 +7,25 @@ import 'package:icarus/const/coordinate_system.dart';
 class CustomCircleWidget extends StatelessWidget {
   const CustomCircleWidget({
     super.key,
-    required this.abilityInfo,
+    required this.iconPath,
     required this.size,
     required this.outlineColor,
     required this.hasCenterDot,
-    required this.isDouble,
+    required this.hasPerimeter,
     this.opacity,
     this.innerSize,
-    this.innerColor,
+    this.fillColor,
   });
 
-  final AbilityInfo abilityInfo;
+  final String iconPath;
   final double size;
   final Color outlineColor;
-  final bool hasCenterDot;
-  final bool isDouble;
 
+  final bool hasCenterDot;
+  final bool hasPerimeter;
   final int? opacity;
   final double? innerSize;
-  final Color? innerColor;
+  final Color? fillColor;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class CustomCircleWidget extends StatelessWidget {
     log(secondaryScaleSize.toString());
     // abilityInfo.updateCenterPoint(Offset(scaleSize / 2, scaleSize / 2));
     if (hasCenterDot) {
-      return !isDouble
+      return !hasPerimeter
           ? Stack(
               children: [
                 IgnorePointer(
@@ -67,7 +67,7 @@ class CustomCircleWidget extends StatelessWidget {
                           color: Color(0xFF1B1B1B),
                         ),
                         child: Image.asset(
-                          abilityInfo.iconPath,
+                          iconPath,
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -100,9 +100,9 @@ class CustomCircleWidget extends StatelessWidget {
                           height: secondaryScaleSize,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: innerColor!.withAlpha(opacity ?? 70),
+                            color: fillColor!.withAlpha(opacity ?? 70),
                             border: Border.all(
-                              color: innerColor!,
+                              color: fillColor!,
                               width: coordinateSystem.scale(2),
                             ),
                           ),
@@ -124,7 +124,7 @@ class CustomCircleWidget extends StatelessWidget {
                           color: Color(0xFF1B1B1B),
                         ),
                         child: Image.asset(
-                          abilityInfo.iconPath,
+                          iconPath,
                           fit: BoxFit.contain,
                         ),
                       ),

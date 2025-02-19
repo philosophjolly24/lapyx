@@ -96,14 +96,16 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     feedback: ref
                         .watch(abilityProvider)[widget.index]
                         .data
-                        .abilityWidget!(rotation),
+                        .abilityData!
+                        .createWidget(),
                     childWhenDragging: const SizedBox.shrink(),
                     onDragEnd: widget.onDragEnd,
                     // dragAnchorStrategy: pointDragAnchorStrategy,
                     child: ref
                         .watch(abilityProvider)[widget.index]
                         .data
-                        .abilityWidget!(rotation),
+                        .abilityData!
+                        .createWidget(),
                   ),
                 ),
               ),
