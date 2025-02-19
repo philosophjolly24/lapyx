@@ -9,7 +9,7 @@ import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/widgets/dot_painter.dart';
 
 import 'package:icarus/widgets/drawing_painter.dart';
-import 'package:icarus/widgets/placed_agent_builder.dart';
+import 'package:icarus/widgets/placed_widget_builder.dart';
 
 class InteractiveMap extends ConsumerStatefulWidget {
   const InteractiveMap({super.key});

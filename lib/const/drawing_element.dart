@@ -42,44 +42,45 @@ class FreeDrawing extends DrawingElement {
   void rebuildPath(CoordinateSystem coordinateSystem) {
     if (listOfPoints.length < 2) return;
 
-    final freePath = Path();
-    freePath.moveTo(coordinateSystem.coordinateToScreen(listOfPoints[0]).dx,
-        coordinateSystem.coordinateToScreen(listOfPoints[0]).dy);
+    final path = Path();
+    final screenPoints = listOfPoints
+        .map((p) => coordinateSystem.coordinateToScreen(p))
+        .toList();
 
-    for (int i = 0; i < listOfPoints.length - 2; i++) {
-      final current = coordinateSystem.coordinateToScreen(listOfPoints[i]);
-      final next = coordinateSystem.coordinateToScreen(listOfPoints[i + 1]);
+    // Move to first point
+    path.moveTo(screenPoints[0].dx, screenPoints[0].dy);
 
-      // Calculate the control point as the midpoint between points
-      final controlPoint = Offset(
-        (current.dx + next.dx) / 2,
-        (current.dy + next.dy) / 2,
-      );
+    // Add cubic Bezier segments between points
+    for (int i = 0; i < screenPoints.length; i++) {
+      final p0 = i > 0 ? screenPoints[i - 1] : screenPoints[0];
+      final p1 = screenPoints[i];
+      final p2 = i < screenPoints.length - 1 ? screenPoints[i + 1] : p1;
+      final p3 = i < screenPoints.length - 2 ? screenPoints[i + 2] : p2;
 
-      freePath.quadraticBezierTo(
-        current.dx, current.dy, // control point
-        controlPoint.dx, controlPoint.dy, // end point
-      );
+      if (i == 0) {
+        // First segment
+        final controlPoint1 = p1 + (p2 - p0) * 0.1;
+        final controlPoint2 = p2 - (p3 - p1) * 0.1;
+        path.cubicTo(controlPoint1.dx, controlPoint1.dy, controlPoint2.dx,
+            controlPoint2.dy, p2.dx, p2.dy);
+      } else if (i < screenPoints.length - 2) {
+        // Middle segments
+        const tension = 0.5; // Adjust this value (0.0-1.0) for curve tightness
+        final controlPoint1 = p1 + (p2 - p0) * tension * 0.5;
+        final controlPoint2 = p2 - (p3 - p1) * tension * 0.5;
+        path.cubicTo(controlPoint1.dx, controlPoint1.dy, controlPoint2.dx,
+            controlPoint2.dy, p2.dx, p2.dy);
+      }
     }
 
-    // Draw the last segment
-    if (listOfPoints.length >= 2) {
-      final last = listOfPoints.length - 1;
-      final secondLast = listOfPoints.length - 2;
-
-      final lastPoint = coordinateSystem.coordinateToScreen(listOfPoints[last]);
-      final secondLastPoint =
-          coordinateSystem.coordinateToScreen(listOfPoints[secondLast]);
-
-      freePath.quadraticBezierTo(
-        secondLastPoint.dx,
-        secondLastPoint.dy,
-        lastPoint.dx,
-        lastPoint.dy,
-      );
+    // Handle last segment if needed
+    if (screenPoints.length >= 2) {
+      final last = screenPoints[screenPoints.length - 1];
+      final secondLast = screenPoints[screenPoints.length - 2];
+      path.quadraticBezierTo(secondLast.dx, secondLast.dy, last.dx, last.dy);
     }
 
-    path = freePath;
+    this.path = path;
   }
 
   @override

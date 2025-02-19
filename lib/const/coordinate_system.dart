@@ -35,12 +35,6 @@ class CoordinateSystem {
     double normalizedY =
         (screenPoint.dy / _playAreaSize.height) * normalizedHeight;
 
-    //   dev.log('''
-    // Screen to Coordinate:
-    // Input Screen Positon: ${screenPoint.dx}, ${screenPoint.dy}
-    // PlayAreaSize: ${playAreaSize.width}, ${playAreaSize.height}
-    // Output screen pos: $normalizedX, $normalizedY
-    // ''');
     return Offset(normalizedX, normalizedY);
   }
 
@@ -49,12 +43,6 @@ class CoordinateSystem {
     double screenX = (coordinates.dx / normalizedWidth) * _playAreaSize.width;
     double screenY = (coordinates.dy / normalizedHeight) * _playAreaSize.height;
 
-    //   dev.log('''
-    // Coordinate to Screen:
-    // Input coordinates: ${coordinates.dx}, ${coordinates.dy}
-    // PlayAreaSize: ${playAreaSize.width}, ${playAreaSize.height}
-    // Output screen pos: $screenX, $screenY
-    // ''');
     return Offset(screenX, screenY);
   }
 
@@ -82,5 +70,12 @@ class CoordinateSystem {
       height: scaledSize.height,
       child: child,
     );
+  }
+
+  bool isOutOfBounds(Offset offset) {
+    return offset.dx > normalizedWidth ||
+        offset.dy > normalizedHeight ||
+        offset.dx < 0 ||
+        offset.dy < 0;
   }
 }

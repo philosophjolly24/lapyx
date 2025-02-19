@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/placed_classes.dart';
+import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
@@ -39,10 +40,8 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                       Offset localOffset =
                           renderBox.globalToLocal(details.offset);
                       // Updating info
-
-                      log(coordinateSystem
-                          .screenToCoordinate(localOffset)
-                          .toString());
+                      //TODO: Comprehensive bounds checking for abilities
+                      log(renderBox.size.toString());
 
                       ability.updatePosition(
                         coordinateSystem.screenToCoordinate(localOffset),
@@ -64,10 +63,21 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                             context.findRenderObject() as RenderBox;
                         Offset localOffset =
                             renderBox.globalToLocal(details.offset);
-                        // Updating info
+
+                        //Basically makes sure that if more than half is of the screen it gets deleted
+                        Offset virtualOffset =
+                            coordinateSystem.screenToCoordinate(localOffset);
+                        double scaledSafeArea =
+                            coordinateSystem.scale(Settings.agentSize / 2);
+
+                        if (coordinateSystem.isOutOfBounds(virtualOffset
+                            .translate(scaledSafeArea, scaledSafeArea))) {
+                          ref.read(agentProvider.notifier).removeAgent(index);
+                          return;
+                        }
 
                         agent.updatePosition(
-                          coordinateSystem.screenToCoordinate(localOffset),
+                          virtualOffset,
                         );
                         ref.read(agentProvider.notifier).bringFoward(index);
                       },

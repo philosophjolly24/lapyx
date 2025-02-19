@@ -31,6 +31,12 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
     state = newState;
   }
 
+  void removeAbility(int index) {
+    final newState = [...state];
+    newState.removeAt(index);
+    state = newState;
+  }
+
   String toJson() {
     final List<Map<String, dynamic>> jsonList =
         state.map((ability) => ability.toJson()).toList();

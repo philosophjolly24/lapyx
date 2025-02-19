@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -69,6 +70,12 @@ class SaveButtonAndLoad extends ConsumerWidget {
                   .fromJson(jsonEncode(json["mapData"]));
             },
             icon: const Icon(Icons.file_open),
+          ),
+          IconButton(
+            onPressed: () async {
+              log(ref.read(agentProvider.notifier).toString());
+            },
+            icon: const Icon(Icons.bug_report),
           ),
         ],
       ),

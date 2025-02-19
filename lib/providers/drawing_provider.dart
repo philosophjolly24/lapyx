@@ -84,12 +84,12 @@ class DrawingProvider extends Notifier<DrawingState> {
 
   void updateFreeDrawing(Offset offset, CoordinateSystem coordinateSystem) {
     final listOfElements = state.elements;
-
     List<Offset> currentFreeDrawing =
         (listOfElements[_indexOfCurrentEdit] as FreeDrawing).listOfPoints;
-
     Offset lastPoint = currentFreeDrawing[currentFreeDrawing.length - 1];
-    if (((lastPoint - offset).distance) < 2) return;
+
+    final minDistance = coordinateSystem.scale(3);
+    if ((lastPoint - offset).distance < minDistance) return;
 
     (listOfElements[_indexOfCurrentEdit] as FreeDrawing)
         .path

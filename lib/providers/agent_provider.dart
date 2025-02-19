@@ -25,6 +25,14 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
     state = [...newState, temp];
   }
 
+  void removeAgent(int index) {
+    final newState = [...state];
+
+    newState.removeAt(index);
+
+    state = newState;
+  }
+
   String toJson() {
     final List<Map<String, dynamic>> jsonList =
         state.map((agent) => agent.toJson()).toList();
@@ -36,5 +44,18 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
     state = jsonList
         .map((json) => PlacedAgent.fromJson(json as Map<String, dynamic>))
         .toList();
+  }
+
+  @override
+  String toString() {
+    String output = "[";
+
+    for (PlacedAgent agent in state) {
+      output += "Name: ${agent.type}, Position: ${agent.position}, ";
+    }
+
+    output += "]";
+
+    return output;
   }
 }
