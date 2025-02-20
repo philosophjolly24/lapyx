@@ -40,7 +40,6 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                       Offset localOffset =
                           renderBox.globalToLocal(details.offset);
                       // Updating info
-                      //TODO: Comprehensive bounds checking for abilities
 
                       Offset virtualOffset =
                           coordinateSystem.screenToCoordinate(localOffset);
@@ -58,6 +57,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                       ability.updatePosition(
                         coordinateSystem.screenToCoordinate(localOffset),
                       );
+                      ref.read(abilityProvider.notifier).bringFoward(index);
                     },
                   ),
                 for (final (index, agent) in ref.watch(agentProvider).indexed)
