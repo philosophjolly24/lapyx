@@ -15,12 +15,14 @@ class CustomSquareWidget extends StatelessWidget {
     this.distanceBetweenAOE,
     this.rotation,
     required this.iconPath,
+    required this.origin,
   });
 
   final Color color;
   final double width;
   final double height;
   final String iconPath;
+  final Offset origin;
   final double? distanceBetweenAOE;
   final double? rotation;
 
@@ -30,6 +32,7 @@ class CustomSquareWidget extends StatelessWidget {
 
     return Transform.rotate(
       angle: rotation ?? 0,
+      origin: origin,
       child: Column(
         children: [
           IgnorePointer(

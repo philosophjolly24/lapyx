@@ -120,6 +120,7 @@ class SquareAbility extends Ability {
       iconPath: iconPath,
       distanceBetweenAOE: distanceBetweenAOE,
       rotation: rotation,
+      origin: getAnchorPoint(),
     );
   }
 }
