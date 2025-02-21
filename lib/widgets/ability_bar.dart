@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
@@ -32,6 +34,7 @@ class AbiilityBar extends ConsumerWidget {
                   final info = draggable.data as AbilityInfo;
 
                   double scaleFactor = CoordinateSystem.instance.scaleFactor;
+                  log("Center point dragging value${info.abilityData.getAnchorPoint().scale(scaleFactor, scaleFactor).toString()}");
                   return info.abilityData
                       .getAnchorPoint()
                       .scale(scaleFactor, scaleFactor);

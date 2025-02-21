@@ -24,20 +24,6 @@ class PlacedAbilityWidget extends StatefulWidget {
 class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
   Offset rotationOrigin = Offset.zero;
   GlobalKey globalKey = GlobalKey();
-  Offset pointDragAnchorStrategy(
-      Draggable<Object> draggable, BuildContext context, Offset position) {
-    RenderBox? renderbox;
-
-    renderbox = globalKey.currentContext?.findRenderObject() as RenderBox?;
-
-    if (renderbox == null) return Offset.zero;
-
-    Offset feedBackCenter = renderbox
-        .localToGlobal(Offset(renderbox.size.width / 2, renderbox.size.height));
-
-    return (context.findRenderObject() as RenderBox)
-        .globalToLocal(feedBackCenter);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,10 +43,15 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
               )
             : RotatableWidget(
                 rotation: rotation,
+                origin: widget.ability.data.abilityData.getAnchorPoint(),
                 onPanStart: (details) {
                   final box = context.findRenderObject() as RenderBox;
-                  final bottomCenter =
-                      widget.ability.data.abilityData.getAnchorPoint();
+                  final bottomCenter = widget.ability.data.abilityData
+                      .getAnchorPoint()
+                      .scale(coordinateSystem.scaleFactor,
+                          coordinateSystem.scaleFactor);
+                  // final bottomCenter =
+                  //     Offset(box.size.width / 2, box.size.height);
 
                   rotationOrigin = box.localToGlobal(bottomCenter);
                 },
@@ -87,22 +78,20 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     rotationOrigin = Offset.zero;
                   });
                 },
-                child: Positioned(
-                  child: Draggable(
-                    feedback: ref
-                        .watch(abilityProvider)[widget.index]
-                        .data
-                        .abilityData
-                        .createWidget(rotation),
-                    childWhenDragging: const SizedBox.shrink(),
-                    onDragEnd: widget.onDragEnd,
-                    // dragAnchorStrategy: pointDragAnchorStrategy,
-                    child: ref
-                        .watch(abilityProvider)[widget.index]
-                        .data
-                        .abilityData
-                        .createWidget(rotation),
-                  ),
+                child: Draggable(
+                  feedback: ref
+                      .watch(abilityProvider)[widget.index]
+                      .data
+                      .abilityData
+                      .createWidget(rotation),
+                  childWhenDragging: const SizedBox.shrink(),
+                  onDragEnd: widget.onDragEnd,
+                  // dragAnchorStrategy: pointDragAnchorStrategy,
+                  child: ref
+                      .watch(abilityProvider)[widget.index]
+                      .data
+                      .abilityData
+                      .createWidget(rotation),
                 ),
               ),
       );

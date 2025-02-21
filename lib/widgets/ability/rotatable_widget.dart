@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:icarus/const/coordinate_system.dart';
 
 class RotatableWidget extends StatelessWidget {
   final Widget child;
   final double rotation;
+  final Offset origin;
   final Function(DragUpdateDetails details) onPanUpdate;
   final Function(DragStartDetails details) onPanStart;
 
@@ -16,6 +19,7 @@ class RotatableWidget extends StatelessWidget {
     required this.onPanUpdate,
     required this.onPanStart,
     required this.onPanEnd,
+    required this.origin,
   });
 
   @override
@@ -26,19 +30,24 @@ class RotatableWidget extends StatelessWidget {
       children: [
         child,
         Positioned.fill(
-          child: Align(
+          child: Transform.rotate(
+            angle: rotation,
             alignment: Alignment.topCenter,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onPanStart: onPanStart,
-              onPanUpdate: onPanUpdate,
-              onPanEnd: onPanEnd,
-              child: Container(
-                width: coordinateSystem.scale(15),
-                height: coordinateSystem.scale(15),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
+            origin: Offset(0, coordinateSystem.scale(origin.dy)),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onPanStart: onPanStart,
+                onPanUpdate: onPanUpdate,
+                onPanEnd: onPanEnd,
+                child: Container(
+                  width: coordinateSystem.scale(15),
+                  height: coordinateSystem.scale(15),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
             ),

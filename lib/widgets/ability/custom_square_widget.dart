@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/const/settings.dart';
 
 class CustomSquareWidget extends StatelessWidget {
-  //I want to be able to to pass the rotation to the CustomSquareWidget
-  //Rotation is stored in the PlacedAbility widget which is stored within the AbilityProvider
-  //Issue is that how do I access the right abilityProvider to get the correct rotation info
-
-  //Could a key be the issue?
   const CustomSquareWidget({
     super.key,
     required this.color,
@@ -29,40 +25,67 @@ class CustomSquareWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
+    final scaledWidth = coordinateSystem.scale(width);
+    final scaledHeight = coordinateSystem.scale(height);
+    final scaledDistance = coordinateSystem.scale(distanceBetweenAOE ?? 0);
+    final scaledAbilitySize = coordinateSystem.scale(Settings.abilitySize);
+    final totalHeight = scaledHeight + scaledDistance + scaledAbilitySize;
+
+    final rotationOrigin = origin.scale(
+        coordinateSystem.scaleFactor, coordinateSystem.scaleFactor);
 
     return Transform.rotate(
+      alignment: Alignment.topLeft,
       angle: rotation ?? 0,
-      origin: origin,
-      child: Column(
-        children: [
-          IgnorePointer(
-            child: Container(
-              width: coordinateSystem.scale(width),
-              height: coordinateSystem.scale(height),
-              color: color.withAlpha(100),
-            ),
-          ),
-          IgnorePointer(
-            child: SizedBox(
-              height: coordinateSystem.scale(distanceBetweenAOE ?? 0),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              width: coordinateSystem.scale(25),
-              height: coordinateSystem.scale(25),
-              padding: EdgeInsets.all(coordinateSystem.scale(3)),
-              decoration: const BoxDecoration(
-                color: Color(0xFF1B1B1B),
-              ),
-              child: Image.asset(
-                iconPath,
-                fit: BoxFit.contain,
+      origin: rotationOrigin,
+      child: SizedBox(
+        width: scaledWidth,
+        height: totalHeight,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // Main square
+            Positioned(
+              top: 0,
+              left: 0,
+              child: IgnorePointer(
+                child: Container(
+                  width: scaledWidth,
+                  height: scaledHeight,
+                  color: color.withAlpha(100),
+                ),
               ),
             ),
-          ),
-        ],
+            // Ability icon
+            Positioned(
+              bottom: 0,
+              left: (scaledWidth - scaledAbilitySize) / 2,
+              child: Container(
+                width: scaledAbilitySize,
+                height: scaledAbilitySize,
+                padding: EdgeInsets.all(coordinateSystem.scale(3)),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1B1B1B),
+                ),
+                child: Image.asset(
+                  iconPath,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            // Debug point to visualize rotation origin
+            if (true) // Set to true to debug
+              Positioned(
+                left: rotationOrigin.dx - 2,
+                top: rotationOrigin.dy - 2,
+                child: Container(
+                  width: 4,
+                  height: 4,
+                  color: Colors.red,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
