@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/abilities.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/ability_provider.dart';
@@ -47,7 +48,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
       return Positioned(
         left: coordinateSystem.coordinateToScreen(widget.ability.position).dx,
         top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
-        child: !widget.ability.data.isTransformable
+        child: (widget.ability.data.abilityData is! SquareAbility)
             ? Draggable(
                 feedback: widget.ability.data.abilityData.createWidget(),
                 childWhenDragging: const SizedBox.shrink(),
@@ -59,7 +60,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                 onPanStart: (details) {
                   final box = context.findRenderObject() as RenderBox;
                   final bottomCenter =
-                      Offset(box.size.width / 2, box.size.height);
+                      widget.ability.data.abilityData.getAnchorPoint();
 
                   rotationOrigin = box.localToGlobal(bottomCenter);
                 },
@@ -92,7 +93,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                         .watch(abilityProvider)[widget.index]
                         .data
                         .abilityData
-                        .createWidget(),
+                        .createWidget(rotation),
                     childWhenDragging: const SizedBox.shrink(),
                     onDragEnd: widget.onDragEnd,
                     // dragAnchorStrategy: pointDragAnchorStrategy,
@@ -100,7 +101,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                         .watch(abilityProvider)[widget.index]
                         .data
                         .abilityData
-                        .createWidget(),
+                        .createWidget(rotation),
                   ),
                 ),
               ),
