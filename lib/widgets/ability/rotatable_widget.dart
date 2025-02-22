@@ -25,15 +25,18 @@ class RotatableWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
+    final rotationOrigin = origin.scale(
+        coordinateSystem.scaleFactor, coordinateSystem.scaleFactor);
+    return Transform.rotate(
+      angle: rotation,
+      alignment: Alignment.topLeft,
+      origin: rotationOrigin,
+      child: Stack(
+        children: [
+          child,
 
-    return Stack(
-      children: [
-        child,
-        Positioned.fill(
-          child: Transform.rotate(
-            angle: rotation,
-            alignment: Alignment.topCenter,
-            origin: Offset(0, coordinateSystem.scale(origin.dy)),
+          //Circle
+          Positioned.fill(
             child: Align(
               alignment: Alignment.topCenter,
               child: GestureDetector(
@@ -55,8 +58,8 @@ class RotatableWidget extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

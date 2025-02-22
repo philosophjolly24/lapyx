@@ -82,11 +82,19 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   });
                 },
                 child: Draggable(
-                  feedback: ref
-                      .watch(abilityProvider)[widget.index]
-                      .data
-                      .abilityData
-                      .createWidget(rotation),
+                  feedback: Transform.rotate(
+                    angle: rotation,
+                    alignment: Alignment.topLeft,
+                    origin: widget.ability.data.abilityData
+                        .getAnchorPoint()
+                        .scale(coordinateSystem.scaleFactor,
+                            coordinateSystem.scaleFactor),
+                    child: ref
+                        .watch(abilityProvider)[widget.index]
+                        .data
+                        .abilityData
+                        .createWidget(rotation),
+                  ),
                   childWhenDragging: const SizedBox.shrink(),
                   onDragEnd: widget.onDragEnd,
                   // dragAnchorStrategy: pointDragAnchorStrategy,

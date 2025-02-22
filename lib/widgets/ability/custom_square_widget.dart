@@ -34,58 +34,53 @@ class CustomSquareWidget extends StatelessWidget {
     final rotationOrigin = origin.scale(
         coordinateSystem.scaleFactor, coordinateSystem.scaleFactor);
 
-    return Transform.rotate(
-      alignment: Alignment.topLeft,
-      angle: rotation ?? 0,
-      origin: rotationOrigin,
-      child: SizedBox(
-        width: scaledWidth,
-        height: totalHeight,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            // Main square
-            Positioned(
-              top: 0,
-              left: 0,
-              child: IgnorePointer(
-                child: Container(
-                  width: scaledWidth,
-                  height: scaledHeight,
-                  color: color.withAlpha(100),
-                ),
-              ),
-            ),
-            // Ability icon
-            Positioned(
-              bottom: 0,
-              left: (scaledWidth - scaledAbilitySize) / 2,
+    return SizedBox(
+      width: scaledWidth,
+      height: totalHeight,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          // Main square
+          Positioned(
+            top: 0,
+            left: 0,
+            child: IgnorePointer(
               child: Container(
-                width: scaledAbilitySize,
-                height: scaledAbilitySize,
-                padding: EdgeInsets.all(coordinateSystem.scale(3)),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF1B1B1B),
-                ),
-                child: Image.asset(
-                  iconPath,
-                  fit: BoxFit.contain,
-                ),
+                width: scaledWidth,
+                height: scaledHeight,
+                color: color.withAlpha(100),
               ),
             ),
-            // Debug point to visualize rotation origin
-            if (true) // Set to true to debug
-              Positioned(
-                left: rotationOrigin.dx - 2,
-                top: rotationOrigin.dy - 2,
-                child: Container(
-                  width: 4,
-                  height: 4,
-                  color: Colors.red,
-                ),
+          ),
+          // Ability icon
+          Positioned(
+            bottom: 0,
+            left: (scaledWidth - scaledAbilitySize) / 2,
+            child: Container(
+              width: scaledAbilitySize,
+              height: scaledAbilitySize,
+              padding: EdgeInsets.all(coordinateSystem.scale(3)),
+              decoration: const BoxDecoration(
+                color: Color(0xFF1B1B1B),
               ),
-          ],
-        ),
+              child: Image.asset(
+                iconPath,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          // Debug point to visualize rotation origin
+          if (true) // Set to true to debug
+            Positioned(
+              left: rotationOrigin.dx - 2,
+              top: rotationOrigin.dy - 2,
+              child: Container(
+                width: 4,
+                height: 4,
+                color: Colors.red,
+              ),
+            ),
+        ],
       ),
     );
   }
