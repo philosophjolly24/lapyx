@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:icarus/const/coordinate_system.dart';
@@ -41,6 +41,9 @@ class RotatableWidget extends StatelessWidget {
                 onPanStart: onPanStart,
                 onPanUpdate: onPanUpdate,
                 onPanEnd: onPanEnd,
+                onTap: () {
+                  log("I'm being hit");
+                },
                 child: Container(
                   width: coordinateSystem.scale(15),
                   height: coordinateSystem.scale(15),

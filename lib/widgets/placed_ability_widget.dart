@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/abilities.dart';
@@ -45,6 +47,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                 rotation: rotation,
                 origin: widget.ability.data.abilityData.getAnchorPoint(),
                 onPanStart: (details) {
+                  log("Rotation Start");
                   final box = context.findRenderObject() as RenderBox;
                   final bottomCenter = widget.ability.data.abilityData
                       .getAnchorPoint()
