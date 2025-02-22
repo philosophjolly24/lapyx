@@ -1,4 +1,4 @@
-⚠️ The project is currently undergoing "The Holy Rewrite" so on-going commits will be in the relevant branch
+
 
 # icarus
 
