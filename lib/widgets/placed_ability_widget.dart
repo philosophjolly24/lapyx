@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/abilities.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/ability_provider.dart';
-import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/rotatable_widget.dart';
 import 'dart:math' as math;
 
@@ -24,20 +26,6 @@ class PlacedAbilityWidget extends StatefulWidget {
 class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
   Offset rotationOrigin = Offset.zero;
   GlobalKey globalKey = GlobalKey();
-  Offset pointDragAnchorStrategy(
-      Draggable<Object> draggable, BuildContext context, Offset position) {
-    RenderBox? renderbox;
-
-    renderbox = globalKey.currentContext?.findRenderObject() as RenderBox?;
-
-    if (renderbox == null) return Offset.zero;
-
-    Offset feedBackCenter = renderbox
-        .localToGlobal(Offset(renderbox.size.width / 2, renderbox.size.height));
-
-    return (context.findRenderObject() as RenderBox)
-        .globalToLocal(feedBackCenter);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,23 +36,25 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
       return Positioned(
         left: coordinateSystem.coordinateToScreen(widget.ability.position).dx,
         top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
-        child: !widget.ability.data.isTransformable
+        child: (widget.ability.data.abilityData is! SquareAbility)
             ? Draggable(
-                feedback: AbilityWidget(
-                  ability: widget.ability.data,
-                ),
+                feedback: widget.ability.data.abilityData.createWidget(),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
-                child: AbilityWidget(
-                  ability: widget.ability.data,
-                ),
+                child: widget.ability.data.abilityData.createWidget(),
               )
             : RotatableWidget(
                 rotation: rotation,
+                origin: widget.ability.data.abilityData.getAnchorPoint(),
                 onPanStart: (details) {
+                  log("Rotation Start");
                   final box = context.findRenderObject() as RenderBox;
-                  final bottomCenter =
-                      Offset(box.size.width / 2, box.size.height);
+                  final bottomCenter = widget.ability.data.abilityData
+                      .getAnchorPoint()
+                      .scale(coordinateSystem.scaleFactor,
+                          coordinateSystem.scaleFactor);
+                  // final bottomCenter =
+                  //     Offset(box.size.width / 2, box.size.height);
 
                   rotationOrigin = box.localToGlobal(bottomCenter);
                 },
@@ -91,20 +81,28 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     rotationOrigin = Offset.zero;
                   });
                 },
-                child: Positioned(
-                  child: Draggable(
-                    feedback: ref
-                        .watch(abilityProvider)[widget.index]
-                        .data
-                        .abilityWidget!(rotation),
-                    childWhenDragging: const SizedBox.shrink(),
-                    onDragEnd: widget.onDragEnd,
-                    // dragAnchorStrategy: pointDragAnchorStrategy,
+                child: Draggable(
+                  feedback: Transform.rotate(
+                    angle: rotation,
+                    alignment: Alignment.topLeft,
+                    origin: widget.ability.data.abilityData
+                        .getAnchorPoint()
+                        .scale(coordinateSystem.scaleFactor,
+                            coordinateSystem.scaleFactor),
                     child: ref
                         .watch(abilityProvider)[widget.index]
                         .data
-                        .abilityWidget!(rotation),
+                        .abilityData
+                        .createWidget(rotation),
                   ),
+                  childWhenDragging: const SizedBox.shrink(),
+                  onDragEnd: widget.onDragEnd,
+                  // dragAnchorStrategy: pointDragAnchorStrategy,
+                  child: ref
+                      .watch(abilityProvider)[widget.index]
+                      .data
+                      .abilityData
+                      .createWidget(rotation),
                 ),
               ),
       );

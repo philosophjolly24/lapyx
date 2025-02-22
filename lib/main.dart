@@ -5,7 +5,7 @@ import 'package:icarus/home_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+  // if (!kIsWeb &&   (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
   //   setWindowTitle('Admin Dashboard');
   //   setWindowMinSize(const Size(1300, 800));
   //   setWindowMaxSize(Size.infinite);

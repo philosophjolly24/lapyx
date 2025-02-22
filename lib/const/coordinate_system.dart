@@ -50,6 +50,7 @@ class CoordinateSystem {
   // Get the scale factor based on screen height
   double get _scaleFactor => _playAreaSize.height / _baseHeight;
 
+  double get scaleFactor => _scaleFactor;
   // Scale any dimension based on height
   double scale(double size) => size * _scaleFactor;
 
@@ -73,9 +74,10 @@ class CoordinateSystem {
   }
 
   bool isOutOfBounds(Offset offset) {
-    return offset.dx > normalizedWidth ||
-        offset.dy > normalizedHeight ||
-        offset.dx < 0 ||
-        offset.dy < 0;
+    const int tolerance = 10;
+    return offset.dx > normalizedWidth - tolerance ||
+        offset.dy > normalizedHeight - tolerance ||
+        offset.dx < 0 + tolerance ||
+        offset.dy < 0 + tolerance;
   }
 }

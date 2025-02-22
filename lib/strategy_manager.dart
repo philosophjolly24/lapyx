@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/strategy_view.dart';
 
 class StrategyManager extends ConsumerWidget {
   const StrategyManager({super.key});

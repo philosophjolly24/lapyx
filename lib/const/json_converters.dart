@@ -1,6 +1,3 @@
-// Create a reusable converter
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:json_annotation/json_annotation.dart';

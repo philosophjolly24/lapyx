@@ -40,12 +40,24 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                       Offset localOffset =
                           renderBox.globalToLocal(details.offset);
                       // Updating info
-                      //TODO: Comprehensive bounds checking for abilities
+
+                      Offset virtualOffset =
+                          coordinateSystem.screenToCoordinate(localOffset);
+                      Offset safeArea =
+                          ability.data.abilityData.getAnchorPoint();
+
+                      if (coordinateSystem.isOutOfBounds(
+                          virtualOffset.translate(safeArea.dx, safeArea.dy))) {
+                        ref.read(abilityProvider.notifier).removeAbility(index);
+                        return;
+                      }
+
                       log(renderBox.size.toString());
 
                       ability.updatePosition(
                         coordinateSystem.screenToCoordinate(localOffset),
                       );
+                      ref.read(abilityProvider.notifier).bringFoward(index);
                     },
                   ),
                 for (final (index, agent) in ref.watch(agentProvider).indexed)
@@ -67,11 +79,10 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                         //Basically makes sure that if more than half is of the screen it gets deleted
                         Offset virtualOffset =
                             coordinateSystem.screenToCoordinate(localOffset);
-                        double scaledSafeArea =
-                            coordinateSystem.scale(Settings.agentSize / 2);
+                        double safeArea = Settings.agentSize / 2;
 
-                        if (coordinateSystem.isOutOfBounds(virtualOffset
-                            .translate(scaledSafeArea, scaledSafeArea))) {
+                        if (coordinateSystem.isOutOfBounds(
+                            virtualOffset.translate(safeArea, safeArea))) {
                           ref.read(agentProvider.notifier).removeAgent(index);
                           return;
                         }

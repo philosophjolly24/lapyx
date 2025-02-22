@@ -32,7 +32,7 @@ class FreeDrawing extends DrawingElement {
   factory FreeDrawing.fromJson(Map<String, dynamic> json) =>
       _$FreeDrawingFromJson(json);
 
-  @override
+  // @override
   Map<String, dynamic> toJson() => _$FreeDrawingToJson(this);
 
   void updatePath(Path newPath) {
