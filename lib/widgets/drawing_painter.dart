@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/drawing_element.dart';
+import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
@@ -105,7 +106,7 @@ class DrawingPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.white
-      ..strokeWidth = coordinateSystem.scale(5)
+      ..strokeWidth = coordinateSystem.scale(Settings.brushSize)
       ..style = PaintingStyle.stroke
       ..strokeJoin = StrokeJoin.round
       ..isAntiAlias = true
