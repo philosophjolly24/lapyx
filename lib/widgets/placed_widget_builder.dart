@@ -67,6 +67,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                     top: coordinateSystem.coordinateToScreen(agent.position).dy,
                     child: Draggable(
                       feedback: AgentWidget(
+                        index: null,
                         agent: AgentData.agents[agent.type]!,
                       ),
                       childWhenDragging: const SizedBox.shrink(),
@@ -93,6 +94,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                         ref.read(agentProvider.notifier).bringFoward(index);
                       },
                       child: AgentWidget(
+                        index: index,
                         agent: AgentData.agents[agent.type]!,
                       ),
                     ),

@@ -8,7 +8,7 @@ import 'package:icarus/widgets/ability/image_widget.dart';
 
 abstract class Ability {
   Offset getAnchorPoint();
-  Widget createWidget([double? rotation]);
+  Widget createWidget(int? index, [double? rotation]);
 }
 
 class BaseAbility extends Ability {
@@ -17,8 +17,11 @@ class BaseAbility extends Ability {
   BaseAbility({required this.iconPath});
 
   @override
-  Widget createWidget([double? rotation]) {
-    return AbilityWidget(iconPath: iconPath);
+  Widget createWidget(int? index, [double? rotation]) {
+    return AbilityWidget(
+      iconPath: iconPath,
+      index: index,
+    );
   }
 
   @override
@@ -33,7 +36,7 @@ class ImageAbility extends Ability {
 
   ImageAbility({required this.imagePath, required this.size});
   @override
-  Widget createWidget([double? rotation]) {
+  Widget createWidget(int? index, [double? rotation]) {
     return ImageWidget(imagePath: imagePath, size: size);
   }
 
@@ -71,7 +74,7 @@ class CircleAbility extends Ability {
   }
 
   @override
-  Widget createWidget([double? rotation]) {
+  Widget createWidget(int? index, [double? rotation]) {
     return CustomCircleWidget(
       iconPath: iconPath,
       size: size,
@@ -81,6 +84,7 @@ class CircleAbility extends Ability {
       opacity: opacity,
       fillColor: fillColor,
       innerSize: perimeterSize,
+      index: index,
     );
   }
 }
@@ -110,8 +114,9 @@ class SquareAbility extends Ability {
   }
 
   @override
-  Widget createWidget([double? rotation]) {
+  Widget createWidget(int? index, [double? rotation]) {
     return CustomSquareWidget(
+      index: index,
       color: color,
       width: width,
       height: height,

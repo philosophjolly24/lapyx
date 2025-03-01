@@ -38,10 +38,11 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
         top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
         child: (widget.ability.data.abilityData is! SquareAbility)
             ? Draggable(
-                feedback: widget.ability.data.abilityData.createWidget(),
+                feedback: widget.ability.data.abilityData.createWidget(null),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
-                child: widget.ability.data.abilityData.createWidget(),
+                child:
+                    widget.ability.data.abilityData.createWidget(widget.index),
               )
             : RotatableWidget(
                 rotation: rotation,
@@ -93,7 +94,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                         .watch(abilityProvider)[widget.index]
                         .data
                         .abilityData
-                        .createWidget(rotation),
+                        .createWidget(widget.index, rotation),
                   ),
                   childWhenDragging: const SizedBox.shrink(),
                   onDragEnd: widget.onDragEnd,
@@ -102,7 +103,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                       .watch(abilityProvider)[widget.index]
                       .data
                       .abilityData
-                      .createWidget(rotation),
+                      .createWidget(widget.index, rotation),
                 ),
               ),
       );

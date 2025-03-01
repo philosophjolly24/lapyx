@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/providers/ability_provider.dart';
+import 'package:icarus/widgets/mouse_watch.dart';
 
-class CustomSquareWidget extends StatelessWidget {
+class CustomSquareWidget extends ConsumerWidget {
   const CustomSquareWidget({
     super.key,
     required this.color,
@@ -12,8 +15,10 @@ class CustomSquareWidget extends StatelessWidget {
     this.rotation,
     required this.iconPath,
     required this.origin,
+    required this.index,
   });
 
+  final int? index;
   final Color color;
   final double width;
   final double height;
@@ -23,16 +28,13 @@ class CustomSquareWidget extends StatelessWidget {
   final double? rotation;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final coordinateSystem = CoordinateSystem.instance;
     final scaledWidth = coordinateSystem.scale(width);
     final scaledHeight = coordinateSystem.scale(height);
     final scaledDistance = coordinateSystem.scale(distanceBetweenAOE ?? 0);
     final scaledAbilitySize = coordinateSystem.scale(Settings.abilitySize);
     final totalHeight = scaledHeight + scaledDistance + scaledAbilitySize;
-
-    final rotationOrigin = origin.scale(
-        coordinateSystem.scaleFactor, coordinateSystem.scaleFactor);
 
     return SizedBox(
       width: scaledWidth,
@@ -56,30 +58,37 @@ class CustomSquareWidget extends StatelessWidget {
           Positioned(
             bottom: 0,
             left: (scaledWidth - scaledAbilitySize) / 2,
-            child: Container(
-              width: scaledAbilitySize,
-              height: scaledAbilitySize,
-              padding: EdgeInsets.all(coordinateSystem.scale(3)),
-              decoration: const BoxDecoration(
-                color: Color(0xFF1B1B1B),
-              ),
-              child: Image.asset(
-                iconPath,
-                fit: BoxFit.contain,
+            child: MouseWatch(
+              onDeleteKeyPressed: () {
+                if (index == null) return;
+
+                ref.read(abilityProvider.notifier).removeAbility(index!);
+              },
+              child: Container(
+                width: scaledAbilitySize,
+                height: scaledAbilitySize,
+                padding: EdgeInsets.all(coordinateSystem.scale(3)),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1B1B1B),
+                ),
+                child: Image.asset(
+                  iconPath,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
           // Debug point to visualize rotation origin
-          if (true) // Set to true to debug
-            Positioned(
-              left: rotationOrigin.dx - 2,
-              top: rotationOrigin.dy - 2,
-              child: Container(
-                width: 4,
-                height: 4,
-                color: Colors.red,
-              ),
-            ),
+          // if (false) // Set to true to debug
+          //   Positioned(
+          //     left: rotationOrigin.dx - 2,
+          //     top: rotationOrigin.dy - 2,
+          //     child: Container(
+          //       width: 4,
+          //       height: 4,
+          //       color: Colors.red,
+          //     ),
+          //   ),
         ],
       ),
     );
