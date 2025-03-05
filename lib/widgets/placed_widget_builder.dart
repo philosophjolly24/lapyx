@@ -8,8 +8,11 @@ import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
+import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/widgets/placed_ability_widget.dart';
+import 'package:icarus/widgets/text_widget.dart';
+import 'package:uuid/uuid.dart';
 
 class PlacedWidgetBuilder extends ConsumerStatefulWidget {
   const PlacedWidgetBuilder({super.key});
@@ -29,6 +32,43 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
           builder: (context, candidateData, rejectedData) {
             return Stack(
               children: [
+                for (final (index, placedText)
+                    in ref.watch(textProvider).indexed)
+                  Positioned(
+                    left: coordinateSystem
+                        .coordinateToScreen(placedText.position)
+                        .dx,
+                    top: coordinateSystem
+                        .coordinateToScreen(placedText.position)
+                        .dy,
+                    child: Draggable(
+                      feedback: TextWidget(placedText.text),
+                      childWhenDragging: const SizedBox.shrink(),
+                      onDragEnd: (details) {
+                        RenderBox renderBox =
+                            context.findRenderObject() as RenderBox;
+                        Offset localOffset =
+                            renderBox.globalToLocal(details.offset);
+
+                        //Basically makes sure that if more than half is of the screen it gets deleted
+                        Offset virtualOffset =
+                            coordinateSystem.screenToCoordinate(localOffset);
+                        double safeArea = Settings.agentSize / 2;
+
+                        if (coordinateSystem.isOutOfBounds(
+                            virtualOffset.translate(safeArea, safeArea))) {
+                          ref.read(textProvider.notifier).removeText(index);
+                          return;
+                        }
+
+                        placedText.updatePosition(
+                          virtualOffset,
+                        );
+                        ref.read(textProvider.notifier).bringFoward(index);
+                      },
+                      child: TextWidget(placedText.text),
+                    ),
+                  ),
                 for (final (index, ability)
                     in ref.watch(abilityProvider).indexed)
                   PlacedAbilityWidget(
@@ -107,9 +147,10 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
             Offset localOffset = renderBox.globalToLocal(details.offset);
             Offset normalizedPosition =
                 coordinateSystem.screenToCoordinate(localOffset);
-
+            const uuid = Uuid();
             if (details.data is AgentData) {
               PlacedAgent placedAgent = PlacedAgent(
+                id: uuid.v4(),
                 type: (details.data as AgentData).type,
                 position: normalizedPosition,
               );
@@ -117,8 +158,10 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
               ref.read(agentProvider.notifier).addAgent(placedAgent);
             } else if (details.data is AbilityInfo) {
               PlacedAbility placedAbility = PlacedAbility(
-                  data: details.data as AbilityInfo,
-                  position: normalizedPosition);
+                id: uuid.v4(),
+                data: details.data as AbilityInfo,
+                position: normalizedPosition,
+              );
 
               ref.read(abilityProvider.notifier).addAbility(placedAbility);
             }

@@ -9,10 +9,12 @@ part of 'placed_classes.dart';
 PlacedWidget _$PlacedWidgetFromJson(Map<String, dynamic> json) => PlacedWidget(
       position: const OffsetConverter()
           .fromJson(json['position'] as Map<String, dynamic>),
+      id: json['id'] as String,
     );
 
 Map<String, dynamic> _$PlacedWidgetToJson(PlacedWidget instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'position': const OffsetConverter().toJson(instance.position),
     };
 
@@ -20,10 +22,12 @@ PlacedAgent _$PlacedAgentFromJson(Map<String, dynamic> json) => PlacedAgent(
       type: $enumDecode(_$AgentTypeEnumMap, json['type']),
       position: const OffsetConverter()
           .fromJson(json['position'] as Map<String, dynamic>),
+      id: json['id'] as String,
     );
 
 Map<String, dynamic> _$PlacedAgentToJson(PlacedAgent instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'position': const OffsetConverter().toJson(instance.position),
       'type': _$AgentTypeEnumMap[instance.type]!,
     };
@@ -63,10 +67,12 @@ PlacedAbility _$PlacedAbilityFromJson(Map<String, dynamic> json) =>
           .fromJson(json['data'] as Map<String, dynamic>),
       position: const OffsetConverter()
           .fromJson(json['position'] as Map<String, dynamic>),
+      id: json['id'] as String,
     )..rotation = (json['rotation'] as num).toDouble();
 
 Map<String, dynamic> _$PlacedAbilityToJson(PlacedAbility instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'position': const OffsetConverter().toJson(instance.position),
       'data': const AbilityInfoConverter().toJson(instance.data),
       'rotation': instance.rotation,

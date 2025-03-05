@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Settings {
@@ -6,6 +5,6 @@ class Settings {
   static const double abilitySize = 30;
   static const Color abilityBGColor = Color(0xFF1B1B1B);
 
-  static const double brushSize = 1;
+  static const double brushSize = 5;
   static const PhysicalKeyboardKey deleteKey = PhysicalKeyboardKey.keyX;
 }
