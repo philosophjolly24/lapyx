@@ -42,7 +42,11 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                         .coordinateToScreen(placedText.position)
                         .dy,
                     child: Draggable(
-                      feedback: TextWidget(placedText.text),
+                      feedback: TextWidget(
+                        id: placedText.id,
+                        text: placedText.text,
+                        isDragged: true,
+                      ),
                       childWhenDragging: const SizedBox.shrink(),
                       onDragEnd: (details) {
                         RenderBox renderBox =
@@ -66,7 +70,10 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                         );
                         ref.read(textProvider.notifier).bringFoward(index);
                       },
-                      child: TextWidget(placedText.text),
+                      child: TextWidget(
+                        text: placedText.text,
+                        id: placedText.id,
+                      ),
                     ),
                   ),
                 for (final (index, ability)

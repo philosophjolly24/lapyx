@@ -22,6 +22,17 @@ class TextProvider extends Notifier<List<PlacedText>> {
     state = [...newState, temp];
   }
 
+  void editText(String text, String id) {
+    final newState = [...state];
+    newState
+        .firstWhere(
+          (element) => element.id == id,
+        )
+        .text = text;
+    // newState[index].text = text;
+    state = newState;
+  }
+
   void removeText(int index) {
     final newState = [...state];
     newState.removeAt(index);
