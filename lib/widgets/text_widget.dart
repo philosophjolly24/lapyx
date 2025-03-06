@@ -64,7 +64,8 @@ class _TextWidgetState extends ConsumerState<TextWidget> {
                 margin: const EdgeInsets.all(0),
                 color: Colors.black,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   child: TextField(
                     focusNode: _focusNode,
                     controller: _controller,
@@ -73,15 +74,12 @@ class _TextWidgetState extends ConsumerState<TextWidget> {
                       hintStyle: TextStyle(color: Colors.grey),
                       border: InputBorder.none,
                     ),
+                    maxLines: null,
+                    minLines: null,
+                    expands: true,
                     onTapOutside: (event) {
                       _focusNode.unfocus();
                     },
-                    // onSubmitted: (value) {
-                    //   log("I am submitted");
-                    // },
-                    // onEditingComplete: () {
-
-                    // },
                   ),
                 ),
               ),
