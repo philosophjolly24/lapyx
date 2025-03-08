@@ -70,7 +70,7 @@ class _TextWidgetState extends ConsumerState<TextWidget> {
                     focusNode: _focusNode,
                     controller: _controller,
                     decoration: const InputDecoration(
-                      hintText: "Write here",
+                      hintText: "Write here...",
                       hintStyle: TextStyle(color: Colors.grey),
                       border: InputBorder.none,
                     ),

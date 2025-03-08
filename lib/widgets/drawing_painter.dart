@@ -41,49 +41,51 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
     bool isNavigating = currentInteractionState == InteractionState.navigation;
     return IgnorePointer(
       ignoring: isNavigating,
-      child: GestureDetector(
-        onPanStart: (details) {
-          switch (currentInteractionState) {
-            case InteractionState.drawLine:
-              Offset lineStart =
-                  coordinateSystem.screenToCoordinate(details.localPosition);
-              ref.read(drawingProvider.notifier).startLine(lineStart);
-            case InteractionState.drawFreeLine:
-              ref
-                  .read(drawingProvider.notifier)
-                  .startFreeDrawing(details.localPosition, coordinateSystem);
-            default:
-          }
-        },
-        onPanUpdate: (details) {
-          switch (currentInteractionState) {
-            case InteractionState.drawLine:
-              Offset lineEnd =
-                  coordinateSystem.screenToCoordinate(details.localPosition);
+      child: RepaintBoundary(
+        child: GestureDetector(
+          onPanStart: (details) {
+            switch (currentInteractionState) {
+              case InteractionState.drawLine:
+                Offset lineStart =
+                    coordinateSystem.screenToCoordinate(details.localPosition);
+                ref.read(drawingProvider.notifier).startLine(lineStart);
+              case InteractionState.drawFreeLine:
+                ref
+                    .read(drawingProvider.notifier)
+                    .startFreeDrawing(details.localPosition, coordinateSystem);
+              default:
+            }
+          },
+          onPanUpdate: (details) {
+            switch (currentInteractionState) {
+              case InteractionState.drawLine:
+                Offset lineEnd =
+                    coordinateSystem.screenToCoordinate(details.localPosition);
 
-              ref.read(drawingProvider.notifier).updateCurrentLine(lineEnd);
-            case InteractionState.drawFreeLine:
-              ref
-                  .read(drawingProvider.notifier)
-                  .updateFreeDrawing(details.localPosition, coordinateSystem);
-            default:
-          }
-        },
-        onPanEnd: (details) {
-          switch (currentInteractionState) {
-            case InteractionState.drawLine:
-              Offset lineEnd =
-                  coordinateSystem.screenToCoordinate(details.localPosition);
-              ref.read(drawingProvider.notifier).finishCurrentLine(lineEnd);
-            case InteractionState.drawFreeLine:
-              ref
-                  .read(drawingProvider.notifier)
-                  .finishFreeDrawing(details.localPosition, coordinateSystem);
-            default:
-          }
-        },
-        child: CustomPaint(
-          painter: drawingPainter,
+                ref.read(drawingProvider.notifier).updateCurrentLine(lineEnd);
+              case InteractionState.drawFreeLine:
+                ref
+                    .read(drawingProvider.notifier)
+                    .updateFreeDrawing(details.localPosition, coordinateSystem);
+              default:
+            }
+          },
+          onPanEnd: (details) {
+            switch (currentInteractionState) {
+              case InteractionState.drawLine:
+                Offset lineEnd =
+                    coordinateSystem.screenToCoordinate(details.localPosition);
+                ref.read(drawingProvider.notifier).finishCurrentLine(lineEnd);
+              case InteractionState.drawFreeLine:
+                ref
+                    .read(drawingProvider.notifier)
+                    .finishFreeDrawing(details.localPosition, coordinateSystem);
+              default:
+            }
+          },
+          child: CustomPaint(
+            painter: drawingPainter,
+          ),
         ),
       ),
     );

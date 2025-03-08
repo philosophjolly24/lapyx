@@ -21,7 +21,11 @@ class Line extends DrawingElement {
 
 @JsonSerializable()
 class FreeDrawing extends DrawingElement {
-  FreeDrawing();
+  FreeDrawing({
+    List<Offset>? listOfPoints,
+    Path? path,
+  })  : listOfPoints = listOfPoints ?? [],
+        path = path ?? Path();
 
   @OffsetListConverter()
   List<Offset> listOfPoints = [];
@@ -81,6 +85,16 @@ class FreeDrawing extends DrawingElement {
     }
 
     this.path = path;
+  }
+
+  FreeDrawing copyWith({
+    List<Offset>? listOfPoints,
+    Path? path,
+  }) {
+    return FreeDrawing(
+      listOfPoints: listOfPoints ?? this.listOfPoints,
+      path: path ?? this.path,
+    );
   }
 
   @override
