@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/placed_classes.dart';
 
@@ -37,5 +39,18 @@ class TextProvider extends Notifier<List<PlacedText>> {
     final newState = [...state];
     newState.removeAt(index);
     state = newState;
+  }
+
+  String toJson() {
+    final List<Map<String, dynamic>> jsonList =
+        state.map((text) => text.toJson()).toList();
+    return jsonEncode(jsonList);
+  }
+
+  void fromJson(String jsonString) {
+    final List<dynamic> jsonList = jsonDecode(jsonString);
+    state = jsonList
+        .map((json) => PlacedText.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 }

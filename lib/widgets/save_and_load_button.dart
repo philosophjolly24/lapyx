@@ -9,6 +9,7 @@ import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
+import 'package:icarus/providers/text_provider.dart';
 
 class SaveButtonAndLoad extends ConsumerWidget {
   const SaveButtonAndLoad({super.key});
@@ -22,6 +23,7 @@ class SaveButtonAndLoad extends ConsumerWidget {
           IconButton(
             onPressed: () async {
               String? outputFile = await FilePicker.platform.saveFile(
+                type: FileType.custom,
                 dialogTitle: 'Please select an output file:',
                 fileName: 'strategy.ica',
                 allowedExtensions: [".ica"],
@@ -35,6 +37,7 @@ class SaveButtonAndLoad extends ConsumerWidget {
                 "drawingData": ${ref.read(drawingProvider.notifier).toJson()},
                 "agentData": ${ref.read(agentProvider.notifier).toJson()},
                 "abilityData": ${ref.read(abilityProvider.notifier).toJson()},
+                "textData": ${ref.read(textProvider.notifier).toJson()},
                 "mapData": ${ref.read(mapProvider.notifier).toJson()}
                 }
               ''';
@@ -68,12 +71,15 @@ class SaveButtonAndLoad extends ConsumerWidget {
               ref
                   .read(mapProvider.notifier)
                   .fromJson(jsonEncode(json["mapData"]));
+              ref
+                  .read(textProvider.notifier)
+                  .fromJson(jsonEncode(json["textData"]));
             },
             icon: const Icon(Icons.file_open),
           ),
           IconButton(
             onPressed: () async {
-              log(ref.read(agentProvider.notifier).toString());
+              log(ref.read(drawingProvider).toString());
             },
             icon: const Icon(Icons.bug_report),
           ),

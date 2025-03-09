@@ -18,6 +18,22 @@ Map<String, dynamic> _$PlacedWidgetToJson(PlacedWidget instance) =>
       'position': const OffsetConverter().toJson(instance.position),
     };
 
+PlacedText _$PlacedTextFromJson(Map<String, dynamic> json) => PlacedText(
+      position: const OffsetConverter()
+          .fromJson(json['position'] as Map<String, dynamic>),
+      id: json['id'] as String,
+    )
+      ..text = json['text'] as String
+      ..size = (json['size'] as num?)?.toDouble();
+
+Map<String, dynamic> _$PlacedTextToJson(PlacedText instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'position': const OffsetConverter().toJson(instance.position),
+      'text': instance.text,
+      'size': instance.size,
+    };
+
 PlacedAgent _$PlacedAgentFromJson(Map<String, dynamic> json) => PlacedAgent(
       type: $enumDecode(_$AgentTypeEnumMap, json['type']),
       position: const OffsetConverter()

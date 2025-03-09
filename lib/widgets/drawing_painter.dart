@@ -30,11 +30,11 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
     DrawingState drawingState = ref.watch(drawingProvider);
 
     CustomPainter drawingPainter = DrawingPainter(
-      updateCounter: drawingState.updateCounter,
-      coordinateSystem: coordinateSystem,
-      elements: drawingState.elements, // Pass the data directly
-      drawingProvider: ref.read(drawingProvider.notifier),
-    );
+        updateCounter: drawingState.updateCounter,
+        coordinateSystem: coordinateSystem,
+        elements: drawingState.elements, // Pass the data directly
+        drawingProvider: ref.read(drawingProvider.notifier),
+        currentLine: drawingState.currentElement);
 
     final currentInteractionState = ref.watch(interactionStateProvider);
 
@@ -95,14 +95,17 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
 class DrawingPainter extends CustomPainter {
   final CoordinateSystem coordinateSystem;
   final List<DrawingElement> elements; // Store the drawing elements
+  final DrawingElement? currentLine;
   final int updateCounter;
   final DrawingProvider drawingProvider;
 
-  DrawingPainter(
-      {required this.updateCounter,
-      required this.coordinateSystem,
-      required this.elements,
-      required this.drawingProvider});
+  DrawingPainter({
+    required this.updateCounter,
+    required this.currentLine,
+    required this.coordinateSystem,
+    required this.elements,
+    required this.drawingProvider,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -130,6 +133,14 @@ class DrawingPainter extends CustomPainter {
         if (paths.length < 2) return;
 
         canvas.drawPath(freeDrawing.path, paint);
+      }
+    }
+
+    if (currentLine != null) {
+      if (currentLine is FreeDrawing) {
+        final drawingElement = currentLine as FreeDrawing;
+
+        canvas.drawPath(drawingElement.path, paint);
       }
     }
   }

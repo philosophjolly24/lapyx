@@ -25,10 +25,17 @@ class PlacedWidget {
 }
 
 //TODO: Make this build runner compatable
+@JsonSerializable()
 class PlacedText extends PlacedWidget {
   PlacedText({required super.position, required super.id});
 
   String text = "";
+  double? size;
+
+  factory PlacedText.fromJson(Map<String, dynamic> json) =>
+      _$PlacedTextFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => _$PlacedTextToJson(this);
 }
 
 @JsonSerializable()

@@ -29,6 +29,29 @@ class DrawingState {
       currentElement: currentElement ?? this.currentElement,
     );
   }
+
+  //The copy with pattern does not work in this current situation because sometimes we actually need to set a null value to drawingState
+  DrawingState copyWithButEvil({
+    List<DrawingElement>? elements,
+    int? updateCounter,
+  }) {
+    return DrawingState(
+      elements: elements ?? this.elements,
+      updateCounter: updateCounter ?? this.updateCounter,
+      currentElement: null,
+    );
+  }
+
+  @override
+  String toString() {
+    String value = "";
+    int count = 0;
+    for (DrawingElement element in elements) {
+      count++;
+      value += "$count| ";
+    }
+    return 'DrawingState{elements: $value, updateCounter: $updateCounter, currentElement: $currentElement';
+  }
 }
 
 final drawingProvider =
@@ -64,7 +87,7 @@ class DrawingProvider extends Notifier<DrawingState> {
   }
 
   void _triggerRepaint() {
-    state = state.copyWith(updateCounter: (state.updateCounter + 1) % 3);
+    state = state.copyWith(updateCounter: (state.updateCounter + 1));
   }
 
   void startFreeDrawing(Offset start, CoordinateSystem coordinateSystem) {
@@ -107,13 +130,12 @@ class DrawingProvider extends Notifier<DrawingState> {
     currentDrawing.listOfPoints
         .add(coordinateSystem.screenToCoordinate(offset));
 
-    FreeDrawing simplifiedDrawing = douglasPeucker(currentDrawing, 16);
+    FreeDrawing simplifiedDrawing = douglasPeucker(currentDrawing, 0);
 
     simplifiedDrawing.rebuildPath(coordinateSystem);
 
-    state = state.copyWith(
+    state = state.copyWithButEvil(
       elements: [...state.elements, simplifiedDrawing],
-      currentElement: null,
     );
     _triggerRepaint();
   }
@@ -167,7 +189,7 @@ class DrawingProvider extends Notifier<DrawingState> {
   }
 
   void clearAll() {
-    state = state.copyWith(elements: []);
+    state = DrawingState(elements: []);
     _triggerRepaint();
   }
 }
@@ -179,7 +201,7 @@ FreeDrawing douglasPeucker(FreeDrawing drawing, double epsilon) {
     return drawing;
   }
 
-  FreeDrawing newDrawing = drawing;
+  FreeDrawing newDrawing = FreeDrawing(listOfPoints: [...drawing.listOfPoints]);
   final listOfPoints = newDrawing.listOfPoints;
   // Find the point farthest from the line between the first and last points
   double maxDistance = 0;
