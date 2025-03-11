@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/settings.dart';
+import 'package:icarus/const/shortcut_info.dart';
 
 class MouseWatch extends ConsumerStatefulWidget {
   const MouseWatch({this.onDeleteKeyPressed, required this.child, super.key});
@@ -35,12 +35,17 @@ class _MouseWatchState extends ConsumerState<MouseWatch> {
           _focusNode.unfocus();
         });
       },
-      child: KeyboardListener(
+      child: FocusableActionDetector(
         focusNode: _focusNode,
-        onKeyEvent: (value) {
-          if (value.physicalKey == Settings.deleteKey && isMouseInRegion) {
-            widget.onDeleteKeyPressed?.call();
-          }
+        shortcuts: ShortcutInfo.widgetShortcuts,
+        actions: {
+          WidgetDeleteIntent: CallbackAction<WidgetDeleteIntent>(
+            onInvoke: (intent) {
+              if (!isMouseInRegion) return;
+
+              return widget.onDeleteKeyPressed?.call();
+            },
+          )
         },
         child: widget.child,
       ),
