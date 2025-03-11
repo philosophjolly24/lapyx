@@ -44,13 +44,13 @@ class DrawingState {
 
   @override
   String toString() {
-    String value = "";
-    int count = 0;
+    String output = "";
     for (DrawingElement element in elements) {
-      count++;
-      value += "$count| ";
+      if (element is FreeDrawing) {
+        output += "${element.listOfPoints.toString()} \n--------------\n";
+      }
     }
-    return 'DrawingState{elements: $value, updateCounter: $updateCounter, currentElement: $currentElement';
+    return output;
   }
 }
 
@@ -130,10 +130,10 @@ class DrawingProvider extends Notifier<DrawingState> {
     currentDrawing.listOfPoints
         .add(coordinateSystem.screenToCoordinate(offset));
 
-    FreeDrawing simplifiedDrawing = douglasPeucker(currentDrawing, 0);
+    FreeDrawing simplifiedDrawing = douglasPeucker(currentDrawing, 1.5);
+    // douglasPeucker(currentDrawing, 1);
 
     simplifiedDrawing.rebuildPath(coordinateSystem);
-
     state = state.copyWithButEvil(
       elements: [...state.elements, simplifiedDrawing],
     );
@@ -260,4 +260,30 @@ double perpendicularDistance(Offset point, Offset lineStart, Offset lineEnd) {
   double denominator = sqrt(dx * dx + dy * dy);
 
   return numerator / denominator;
+}
+
+List<Offset> pathSmoothing(List<Offset> points) {
+  final List<Offset> smoothPoints = [];
+  if (points.length < 2) {
+    return points;
+  }
+
+  for (int i = 0; i < points.length - 1; i++) {
+    final p0 = points[i];
+
+    final p1 = points[1 + i];
+
+    final q = Offset(
+      0.75 * p0.dx + 0.25 * p1.dx,
+      0.75 * p0.dy + 0.25 * p1.dy,
+    );
+    final r = Offset(
+      0.25 * p0.dx + 0.75 * p1.dx,
+      0.25 * p0.dy + 0.75 * p1.dy,
+    );
+
+    smoothPoints.add(q);
+    smoothPoints.add(r);
+  }
+  return smoothPoints;
 }

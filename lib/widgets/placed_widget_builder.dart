@@ -41,7 +41,8 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                     top: coordinateSystem
                         .coordinateToScreen(placedText.position)
                         .dy,
-                    child: Draggable(
+                    child: Draggable<PlacedWidget>(
+                      data: placedText,
                       feedback: TextWidget(
                         id: placedText.id,
                         text: placedText.text,
@@ -79,6 +80,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                 for (final (index, ability)
                     in ref.watch(abilityProvider).indexed)
                   PlacedAbilityWidget(
+                    data: ability,
                     ability: ability,
                     index: index,
                     onDragEnd: (details) {
@@ -112,7 +114,8 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                     left:
                         coordinateSystem.coordinateToScreen(agent.position).dx,
                     top: coordinateSystem.coordinateToScreen(agent.position).dy,
-                    child: Draggable(
+                    child: Draggable<PlacedWidget>(
+                      data: agent,
                       feedback: AgentWidget(
                         index: null,
                         agent: AgentData.agents[agent.type]!,

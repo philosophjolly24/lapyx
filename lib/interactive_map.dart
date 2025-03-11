@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/maps.dart';
 import 'package:icarus/providers/map_provider.dart';
+import 'package:icarus/widgets/delete_area.dart';
 import 'package:icarus/widgets/dot_painter.dart';
 
 import 'package:icarus/widgets/drawing_painter.dart';
@@ -40,10 +41,11 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
               children: [
                 //Dot Grid
                 const Positioned.fill(
-                    child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: DotGrid(),
-                )),
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: DotGrid(),
+                  ),
+                ),
 
                 // Map SVG
                 Positioned.fill(
@@ -57,6 +59,12 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                 //Painting
                 Positioned.fill(
                   child: InteractivePainter(),
+                ),
+
+                //Delete widget
+                Align(
+                  alignment: Alignment.topRight,
+                  child: DeleteArea(),
                 ),
 
                 //Agents

@@ -24,7 +24,6 @@ class PlacedWidget {
   Map<String, dynamic> toJson() => _$PlacedWidgetToJson(this);
 }
 
-//TODO: Make this build runner compatable
 @JsonSerializable()
 class PlacedText extends PlacedWidget {
   PlacedText({required super.position, required super.id});

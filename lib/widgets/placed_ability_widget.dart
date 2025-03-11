@@ -13,11 +13,14 @@ class PlacedAbilityWidget extends StatefulWidget {
   final PlacedAbility ability;
   final Function(DraggableDetails details) onDragEnd;
   final int index;
-  const PlacedAbilityWidget(
-      {super.key,
-      required this.ability,
-      required this.onDragEnd,
-      required this.index});
+  final PlacedWidget data;
+  const PlacedAbilityWidget({
+    super.key,
+    required this.ability,
+    required this.onDragEnd,
+    required this.index,
+    required this.data,
+  });
 
   @override
   State<PlacedAbilityWidget> createState() => _PlacedAbilityWidgetState();
@@ -37,7 +40,8 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
         left: coordinateSystem.coordinateToScreen(widget.ability.position).dx,
         top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
         child: (widget.ability.data.abilityData is! SquareAbility)
-            ? Draggable(
+            ? Draggable<PlacedWidget>(
+                data: widget.data,
                 feedback: widget.ability.data.abilityData.createWidget(null),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
@@ -82,7 +86,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     rotationOrigin = Offset.zero;
                   });
                 },
-                child: Draggable(
+                child: Draggable<PlacedWidget>(
                   feedback: Transform.rotate(
                     angle: rotation,
                     alignment: Alignment.topLeft,
