@@ -4,6 +4,7 @@ import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
+import 'package:icarus/widgets/drawing_tools.dart';
 import 'package:uuid/uuid.dart';
 
 class ToolGrid extends ConsumerWidget {
@@ -33,19 +34,18 @@ class ToolGrid extends ConsumerWidget {
               IconButton(
                 onPressed: () {
                   switch (currentInteractionState) {
-                    case InteractionState.drawFreeLine:
+                    case InteractionState.drawing:
                       ref
                           .read(interactionStateProvider.notifier)
                           .update(InteractionState.navigation);
                     default:
                       ref
                           .read(interactionStateProvider.notifier)
-                          .update(InteractionState.drawFreeLine);
+                          .update(InteractionState.drawing);
                   }
                 },
                 icon: const Icon(Icons.draw),
-                isSelected:
-                    currentInteractionState == InteractionState.drawFreeLine,
+                isSelected: currentInteractionState == InteractionState.drawing,
               ),
               IconButton(
                 onPressed: () {
@@ -66,7 +66,8 @@ class ToolGrid extends ConsumerWidget {
                 icon: const Icon(Icons.text_fields),
               )
             ],
-          )
+          ),
+          const DrawingTools()
         ],
       ),
     );

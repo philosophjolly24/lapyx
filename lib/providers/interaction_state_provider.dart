@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 enum InteractionState {
   navigation,
   drag,
-  drawLine,
-  drawFreeLine,
+  drawing,
 }
 
 final interactionStateProvider =

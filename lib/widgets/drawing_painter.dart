@@ -45,11 +45,11 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
         child: GestureDetector(
           onPanStart: (details) {
             switch (currentInteractionState) {
-              case InteractionState.drawLine:
-                Offset lineStart =
-                    coordinateSystem.screenToCoordinate(details.localPosition);
-                ref.read(drawingProvider.notifier).startLine(lineStart);
-              case InteractionState.drawFreeLine:
+              // case InteractionState.drawLine:
+              //   Offset lineStart =
+              //       coordinateSystem.screenToCoordinate(details.localPosition);
+              //   ref.read(drawingProvider.notifier).startLine(lineStart);
+              case InteractionState.drawing:
                 ref
                     .read(drawingProvider.notifier)
                     .startFreeDrawing(details.localPosition, coordinateSystem);
@@ -58,12 +58,12 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
           },
           onPanUpdate: (details) {
             switch (currentInteractionState) {
-              case InteractionState.drawLine:
-                Offset lineEnd =
-                    coordinateSystem.screenToCoordinate(details.localPosition);
+              // case InteractionState.drawLine:
+              //   Offset lineEnd =
+              //       coordinateSystem.screenToCoordinate(details.localPosition);
 
-                ref.read(drawingProvider.notifier).updateCurrentLine(lineEnd);
-              case InteractionState.drawFreeLine:
+              //   ref.read(drawingProvider.notifier).updateCurrentLine(lineEnd);
+              case InteractionState.drawing:
                 ref
                     .read(drawingProvider.notifier)
                     .updateFreeDrawing(details.localPosition, coordinateSystem);
@@ -72,11 +72,11 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
           },
           onPanEnd: (details) {
             switch (currentInteractionState) {
-              case InteractionState.drawLine:
-                Offset lineEnd =
-                    coordinateSystem.screenToCoordinate(details.localPosition);
-                ref.read(drawingProvider.notifier).finishCurrentLine(lineEnd);
-              case InteractionState.drawFreeLine:
+              // case InteractionState.drawLine:
+              //   Offset lineEnd =
+              //       coordinateSystem.screenToCoordinate(details.localPosition);
+              //   ref.read(drawingProvider.notifier).finishCurrentLine(lineEnd);
+              case InteractionState.drawing:
                 ref
                     .read(drawingProvider.notifier)
                     .finishFreeDrawing(details.localPosition, coordinateSystem);
