@@ -6,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/maps.dart';
 import 'package:icarus/providers/map_provider.dart';
-import 'package:icarus/widgets/delete_area.dart';
 import 'package:icarus/widgets/dot_painter.dart';
 
 import 'package:icarus/widgets/drawing_painter.dart';

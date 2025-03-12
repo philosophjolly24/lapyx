@@ -114,8 +114,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                       ),
                     ),
                   ),
-                for (final (index, placedText)
-                    in ref.watch(textProvider).indexed)
+                for (PlacedText placedText in ref.watch(textProvider))
                   Positioned(
                     left: coordinateSystem
                         .coordinateToScreen(placedText.position)
