@@ -16,9 +16,11 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
     state = [...state, placedAbility];
   }
 
-  void bringFoward(int index) {
+  void bringFoward(String id) {
     final newState = [...state];
 
+    final index = PlacedWidget.getIndexByID(id, newState);
+    if (index < 0) return;
     final temp = newState.removeAt(index);
 
     state = [...newState, temp];
@@ -30,8 +32,11 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
     state = newState;
   }
 
-  void removeAbility(int index) {
+  void removeAbility(String id) {
     final newState = [...state];
+
+    final index = PlacedWidget.getIndexByID(id, newState);
+    if (index < 0) return;
     newState.removeAt(index);
     state = newState;
   }

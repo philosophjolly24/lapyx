@@ -36,7 +36,7 @@ class _SideBarUIState extends State<SideBarUI> {
                 width: sideBarSize + 20,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color: const Color(0xFF141114),
+                  color: Settings.sideBarColor,
                   border: Border.all(
                     color: const Color.fromRGBO(210, 214, 219, 0.1),
                     width: 2,
@@ -101,6 +101,7 @@ class _SideBarUIState extends State<SideBarUI> {
                                         child: Draggable(
                                           data: agent,
                                           feedback: AgentWidget(
+                                            id: null,
                                             agent: agent,
                                           ),
                                           dragAnchorStrategy:

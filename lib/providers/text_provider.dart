@@ -16,9 +16,11 @@ class TextProvider extends Notifier<List<PlacedText>> {
     state = [...state, text];
   }
 
-  void bringFoward(int index) {
+  void bringFoward(String id) {
     final newState = [...state];
 
+    int index = PlacedWidget.getIndexByID(id, newState);
+    if (index < 0) return;
     final temp = newState.removeAt(index);
 
     state = [...newState, temp];
@@ -26,6 +28,7 @@ class TextProvider extends Notifier<List<PlacedText>> {
 
   void editText(String text, String id) {
     final newState = [...state];
+
     newState
         .firstWhere(
           (element) => element.id == id,
@@ -35,8 +38,9 @@ class TextProvider extends Notifier<List<PlacedText>> {
     state = newState;
   }
 
-  void removeText(int index) {
+  void removeText(String id) {
     final newState = [...state];
+    final index = PlacedWidget.getIndexByID(id, newState);
     newState.removeAt(index);
     state = newState;
   }

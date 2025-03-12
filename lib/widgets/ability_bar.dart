@@ -40,7 +40,7 @@ class AbiilityBar extends ConsumerWidget {
                       .scale(scaleFactor, scaleFactor);
                 },
                 feedback:
-                    activeAgent.abilities[index].abilityData.createWidget(10),
+                    activeAgent.abilities[index].abilityData.createWidget(null),
 
                 // dragAnchorStrategy: centerDragStrategy,
                 child: InkWell(

@@ -15,10 +15,10 @@ class CustomSquareWidget extends ConsumerWidget {
     this.rotation,
     required this.iconPath,
     required this.origin,
-    required this.index,
+    required this.id,
   });
 
-  final int? index;
+  final String? id;
   final Color color;
   final double width;
   final double height;
@@ -60,9 +60,9 @@ class CustomSquareWidget extends ConsumerWidget {
             left: (scaledWidth - scaledAbilitySize) / 2,
             child: MouseWatch(
               onDeleteKeyPressed: () {
-                if (index == null) return;
+                if (id == null) return;
 
-                ref.read(abilityProvider.notifier).removeAbility(index!);
+                ref.read(abilityProvider.notifier).removeAbility(id!);
               },
               child: Container(
                 width: scaledAbilitySize,

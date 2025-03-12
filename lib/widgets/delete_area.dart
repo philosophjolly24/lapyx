@@ -2,8 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/placed_classes.dart';
+import 'package:icarus/const/settings.dart';
+import 'package:icarus/providers/ability_provider.dart';
+import 'package:icarus/providers/agent_provider.dart';
+import 'package:icarus/providers/text_provider.dart';
 
 class DeleteArea extends ConsumerWidget {
   const DeleteArea({super.key});
@@ -11,17 +14,18 @@ class DeleteArea extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(16.0),
       child: SizedBox(
         height: 70,
         width: 70,
-        child: DragTarget<DraggableData>(
+        child: DragTarget(
           builder: (context, candidateData, rejectedData) {
             return Container(
-              color: const Color(0xFFFFD7D7),
+              color:
+                  candidateData.isNotEmpty ? Colors.red : Settings.sideBarColor,
               child: const Icon(
                 Icons.delete_outline,
-                color: Color(0xFFFF0000),
+                color: Color.fromARGB(255, 245, 245, 245),
               ),
             );
           },
@@ -29,13 +33,12 @@ class DeleteArea extends ConsumerWidget {
             final placedData = dragData.data;
 
             if (placedData is PlacedAgent) {
-              log("I am agent");
+              ref.read(agentProvider.notifier).removeAgent(placedData.id);
             } else if (placedData is PlacedAbility) {
-              log("I am ability");
+              ref.read(abilityProvider.notifier).removeAbility(placedData.id);
             } else if (placedData is PlacedText) {
-              log("I am text");
+              ref.read(textProvider.notifier).removeText(placedData.id);
             }
-
             log("I worked");
           },
         ),

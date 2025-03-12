@@ -11,7 +11,9 @@ class PlacedWidget {
     required this.position,
     required this.id,
   });
+
   final String id;
+
   @OffsetConverter()
   Offset position;
 
@@ -22,6 +24,12 @@ class PlacedWidget {
   factory PlacedWidget.fromJson(Map<String, dynamic> json) =>
       _$PlacedWidgetFromJson(json);
   Map<String, dynamic> toJson() => _$PlacedWidgetToJson(this);
+
+  static int getIndexByID(String id, List<PlacedWidget> elements) {
+    return elements.indexWhere(
+      (element) => element.id == id,
+    );
+  }
 }
 
 @JsonSerializable()

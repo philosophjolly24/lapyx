@@ -7,4 +7,6 @@ class Settings {
 
   static const double brushSize = 5;
   static const PhysicalKeyboardKey deleteKey = PhysicalKeyboardKey.keyX;
+
+  static const Color sideBarColor = Color(0xFF141114);
 }

@@ -61,12 +61,6 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                   child: InteractivePainter(),
                 ),
 
-                //Delete widget
-                Align(
-                  alignment: Alignment.topRight,
-                  child: DeleteArea(),
-                ),
-
                 //Agents
                 Positioned.fill(
                   child: PlacedWidgetBuilder(),

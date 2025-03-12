@@ -17,21 +17,40 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
     state = [...state, placedAgent];
   }
 
-  void bringFoward(int index) {
+  void bringFoward(String id) {
     final newState = [...state];
+
+    final index = PlacedWidget.getIndexByID(id, newState);
+
+    if (index < 0) return;
 
     final temp = newState.removeAt(index);
 
     state = [...newState, temp];
   }
 
-  void removeAgent(int index) {
+  void removeAgent(String id) {
     final newState = [...state];
 
+    final index = PlacedWidget.getIndexByID(id, newState);
+
+    if (index < 0) return;
     newState.removeAt(index);
 
     state = newState;
   }
+
+  // void removeAgentWithID(String id) {
+  //   final newState = [...state];
+
+  //   final index = newState.indexWhere(
+  //     (element) => element.id == id,
+  //   );
+  //   if (index < 0) return;
+  //   newState.removeAt(index);
+
+  //   state = newState;
+  // }
 
   String toJson() {
     final List<Map<String, dynamic>> jsonList =

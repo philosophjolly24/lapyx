@@ -12,13 +12,13 @@ import 'dart:math' as math;
 class PlacedAbilityWidget extends StatefulWidget {
   final PlacedAbility ability;
   final Function(DraggableDetails details) onDragEnd;
-  final int index;
+  final String id;
   final PlacedWidget data;
   const PlacedAbilityWidget({
     super.key,
     required this.ability,
     required this.onDragEnd,
-    required this.index,
+    required this.id,
     required this.data,
   });
 
@@ -35,7 +35,18 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
     final coordinateSystem = CoordinateSystem.instance;
 
     return Consumer(builder: (context, ref, child) {
-      double rotation = ref.watch(abilityProvider)[widget.index].rotation;
+      final index =
+          PlacedWidget.getIndexByID(widget.id, ref.watch(abilityProvider));
+      if (index < 0) {
+        return Draggable<PlacedWidget>(
+          data: widget.data,
+          feedback: widget.ability.data.abilityData.createWidget(null),
+          childWhenDragging: const SizedBox.shrink(),
+          onDragEnd: widget.onDragEnd,
+          child: widget.ability.data.abilityData.createWidget(widget.id),
+        );
+      }
+      double rotation = ref.watch(abilityProvider)[index].rotation;
       return Positioned(
         left: coordinateSystem.coordinateToScreen(widget.ability.position).dx,
         top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
@@ -45,8 +56,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                 feedback: widget.ability.data.abilityData.createWidget(null),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
-                child:
-                    widget.ability.data.abilityData.createWidget(widget.index),
+                child: widget.ability.data.abilityData.createWidget(widget.id),
               )
             : RotatableWidget(
                 rotation: rotation,
@@ -79,7 +89,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   final newRotation = (currentAngle) + (math.pi / 2);
                   ref
                       .read(abilityProvider.notifier)
-                      .updateRotation(widget.index, newRotation);
+                      .updateRotation(index, newRotation);
                 },
                 onPanEnd: (details) {
                   setState(() {
@@ -87,6 +97,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   });
                 },
                 child: Draggable<PlacedWidget>(
+                  data: widget.data,
                   feedback: Transform.rotate(
                     angle: rotation,
                     alignment: Alignment.topLeft,
@@ -95,19 +106,19 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                         .scale(coordinateSystem.scaleFactor,
                             coordinateSystem.scaleFactor),
                     child: ref
-                        .watch(abilityProvider)[widget.index]
+                        .watch(abilityProvider)[index]
                         .data
                         .abilityData
-                        .createWidget(widget.index, rotation),
+                        .createWidget(widget.id, rotation),
                   ),
                   childWhenDragging: const SizedBox.shrink(),
                   onDragEnd: widget.onDragEnd,
                   // dragAnchorStrategy: pointDragAnchorStrategy,
                   child: ref
-                      .watch(abilityProvider)[widget.index]
+                      .watch(abilityProvider)[index]
                       .data
                       .abilityData
-                      .createWidget(widget.index, rotation),
+                      .createWidget(widget.id, rotation),
                 ),
               ),
       );

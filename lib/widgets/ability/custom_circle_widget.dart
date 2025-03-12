@@ -15,10 +15,10 @@ class CustomCircleWidget extends ConsumerWidget {
     this.opacity = 70,
     this.innerSize = 2,
     this.fillColor,
-    required this.index,
+    required this.id,
   });
 
-  final int? index;
+  final String? id;
   final String iconPath;
   final double size;
   final Color outlineColor;
@@ -118,8 +118,8 @@ class CustomCircleWidget extends ConsumerWidget {
         alignment: Alignment.center,
         child: MouseWatch(
           onDeleteKeyPressed: () {
-            if (index == null) return;
-            ref.watch(abilityProvider.notifier).removeAbility(index!);
+            if (id == null) return;
+            ref.watch(abilityProvider.notifier).removeAbility(id!);
           },
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(3)),

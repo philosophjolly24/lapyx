@@ -9,10 +9,10 @@ class AgentWidget extends ConsumerWidget {
   const AgentWidget({
     super.key,
     required this.agent,
-    this.index,
+    required this.id,
   });
 
-  final int? index;
+  final String? id;
 
   final AgentData agent;
 
@@ -21,8 +21,8 @@ class AgentWidget extends ConsumerWidget {
     final coordinateSystem = CoordinateSystem.instance;
     return MouseWatch(
       onDeleteKeyPressed: () {
-        if (index == null) return;
-        ref.read(agentProvider.notifier).removeAgent(index!);
+        if (id == null) return;
+        ref.read(agentProvider.notifier).removeAgent(id!);
       },
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(3.0)),

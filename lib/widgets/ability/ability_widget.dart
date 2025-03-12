@@ -9,9 +9,10 @@ class AbilityWidget extends ConsumerWidget {
   const AbilityWidget({
     super.key,
     required this.iconPath,
-    required this.index,
+    required this.id,
   });
-  final int? index;
+
+  final String? id;
   final String iconPath;
 
   @override
@@ -20,8 +21,8 @@ class AbilityWidget extends ConsumerWidget {
 
     return MouseWatch(
       onDeleteKeyPressed: () {
-        if (index == null) return;
-        ref.read(abilityProvider.notifier).removeAbility(index!);
+        if (id == null) return;
+        ref.read(abilityProvider.notifier).removeAbility(id!);
       },
       child: ClipRRect(
         borderRadius: const BorderRadius.all(Radius.circular(3)),

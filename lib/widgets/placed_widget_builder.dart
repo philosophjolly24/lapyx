@@ -10,6 +10,7 @@ import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
+import 'package:icarus/widgets/delete_area.dart';
 import 'package:icarus/widgets/placed_ability_widget.dart';
 import 'package:icarus/widgets/text_widget.dart';
 import 'package:uuid/uuid.dart';
@@ -32,6 +33,87 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
           builder: (context, candidateData, rejectedData) {
             return Stack(
               children: [
+                const Align(
+                  alignment: Alignment.topRight,
+                  child: DeleteArea(),
+                ),
+                for (PlacedAbility ability in ref.watch(abilityProvider))
+                  PlacedAbilityWidget(
+                    data: ability,
+                    ability: ability,
+                    id: ability.id,
+                    onDragEnd: (details) {
+                      RenderBox renderBox =
+                          context.findRenderObject() as RenderBox;
+                      Offset localOffset =
+                          renderBox.globalToLocal(details.offset);
+                      // Updating info
+
+                      Offset virtualOffset =
+                          coordinateSystem.screenToCoordinate(localOffset);
+                      Offset safeArea =
+                          ability.data.abilityData.getAnchorPoint();
+
+                      if (coordinateSystem.isOutOfBounds(
+                          virtualOffset.translate(safeArea.dx, safeArea.dy))) {
+                        ref
+                            .read(abilityProvider.notifier)
+                            .removeAbility(ability.id);
+                        return;
+                      }
+
+                      log(renderBox.size.toString());
+
+                      ability.updatePosition(
+                        coordinateSystem.screenToCoordinate(localOffset),
+                      );
+                      ref
+                          .read(abilityProvider.notifier)
+                          .bringFoward(ability.id);
+                    },
+                  ),
+                for (PlacedAgent agent in ref.watch(agentProvider))
+                  Positioned(
+                    left:
+                        coordinateSystem.coordinateToScreen(agent.position).dx,
+                    top: coordinateSystem.coordinateToScreen(agent.position).dy,
+                    child: Draggable<PlacedWidget>(
+                      data: agent,
+                      feedback: AgentWidget(
+                        id: "",
+                        agent: AgentData.agents[agent.type]!,
+                      ),
+                      childWhenDragging: const SizedBox.shrink(),
+                      onDragEnd: (details) {
+                        RenderBox renderBox =
+                            context.findRenderObject() as RenderBox;
+                        Offset localOffset =
+                            renderBox.globalToLocal(details.offset);
+
+                        //Basically makes sure that if more than half is of the screen it gets deleted
+                        Offset virtualOffset =
+                            coordinateSystem.screenToCoordinate(localOffset);
+                        double safeArea = Settings.agentSize / 2;
+
+                        if (coordinateSystem.isOutOfBounds(
+                            virtualOffset.translate(safeArea, safeArea))) {
+                          ref
+                              .read(agentProvider.notifier)
+                              .removeAgent(agent.id);
+                          return;
+                        }
+
+                        agent.updatePosition(
+                          virtualOffset,
+                        );
+                        ref.read(agentProvider.notifier).bringFoward(agent.id);
+                      },
+                      child: AgentWidget(
+                        id: agent.id,
+                        agent: AgentData.agents[agent.type]!,
+                      ),
+                    ),
+                  ),
                 for (final (index, placedText)
                     in ref.watch(textProvider).indexed)
                   Positioned(
@@ -62,90 +144,22 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
 
                         if (coordinateSystem.isOutOfBounds(
                             virtualOffset.translate(safeArea, safeArea))) {
-                          ref.read(textProvider.notifier).removeText(index);
+                          ref
+                              .read(textProvider.notifier)
+                              .removeText(placedText.id);
                           return;
                         }
 
                         placedText.updatePosition(
                           virtualOffset,
                         );
-                        ref.read(textProvider.notifier).bringFoward(index);
+                        ref
+                            .read(textProvider.notifier)
+                            .bringFoward(placedText.id);
                       },
                       child: TextWidget(
                         text: placedText.text,
                         id: placedText.id,
-                      ),
-                    ),
-                  ),
-                for (final (index, ability)
-                    in ref.watch(abilityProvider).indexed)
-                  PlacedAbilityWidget(
-                    data: ability,
-                    ability: ability,
-                    index: index,
-                    onDragEnd: (details) {
-                      RenderBox renderBox =
-                          context.findRenderObject() as RenderBox;
-                      Offset localOffset =
-                          renderBox.globalToLocal(details.offset);
-                      // Updating info
-
-                      Offset virtualOffset =
-                          coordinateSystem.screenToCoordinate(localOffset);
-                      Offset safeArea =
-                          ability.data.abilityData.getAnchorPoint();
-
-                      if (coordinateSystem.isOutOfBounds(
-                          virtualOffset.translate(safeArea.dx, safeArea.dy))) {
-                        ref.read(abilityProvider.notifier).removeAbility(index);
-                        return;
-                      }
-
-                      log(renderBox.size.toString());
-
-                      ability.updatePosition(
-                        coordinateSystem.screenToCoordinate(localOffset),
-                      );
-                      ref.read(abilityProvider.notifier).bringFoward(index);
-                    },
-                  ),
-                for (final (index, agent) in ref.watch(agentProvider).indexed)
-                  Positioned(
-                    left:
-                        coordinateSystem.coordinateToScreen(agent.position).dx,
-                    top: coordinateSystem.coordinateToScreen(agent.position).dy,
-                    child: Draggable<PlacedWidget>(
-                      data: agent,
-                      feedback: AgentWidget(
-                        index: null,
-                        agent: AgentData.agents[agent.type]!,
-                      ),
-                      childWhenDragging: const SizedBox.shrink(),
-                      onDragEnd: (details) {
-                        RenderBox renderBox =
-                            context.findRenderObject() as RenderBox;
-                        Offset localOffset =
-                            renderBox.globalToLocal(details.offset);
-
-                        //Basically makes sure that if more than half is of the screen it gets deleted
-                        Offset virtualOffset =
-                            coordinateSystem.screenToCoordinate(localOffset);
-                        double safeArea = Settings.agentSize / 2;
-
-                        if (coordinateSystem.isOutOfBounds(
-                            virtualOffset.translate(safeArea, safeArea))) {
-                          ref.read(agentProvider.notifier).removeAgent(index);
-                          return;
-                        }
-
-                        agent.updatePosition(
-                          virtualOffset,
-                        );
-                        ref.read(agentProvider.notifier).bringFoward(index);
-                      },
-                      child: AgentWidget(
-                        index: index,
-                        agent: AgentData.agents[agent.type]!,
                       ),
                     ),
                   ),
