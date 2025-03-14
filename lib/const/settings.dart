@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:icarus/const/color_option.dart';
 
 class Settings {
   static const double agentSize = 30;
@@ -9,4 +11,11 @@ class Settings {
   static const PhysicalKeyboardKey deleteKey = PhysicalKeyboardKey.keyX;
 
   static const Color sideBarColor = Color(0xFF141114);
+  static List<ColorOption> penColors = [
+    ColorOption(color: Colors.white, isSelected: true),
+    ColorOption(color: Colors.red, isSelected: false),
+    ColorOption(color: Colors.blue, isSelected: false),
+    ColorOption(color: Colors.yellow, isSelected: false),
+    ColorOption(color: Colors.green, isSelected: false),
+  ];
 }

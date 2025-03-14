@@ -3,6 +3,7 @@ import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/drawing_element.dart';
@@ -90,14 +91,15 @@ class DrawingProvider extends Notifier<DrawingState> {
     state = state.copyWith(updateCounter: (state.updateCounter + 1));
   }
 
-  void startFreeDrawing(Offset start, CoordinateSystem coordinateSystem) {
+  void startFreeDrawing(
+      Offset start, CoordinateSystem coordinateSystem, Color activeColor) {
     if (state.currentElement != null) {
       dev.log(
           "An error occured the gesture detecture is attempting to draw while another line is active");
       return;
     }
 
-    FreeDrawing freeDrawing = FreeDrawing();
+    FreeDrawing freeDrawing = FreeDrawing(color: activeColor);
 
     freeDrawing.path.moveTo(start.dx, start.dy);
 
@@ -150,7 +152,7 @@ class DrawingProvider extends Notifier<DrawingState> {
       return;
     }
 
-    Line newLine = Line(null, lineStart: start, lineEnd: start);
+    Line newLine = Line(color: Colors.white, lineStart: start, lineEnd: start);
     listOfElements.add(newLine);
 
     state = state.copyWith(elements: listOfElements);
@@ -201,7 +203,8 @@ FreeDrawing douglasPeucker(FreeDrawing drawing, double epsilon) {
     return drawing;
   }
 
-  FreeDrawing newDrawing = FreeDrawing(listOfPoints: [...drawing.listOfPoints]);
+  FreeDrawing newDrawing = FreeDrawing(
+      listOfPoints: [...drawing.listOfPoints], color: drawing.color);
   final listOfPoints = newDrawing.listOfPoints;
   // Find the point farthest from the line between the first and last points
   double maxDistance = 0;

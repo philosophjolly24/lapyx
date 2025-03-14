@@ -5,14 +5,17 @@ import 'package:json_annotation/json_annotation.dart';
 
 part "drawing_element.g.dart";
 
-abstract class DrawingElement {}
+abstract class DrawingElement {
+  final Color color;
+
+  DrawingElement({required this.color});
+}
 
 class Line extends DrawingElement {
   final Offset lineStart;
   Offset lineEnd;
-  final Color? color;
 
-  Line(this.color, {required this.lineStart, required this.lineEnd});
+  Line({required this.lineStart, required this.lineEnd, required super.color});
 
   void updateEndPoint(Offset endPoint) {
     lineEnd = endPoint;
@@ -24,6 +27,7 @@ class FreeDrawing extends DrawingElement {
   FreeDrawing({
     List<Offset>? listOfPoints,
     Path? path,
+    required super.color,
   })  : listOfPoints = listOfPoints ?? [],
         path = path ?? Path();
 
@@ -109,8 +113,10 @@ class FreeDrawing extends DrawingElement {
   FreeDrawing copyWith({
     List<Offset>? listOfPoints,
     Path? path,
+    Color? color,
   }) {
     return FreeDrawing(
+      color: color ?? this.color,
       listOfPoints: listOfPoints ?? this.listOfPoints,
       path: path ?? this.path,
     );

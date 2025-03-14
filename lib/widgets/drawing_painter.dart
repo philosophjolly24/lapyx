@@ -5,6 +5,7 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
+import 'package:icarus/providers/pen_provider.dart';
 
 class InteractivePainter extends ConsumerStatefulWidget {
   const InteractivePainter({super.key});
@@ -44,15 +45,16 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
       child: RepaintBoundary(
         child: GestureDetector(
           onPanStart: (details) {
+            final currentColor = ref.read(penProvider).color;
             switch (currentInteractionState) {
               // case InteractionState.drawLine:
               //   Offset lineStart =
               //       coordinateSystem.screenToCoordinate(details.localPosition);
               //   ref.read(drawingProvider.notifier).startLine(lineStart);
+
               case InteractionState.drawing:
-                ref
-                    .read(drawingProvider.notifier)
-                    .startFreeDrawing(details.localPosition, coordinateSystem);
+                ref.read(drawingProvider.notifier).startFreeDrawing(
+                    details.localPosition, coordinateSystem, currentColor);
               default:
             }
           },

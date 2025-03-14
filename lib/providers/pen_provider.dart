@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/color_option.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/providers/map_provider.dart';
 
 enum PenMode { line, freeDraw, square }
 
@@ -14,7 +16,10 @@ class PenState {
   final double thickness;
   final PenMode penMode;
 
+  final List<ColorOption> listOfColors;
+
   PenState({
+    required this.listOfColors,
     required this.color,
     required this.hasArrow,
     required this.isDotted,
@@ -30,8 +35,10 @@ class PenState {
     double? opacity,
     double? thickness,
     PenMode? penMode,
+    List<ColorOption>? listOfColors,
   }) {
     return PenState(
+      listOfColors: listOfColors ?? this.listOfColors,
       penMode: penMode ?? this.penMode,
       color: color ?? this.color,
       hasArrow: hasArrow ?? this.hasArrow,
@@ -42,10 +49,13 @@ class PenState {
   }
 }
 
+final penProvider = NotifierProvider<PenProvider, PenState>(PenProvider.new);
+
 class PenProvider extends Notifier<PenState> {
   @override
   PenState build() {
     return PenState(
+      listOfColors: Settings.penColors,
       penMode: PenMode.freeDraw,
       color: Colors.white,
       hasArrow: false,
@@ -71,5 +81,20 @@ class PenProvider extends Notifier<PenState> {
       thickness: thickness,
       penMode: penMode,
     );
+  }
+
+  void setColor(int index) {
+    List<ColorOption> newColors = [...state.listOfColors];
+    Color selectedColor = Colors.white;
+    for (final (currentIndex, color) in newColors.indexed) {
+      if (currentIndex == index) {
+        selectedColor = color.color;
+        color.isSelected = true;
+      } else {
+        color.isSelected = false;
+      }
+    }
+
+    state = state.copyWith(listOfColors: newColors, color: selectedColor);
   }
 }
