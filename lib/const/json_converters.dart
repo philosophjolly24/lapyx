@@ -65,13 +65,15 @@ class AbilityInfoConverter
   }
 }
 
-/// A JsonConverter that converts between Color and String hex representation
 class ColorConverter implements JsonConverter<Color, String> {
   const ColorConverter();
 
   @override
   Color fromJson(String json) {
     // Handle null or empty string
+    if (json.isEmpty) {
+      return Colors.transparent;
+    }
 
     // Remove the hash if it exists
     final hexColor = json.startsWith('#') ? json.substring(1) : json;
@@ -101,17 +103,17 @@ class ColorConverter implements JsonConverter<Color, String> {
   @override
   String toJson(Color color) {
     // Handle null color
+    return _colorToHex(color);
+  }
 
-    // Convert to hex string using component accessors
-    return '#${color.a.toRadixString(16).padLeft(2, '0')}'
-        '${color.red.toRadixString(16).padLeft(2, '0')}'
-        '${color.green.toRadixString(16).padLeft(2, '0')}'
-        '${color.blue.toRadixString(16).padLeft(2, '0')}';
+  // Helper method to convert Color to hex string
+  String _colorToHex(Color color, {bool leadingHashSign = true}) {
+    final hexA = (color.a * 255).round().toRadixString(16).padLeft(2, '0');
+    final hexR = (color.r * 255).round().toRadixString(16).padLeft(2, '0');
+    final hexG = (color.g * 255).round().toRadixString(16).padLeft(2, '0');
+    final hexB = (color.b * 255).round().toRadixString(16).padLeft(2, '0');
 
-    // Alternative: if you want to exclude alpha channel:
-    // return '#${color.red.toRadixString(16).padLeft(2, '0')}'
-    //        '${color.green.toRadixString(16).padLeft(2, '0')}'
-    //        '${color.blue.toRadixString(16).padLeft(2, '0')}';
+    return '${leadingHashSign ? '#' : ''}$hexA$hexR$hexG$hexB';
   }
 }
 

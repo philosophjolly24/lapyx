@@ -20,7 +20,8 @@ class DeleteArea extends ConsumerWidget {
         width: 70,
         child: DragTarget(
           builder: (context, candidateData, rejectedData) {
-            return Container(
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
               color:
                   candidateData.isNotEmpty ? Colors.red : Settings.sideBarColor,
               child: const Icon(

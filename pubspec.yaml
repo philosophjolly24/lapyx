@@ -38,6 +38,7 @@ flutter:
 
   assets:
     - assets/maps/
+    - assets/maps/thumbnails/
     - assets/agents/Omen/
     - assets/agents/Killjoy/
     - assets/agents/Sova/

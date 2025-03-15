@@ -6,6 +6,7 @@ import 'package:json_annotation/json_annotation.dart';
 part "drawing_element.g.dart";
 
 abstract class DrawingElement {
+  @ColorConverter()
   final Color color;
 
   DrawingElement({required this.color});

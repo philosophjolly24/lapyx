@@ -20,7 +20,7 @@ class _DrawingToolsState extends ConsumerState<DrawingTools> {
     return ClipRect(
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        height: isExpanded ? 200 : 0, // Change height based on state
+        height: isExpanded ? 120 : 0, // Change height based on state
         curve: Curves.easeInOut,
         child: !isExpanded
             ? const SizedBox.shrink()

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/drawing_element.dart';
@@ -45,7 +47,8 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
       child: RepaintBoundary(
         child: GestureDetector(
           onPanStart: (details) {
-            final currentColor = ref.read(penProvider).color;
+            final currentColor = ref.watch(penProvider).color;
+            log(currentColor.toString());
             switch (currentInteractionState) {
               // case InteractionState.drawLine:
               //   Offset lineStart =
@@ -120,6 +123,7 @@ class DrawingPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     for (int i = 0; i < elements.length; i++) {
+      paint.color = elements[i].color;
       if (elements[i] is Line) {
         Line line = elements[i] as Line;
         Offset screenStartOffset =
@@ -139,6 +143,7 @@ class DrawingPainter extends CustomPainter {
     }
 
     if (currentLine != null) {
+      paint.color = currentLine!.color;
       if (currentLine is FreeDrawing) {
         final drawingElement = currentLine as FreeDrawing;
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/color_option.dart';
 import 'package:icarus/const/settings.dart';
-import 'package:icarus/providers/map_provider.dart';
 
 enum PenMode { line, freeDraw, square }
 

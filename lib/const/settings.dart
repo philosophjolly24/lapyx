@@ -11,6 +11,7 @@ class Settings {
   static const PhysicalKeyboardKey deleteKey = PhysicalKeyboardKey.keyX;
 
   static const Color sideBarColor = Color(0xFF141114);
+  static const Color highlightColor = Color(0x1AD2D6DB);
   static List<ColorOption> penColors = [
     ColorOption(color: Colors.white, isSelected: true),
     ColorOption(color: Colors.red, isSelected: false),

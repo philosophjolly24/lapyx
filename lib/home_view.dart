@@ -11,11 +11,12 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Strategy"),
-      ),
-      body: const StrategyView(),
-    );
+    return const StrategyView();
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: const Text("Strategy"),
+    //   ),
+    //   body: const StrategyView(),
+    // );
   }
 }
