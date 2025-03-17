@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:icarus/interactive_map.dart';
 import 'package:icarus/sidebar.dart';
 import 'package:icarus/widgets/map_selector.dart';

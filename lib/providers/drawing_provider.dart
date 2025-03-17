@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/bounding_box.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/drawing_element.dart';
 
@@ -90,6 +91,64 @@ class DrawingProvider extends Notifier<DrawingState> {
     state = state.copyWith(updateCounter: (state.updateCounter + 1));
   }
 
+  void deleteDrawing(int index) {
+    if (index < 0) return;
+    final newElements = [...state.elements];
+
+    newElements.removeAt(index);
+    state = state.copyWith(elements: [...newElements]);
+    _triggerRepaint();
+  }
+
+  void onErase(Offset mousePos) {
+    final Set<int> indicesToDelete = {};
+
+    for (final (index, drawing) in state.elements.indexed) {
+      if (drawing is FreeDrawing) {
+        if (drawing.boundingBox!.isWithin(mousePos)) {
+          for (int i = 0; i < drawing.listOfPoints.length - 1; i++) {
+            double distance = distanceToLineSegment(
+                mousePos, drawing.listOfPoints[i], drawing.listOfPoints[i + 1]);
+
+            if (distance < 100) {
+              indicesToDelete.add(index);
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    for (int index in indicesToDelete.toList()
+      ..sort((a, b) => b.compareTo(a))) {
+      deleteDrawing(index);
+    }
+  }
+
+  double distanceToLineSegment(Offset p, Offset a, Offset b) {
+    // If a and b are the same point, just return distance to that point
+    if (a == b) return (p - a).distance;
+
+    // Calculate squared length of segment ab
+    final double lengthSquared =
+        (b - a).dx * (b - a).dx + (b - a).dy * (b - a).dy;
+
+    // Calculate projection of point p onto line ab
+    // t is the normalized position (0-1) along the line segment
+    double t = ((p.dx - a.dx) * (b.dx - a.dx) + (p.dy - a.dy) * (b.dy - a.dy)) /
+        lengthSquared;
+
+    // Clamp t to the segment
+    t = t.clamp(0.0, 1.0);
+
+    // Calculate the closest point on the segment
+    final Offset projection =
+        Offset(a.dx + t * (b.dx - a.dx), a.dy + t * (b.dy - a.dy));
+
+    // Return the distance to the closest point
+    return (p - projection).distance;
+  }
+
   void startFreeDrawing(
       Offset start, CoordinateSystem coordinateSystem, Color activeColor) {
     if (state.currentElement != null) {
@@ -97,12 +156,15 @@ class DrawingProvider extends Notifier<DrawingState> {
           "An error occured the gesture detecture is attempting to draw while another line is active");
       return;
     }
+    final Offset normalizedStart = coordinateSystem.screenToCoordinate(start);
 
-    FreeDrawing freeDrawing = FreeDrawing(color: activeColor);
+    FreeDrawing freeDrawing = FreeDrawing(
+        color: activeColor,
+        boundingBox: BoundingBox(min: normalizedStart, max: normalizedStart));
 
     freeDrawing.path.moveTo(start.dx, start.dy);
 
-    freeDrawing.listOfPoints.add(coordinateSystem.screenToCoordinate(start));
+    freeDrawing.listOfPoints.add(normalizedStart);
 
     state = state.copyWith(currentElement: freeDrawing);
 
@@ -111,6 +173,7 @@ class DrawingProvider extends Notifier<DrawingState> {
 
   void updateFreeDrawing(Offset offset, CoordinateSystem coordinateSystem) {
     final currentDrawing = (state.currentElement as FreeDrawing);
+    final normalizedOffset = coordinateSystem.screenToCoordinate(offset);
 
     List<Offset> currentPoints = currentDrawing.listOfPoints;
     Offset lastPoint = currentPoints[currentPoints.length - 1];
@@ -118,12 +181,23 @@ class DrawingProvider extends Notifier<DrawingState> {
     final minDistance = coordinateSystem.scale(3);
     if ((lastPoint - offset).distance < minDistance) return;
 
+    final boundingBox =
+        updateBoundingBox(currentDrawing.boundingBox!, normalizedOffset);
+
     currentDrawing.path.lineTo(offset.dx, offset.dy);
     currentDrawing.listOfPoints
         .add(coordinateSystem.screenToCoordinate(offset));
-
+    currentDrawing.boundingBox = boundingBox;
     state = state.copyWith(currentElement: currentDrawing);
     _triggerRepaint();
+  }
+
+  BoundingBox updateBoundingBox(BoundingBox currentBox, Offset newPoint) {
+    final minX = min(currentBox.min.dx, newPoint.dx);
+    final minY = min(currentBox.min.dy, newPoint.dy);
+    final maxX = max(currentBox.max.dx, newPoint.dx);
+    final maxY = max(currentBox.max.dy, newPoint.dy);
+    return BoundingBox(min: Offset(minX, minY), max: Offset(maxX, maxY));
   }
 
   void finishFreeDrawing(Offset offset, CoordinateSystem coordinateSystem) {
@@ -203,7 +277,9 @@ FreeDrawing douglasPeucker(FreeDrawing drawing, double epsilon) {
   }
 
   FreeDrawing newDrawing = FreeDrawing(
-      listOfPoints: [...drawing.listOfPoints], color: drawing.color);
+      listOfPoints: [...drawing.listOfPoints],
+      color: drawing.color,
+      boundingBox: drawing.boundingBox);
   final listOfPoints = newDrawing.listOfPoints;
   // Find the point farthest from the line between the first and last points
   double maxDistance = 0;

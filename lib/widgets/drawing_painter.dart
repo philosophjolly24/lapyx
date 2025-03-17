@@ -58,6 +58,10 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
               case InteractionState.drawing:
                 ref.read(drawingProvider.notifier).startFreeDrawing(
                     details.localPosition, coordinateSystem, currentColor);
+              case InteractionState.erasing:
+                final normalizedPosition = CoordinateSystem.instance
+                    .screenToCoordinate(details.localPosition);
+                ref.read(drawingProvider.notifier).onErase(normalizedPosition);
               default:
             }
           },
@@ -72,6 +76,10 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
                 ref
                     .read(drawingProvider.notifier)
                     .updateFreeDrawing(details.localPosition, coordinateSystem);
+              case InteractionState.erasing:
+                final normalizedPosition = CoordinateSystem.instance
+                    .screenToCoordinate(details.localPosition);
+                ref.read(drawingProvider.notifier).onErase(normalizedPosition);
               default:
             }
           },
@@ -85,6 +93,10 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
                 ref
                     .read(drawingProvider.notifier)
                     .finishFreeDrawing(details.localPosition, coordinateSystem);
+              case InteractionState.erasing:
+                final normalizedPosition = CoordinateSystem.instance
+                    .screenToCoordinate(details.localPosition);
+                ref.read(drawingProvider.notifier).onErase(normalizedPosition);
               default:
             }
           },

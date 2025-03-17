@@ -4,6 +4,7 @@ enum InteractionState {
   navigation,
   drag,
   drawing,
+  erasing,
 }
 
 final interactionStateProvider =

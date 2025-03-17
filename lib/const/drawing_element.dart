@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icarus/const/bounding_box.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/json_converters.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -8,15 +9,20 @@ part "drawing_element.g.dart";
 abstract class DrawingElement {
   @ColorConverter()
   final Color color;
+  BoundingBox? boundingBox;
 
-  DrawingElement({required this.color});
+  DrawingElement({required this.color, this.boundingBox});
 }
 
 class Line extends DrawingElement {
   final Offset lineStart;
   Offset lineEnd;
 
-  Line({required this.lineStart, required this.lineEnd, required super.color});
+  Line({
+    required this.lineStart,
+    required this.lineEnd,
+    required super.color,
+  });
 
   void updateEndPoint(Offset endPoint) {
     lineEnd = endPoint;
@@ -29,6 +35,7 @@ class FreeDrawing extends DrawingElement {
     List<Offset>? listOfPoints,
     Path? path,
     required super.color,
+    super.boundingBox,
   })  : listOfPoints = listOfPoints ?? [],
         path = path ?? Path();
 
@@ -115,11 +122,13 @@ class FreeDrawing extends DrawingElement {
     List<Offset>? listOfPoints,
     Path? path,
     Color? color,
+    BoundingBox? boundingBox,
   }) {
     return FreeDrawing(
       color: color ?? this.color,
       listOfPoints: listOfPoints ?? this.listOfPoints,
       path: path ?? this.path,
+      boundingBox: boundingBox ?? this.boundingBox,
     );
   }
 

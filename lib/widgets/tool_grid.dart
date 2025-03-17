@@ -5,6 +5,7 @@ import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/drawing_tools.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:uuid/uuid.dart';
 
 class ToolGrid extends ConsumerWidget {
@@ -46,6 +47,22 @@ class ToolGrid extends ConsumerWidget {
                 },
                 icon: const Icon(Icons.draw),
                 isSelected: currentInteractionState == InteractionState.drawing,
+              ),
+              IconButton(
+                onPressed: () {
+                  switch (currentInteractionState) {
+                    case InteractionState.erasing:
+                      ref
+                          .read(interactionStateProvider.notifier)
+                          .update(InteractionState.navigation);
+                    default:
+                      ref
+                          .read(interactionStateProvider.notifier)
+                          .update(InteractionState.erasing);
+                  }
+                },
+                icon: const Icon(Symbols.ink_eraser_rounded),
+                isSelected: currentInteractionState == InteractionState.erasing,
               ),
               IconButton(
                 onPressed: () {

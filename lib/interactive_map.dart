@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/maps.dart';
+import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/widgets/dot_painter.dart';
 
@@ -64,6 +65,15 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                 Positioned.fill(
                   child: PlacedWidgetBuilder(),
                 ),
+
+                // TODO: Later
+                // Positioned.fill(
+                //   child: MouseRegion(
+                //     onHover: (event) {
+                //       // if(ref.watch(interactionStateProvider).)
+                //     },
+                //   ),
+                // )
               ],
             ),
           ),
