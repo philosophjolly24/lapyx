@@ -192,20 +192,13 @@ class DrawingProvider extends Notifier<DrawingState> {
     _triggerRepaint();
   }
 
-  BoundingBox updateBoundingBox(BoundingBox currentBox, Offset newPoint) {
-    final minX = min(currentBox.min.dx, newPoint.dx);
-    final minY = min(currentBox.min.dy, newPoint.dy);
-    final maxX = max(currentBox.max.dx, newPoint.dx);
-    final maxY = max(currentBox.max.dy, newPoint.dy);
-    return BoundingBox(min: Offset(minX, minY), max: Offset(maxX, maxY));
-  }
-
   void finishFreeDrawing(Offset offset, CoordinateSystem coordinateSystem) {
     final currentDrawing = state.currentElement as FreeDrawing;
     currentDrawing.listOfPoints
         .add(coordinateSystem.screenToCoordinate(offset));
 
-    FreeDrawing simplifiedDrawing = douglasPeucker(currentDrawing, 1.5);
+    FreeDrawing simplifiedDrawing = douglasPeucker(currentDrawing, 1.4);
+    // FreeDrawing simplifiedDrawing = currentDrawing.copyWith();
     // douglasPeucker(currentDrawing, 1);
 
     simplifiedDrawing.rebuildPath(coordinateSystem);
@@ -213,6 +206,14 @@ class DrawingProvider extends Notifier<DrawingState> {
       elements: [...state.elements, simplifiedDrawing],
     );
     _triggerRepaint();
+  }
+
+  BoundingBox updateBoundingBox(BoundingBox currentBox, Offset newPoint) {
+    final minX = min(currentBox.min.dx, newPoint.dx);
+    final minY = min(currentBox.min.dy, newPoint.dy);
+    final maxX = max(currentBox.max.dx, newPoint.dx);
+    final maxY = max(currentBox.max.dy, newPoint.dy);
+    return BoundingBox(min: Offset(minX, minY), max: Offset(maxX, maxY));
   }
 
   //TODO: Fix ts later
@@ -270,7 +271,6 @@ class DrawingProvider extends Notifier<DrawingState> {
 }
 
 //Yes I used AI to write the algo. I promise you I understand how it works
-
 FreeDrawing douglasPeucker(FreeDrawing drawing, double epsilon) {
   if (drawing.listOfPoints.length < 3) {
     return drawing;
@@ -281,6 +281,7 @@ FreeDrawing douglasPeucker(FreeDrawing drawing, double epsilon) {
       color: drawing.color,
       boundingBox: drawing.boundingBox);
   final listOfPoints = newDrawing.listOfPoints;
+
   // Find the point farthest from the line between the first and last points
   double maxDistance = 0;
   int index = 0;
@@ -296,8 +297,6 @@ FreeDrawing douglasPeucker(FreeDrawing drawing, double epsilon) {
 
   // If the max distance is greater than epsilon, recursively simplify
   if (maxDistance > epsilon) {
-    // final leftDrawing = newDrawing.copyWith(listOfPoints: listOfPoints.sublist(0, index + 1));
-
     final leftDrawing = douglasPeucker(
         newDrawing.copyWith(listOfPoints: listOfPoints.sublist(0, index + 1)),
         epsilon);
@@ -308,14 +307,14 @@ FreeDrawing douglasPeucker(FreeDrawing drawing, double epsilon) {
 
     // Combine the results, removing the duplicate point at the split
     newDrawing.listOfPoints = [
-      ...leftDrawing.listOfPoints,
-      ...rightDrawing.listOfPoints.sublist(1)
+      ...leftDrawing.listOfPoints
+          .sublist(0, leftDrawing.listOfPoints.length - 1),
+      ...rightDrawing.listOfPoints
     ];
     return newDrawing;
   } else {
     // If no point is far enough, return the endpoints
     newDrawing.listOfPoints = [listOfPoints.first, listOfPoints.last];
-
     return newDrawing;
   }
 }

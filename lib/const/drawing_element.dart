@@ -63,57 +63,27 @@ class FreeDrawing extends DrawingElement {
         .map((p) => coordinateSystem.coordinateToScreen(p))
         .toList();
 
-    // screenPoints = pathSmoothing(screenPoints);
-
     // Move to first point
     path.moveTo(screenPoints[0].dx, screenPoints[0].dy);
 
-    for (int i = 1; i < screenPoints.length - 1; i++) {
-      final point1 = screenPoints[i];
-      final point2 = screenPoints[i + 1];
-      // Calculate the control points for the cubic Bezier curve
-      final controlPoint1 = Offset(
-        (point1.dx + point2.dx) / 2,
-        (point1.dy + point2.dy) / 2,
-      );
-      path.cubicTo(
-        point1.dx, // Control point 1 x
-        point1.dy, // Control point 1 y
-        controlPoint1.dx, // Control point 2 x
-        controlPoint1.dy, // Control point 2 y
-        point2.dx, // End point x
-        point2.dy, // End point y
-      );
+    Offset? previousPoint;
+    for (int i = 0; i < screenPoints.length; i++) {
+      final current = screenPoints[i];
+
+      if (i != 0 && previousPoint != null) {
+        double midX = (previousPoint.dx + current.dx) / 2;
+        double midY = (previousPoint.dy + current.dy) / 2;
+        if (i == 1) {
+          path.lineTo(midX, midY);
+        } else {
+          path.quadraticBezierTo(
+              previousPoint.dx, previousPoint.dy, midX, midY);
+        }
+      }
+      previousPoint = current;
     }
-    // // Add cubic Bezier segments between points
-    // for (int i = 0; i < screenPoints.length; i++) {
-    //   final p0 = i > 0 ? screenPoints[i - 1] : screenPoints[0];
-    //   final p1 = screenPoints[i];
-    //   final p2 = i < screenPoints.length - 1 ? screenPoints[i + 1] : p1;
-    //   final p3 = i < screenPoints.length - 2 ? screenPoints[i + 2] : p2;
 
-    //   if (i == 0) {
-    //     // First segment
-    //     final controlPoint1 = p1 + (p2 - p0) * 0.1;
-    //     final controlPoint2 = p2 - (p3 - p1) * 0.1;
-    //     path.cubicTo(controlPoint1.dx, controlPoint1.dy, controlPoint2.dx,
-    //         controlPoint2.dy, p2.dx, p2.dy);
-    //   } else if (i < screenPoints.length - 2) {
-    //     // Middle segments
-    //     const tension = 0.5; // Adjust this value (0.0-1.0) for curve tightness
-    //     final controlPoint1 = p1 + (p2 - p0) * tension * 0.5;
-    //     final controlPoint2 = p2 - (p3 - p1) * tension * 0.5;
-    //     path.cubicTo(controlPoint1.dx, controlPoint1.dy, controlPoint2.dx,
-    //         controlPoint2.dy, p2.dx, p2.dy);
-    //   }
-    // }
-
-    // // Handle last segment if needed
-    // if (screenPoints.length >= 2) {
-    //   final last = screenPoints[screenPoints.length - 1];
-    //   final secondLast = screenPoints[screenPoints.length - 2];
-    //   path.quadraticBezierTo(secondLast.dx, secondLast.dy, last.dx, last.dy);
-    // }
+    path.lineTo(previousPoint!.dx, previousPoint.dy);
 
     this.path = path;
   }
