@@ -1,18 +1,51 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum ActionType {
+enum ActionGroup {
   agent,
   ability,
   drawing,
 }
 
-class ActionProvider extends Notifier<List<ActionType>> {
+enum ActionType {
+  addition,
+  deletion,
+  edit,
+}
+
+class UserAction {
+  final ActionGroup group;
+  final String id;
+  final ActionType type;
+  UserAction({required this.type, required this.id, required this.group});
+}
+
+class ActionProvider extends Notifier<List<UserAction>> {
+  List<UserAction> poppedItems = [];
+
   @override
-  List<ActionType> build() {
+  List<UserAction> build() {
     return [];
   }
 
-  void addAction(ActionType action) {
-    state = [action, ...state];
+  void addAction(UserAction action) {
+    state = [...state, action];
+  }
+
+  void undoAction(WidgetRef ref) {
+    if (state.isEmpty) return;
+
+    final currentAction = state.last;
+
+    switch (currentAction.group) {
+      case ActionGroup.agent:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case ActionGroup.ability:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case ActionGroup.drawing:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+    }
   }
 }

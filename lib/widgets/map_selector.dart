@@ -60,7 +60,7 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
               width: 2,
             ),
           ),
-          width: 260,
+          width: 262,
           height: 65,
           child: Padding(
             padding: const EdgeInsets.all(4.0),
