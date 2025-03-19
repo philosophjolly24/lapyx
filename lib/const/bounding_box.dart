@@ -1,7 +1,15 @@
 import 'dart:ui';
 
+import 'package:icarus/const/json_converters.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'bounding_box.g.dart';
+
+@JsonSerializable()
 class BoundingBox {
+  @OffsetConverter()
   final Offset min;
+
+  @OffsetConverter()
   final Offset max;
 
   BoundingBox({required this.min, required this.max});
@@ -15,6 +23,11 @@ class BoundingBox {
     }
     return false;
   }
+
+  Map<String, dynamic> toJson() => _$BoundingBoxToJson(this);
+
+  factory BoundingBox.fromJson(Map<String, dynamic> json) =>
+      _$BoundingBoxFromJson(json);
 
   @override
   String toString() {

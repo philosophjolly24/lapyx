@@ -9,9 +9,17 @@ part "drawing_element.g.dart";
 abstract class DrawingElement {
   @ColorConverter()
   final Color color;
+  final bool isDotted;
+  final bool hasArrow;
+
   BoundingBox? boundingBox;
 
-  DrawingElement({required this.color, this.boundingBox});
+  DrawingElement({
+    required this.color,
+    this.boundingBox,
+    required this.isDotted,
+    required this.hasArrow,
+  });
 }
 
 class Line extends DrawingElement {
@@ -22,6 +30,8 @@ class Line extends DrawingElement {
     required this.lineStart,
     required this.lineEnd,
     required super.color,
+    required super.isDotted,
+    required super.hasArrow,
   });
 
   void updateEndPoint(Offset endPoint) {
@@ -36,6 +46,8 @@ class FreeDrawing extends DrawingElement {
     Path? path,
     required super.color,
     super.boundingBox,
+    required super.isDotted,
+    required super.hasArrow,
   })  : listOfPoints = listOfPoints ?? [],
         path = path ?? Path();
 
@@ -93,12 +105,16 @@ class FreeDrawing extends DrawingElement {
     Path? path,
     Color? color,
     BoundingBox? boundingBox,
+    bool? isDotted,
+    bool? hasArrow,
   }) {
     return FreeDrawing(
       color: color ?? this.color,
       listOfPoints: listOfPoints ?? this.listOfPoints,
       path: path ?? this.path,
       boundingBox: boundingBox ?? this.boundingBox,
+      isDotted: isDotted ?? this.isDotted,
+      hasArrow: hasArrow ?? this.hasArrow,
     );
   }
 

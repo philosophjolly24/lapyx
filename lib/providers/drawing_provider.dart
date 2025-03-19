@@ -149,8 +149,8 @@ class DrawingProvider extends Notifier<DrawingState> {
     return (p - projection).distance;
   }
 
-  void startFreeDrawing(
-      Offset start, CoordinateSystem coordinateSystem, Color activeColor) {
+  void startFreeDrawing(Offset start, CoordinateSystem coordinateSystem,
+      Color activeColor, bool isDotted, bool hasArrow) {
     if (state.currentElement != null) {
       dev.log(
           "An error occured the gesture detecture is attempting to draw while another line is active");
@@ -159,8 +159,11 @@ class DrawingProvider extends Notifier<DrawingState> {
     final Offset normalizedStart = coordinateSystem.screenToCoordinate(start);
 
     FreeDrawing freeDrawing = FreeDrawing(
-        color: activeColor,
-        boundingBox: BoundingBox(min: normalizedStart, max: normalizedStart));
+      hasArrow: hasArrow,
+      isDotted: isDotted,
+      color: activeColor,
+      boundingBox: BoundingBox(min: normalizedStart, max: normalizedStart),
+    );
 
     freeDrawing.path.moveTo(start.dx, start.dy);
 
@@ -185,8 +188,10 @@ class DrawingProvider extends Notifier<DrawingState> {
         updateBoundingBox(currentDrawing.boundingBox!, normalizedOffset);
 
     currentDrawing.path.lineTo(offset.dx, offset.dy);
+
     currentDrawing.listOfPoints
         .add(coordinateSystem.screenToCoordinate(offset));
+
     currentDrawing.boundingBox = boundingBox;
     state = state.copyWith(currentElement: currentDrawing);
     _triggerRepaint();
@@ -198,8 +203,6 @@ class DrawingProvider extends Notifier<DrawingState> {
         .add(coordinateSystem.screenToCoordinate(offset));
 
     FreeDrawing simplifiedDrawing = douglasPeucker(currentDrawing, 1.4);
-    // FreeDrawing simplifiedDrawing = currentDrawing.copyWith();
-    // douglasPeucker(currentDrawing, 1);
 
     simplifiedDrawing.rebuildPath(coordinateSystem);
     state = state.copyWithButEvil(
@@ -226,8 +229,8 @@ class DrawingProvider extends Notifier<DrawingState> {
       return;
     }
 
-    Line newLine = Line(color: Colors.white, lineStart: start, lineEnd: start);
-    listOfElements.add(newLine);
+    // Line newLine = Line(color: Colors.white, lineStart: start, lineEnd: start);
+    // listOfElements.add(newLine);
 
     state = state.copyWith(elements: listOfElements);
     // _indexOfCurrentEdit = listOfElements.length - 1;
@@ -275,11 +278,8 @@ FreeDrawing douglasPeucker(FreeDrawing drawing, double epsilon) {
   if (drawing.listOfPoints.length < 3) {
     return drawing;
   }
+  FreeDrawing newDrawing = drawing.copyWith();
 
-  FreeDrawing newDrawing = FreeDrawing(
-      listOfPoints: [...drawing.listOfPoints],
-      color: drawing.color,
-      boundingBox: drawing.boundingBox);
   final listOfPoints = newDrawing.listOfPoints;
 
   // Find the point farthest from the line between the first and last points
@@ -337,30 +337,4 @@ double perpendicularDistance(Offset point, Offset lineStart, Offset lineEnd) {
   double denominator = sqrt(dx * dx + dy * dy);
 
   return numerator / denominator;
-}
-
-List<Offset> pathSmoothing(List<Offset> points) {
-  final List<Offset> smoothPoints = [];
-  if (points.length < 2) {
-    return points;
-  }
-
-  for (int i = 0; i < points.length - 1; i++) {
-    final p0 = points[i];
-
-    final p1 = points[1 + i];
-
-    final q = Offset(
-      0.75 * p0.dx + 0.25 * p1.dx,
-      0.75 * p0.dy + 0.25 * p1.dy,
-    );
-    final r = Offset(
-      0.25 * p0.dx + 0.75 * p1.dx,
-      0.25 * p0.dy + 0.75 * p1.dy,
-    );
-
-    smoothPoints.add(q);
-    smoothPoints.add(r);
-  }
-  return smoothPoints;
 }

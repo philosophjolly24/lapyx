@@ -48,6 +48,8 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
         child: GestureDetector(
           onPanStart: (details) {
             final currentColor = ref.watch(penProvider).color;
+            final hasArrow = ref.watch(penProvider).hasArrow;
+            final isDotted = ref.watch(penProvider).isDotted;
             log(currentColor.toString());
             switch (currentInteractionState) {
               // case InteractionState.drawLine:
@@ -57,7 +59,13 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
 
               case InteractionState.drawing:
                 ref.read(drawingProvider.notifier).startFreeDrawing(
-                    details.localPosition, coordinateSystem, currentColor);
+                      details.localPosition,
+                      coordinateSystem,
+                      currentColor,
+                      isDotted,
+                      hasArrow,
+                    );
+
               case InteractionState.erasing:
                 final normalizedPosition = CoordinateSystem.instance
                     .screenToCoordinate(details.localPosition);
