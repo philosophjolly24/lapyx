@@ -103,10 +103,10 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                           return;
                         }
 
-                        agent.updatePosition(
-                          virtualOffset,
-                        );
-                        ref.read(agentProvider.notifier).bringFoward(agent.id);
+                        //State updates aren't really clear with the current solution
+                        ref
+                            .read(agentProvider.notifier)
+                            .updatePosition(virtualOffset, agent.id);
                       },
                       child: AgentWidget(
                         id: agent.id,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/home_view.dart';
+import 'package:icarus/widgets/global_shortcuts.dart';
 // import 'package:window_size/window_size.dart';
 
 Future<void> main() async {
@@ -51,6 +52,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return const HomeView();
+    return const GlobalShortcuts(child: HomeView());
   }
 }

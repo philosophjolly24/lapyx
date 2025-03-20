@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/json_converters.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -14,11 +17,36 @@ class PlacedWidget {
 
   final String id;
 
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  List<Offset> positionHistory = [];
+
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  List<Offset> poppedPosition = [];
+
   @OffsetConverter()
   Offset position;
 
   void updatePosition(Offset newPosition) {
+    positionHistory.add(position);
     position = newPosition;
+
+    log(positionHistory.toString());
+  }
+
+  void undoPosition() {
+    if (positionHistory.isEmpty) return;
+
+    poppedPosition.add(position);
+    position = positionHistory.last;
+    positionHistory.removeLast();
+  }
+
+  void redoPosition() {
+    if (poppedPosition.isEmpty) return;
+
+    positionHistory.add(position);
+    position = poppedPosition.last;
+    poppedPosition.removeLast();
   }
 
   factory PlacedWidget.fromJson(Map<String, dynamic> json) =>

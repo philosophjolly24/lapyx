@@ -32,7 +32,7 @@ class _MouseWatchState extends ConsumerState<MouseWatch> {
       onExit: (_) {
         setState(() {
           isMouseInRegion = false;
-          _focusNode.unfocus();
+          // _focusNode.unfocus();
         });
       },
       child: FocusableActionDetector(

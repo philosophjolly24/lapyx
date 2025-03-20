@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icarus/interactive_map.dart';
 import 'package:icarus/sidebar.dart';
+import 'package:icarus/widgets/global_shortcuts.dart';
 import 'package:icarus/widgets/map_selector.dart';
 import 'package:icarus/widgets/save_and_load_button.dart';
 
