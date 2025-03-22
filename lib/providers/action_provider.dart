@@ -39,7 +39,10 @@ class ActionProvider extends Notifier<List<UserAction>> {
 
   void redoAction() {
     log(poppedItems.length.toString());
-    if (poppedItems.isEmpty) return;
+    if (poppedItems.isEmpty) {
+      log("Popped list is empty");
+      return;
+    }
 
     final poppedAction = poppedItems.last;
     log(poppedItems.length.toString());

@@ -59,16 +59,15 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                   ),
                 ),
 
-                //Painting
-                Positioned.fill(
-                  child: InteractivePainter(),
-                ),
-
                 //Agents
                 Positioned.fill(
                   child: PlacedWidgetBuilder(),
                 ),
 
+                //Painting
+                Positioned.fill(
+                  child: InteractivePainter(),
+                ),
                 // TODO: Later
                 // Positioned.fill(
                 //   child: MouseRegion(

@@ -8,6 +8,7 @@ import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
+import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/widgets/delete_area.dart';
@@ -29,169 +30,177 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
     final coordinateSystem = CoordinateSystem.instance;
     return LayoutBuilder(
       builder: (context, constraints) {
-        return DragTarget<DraggableData>(
-          builder: (context, candidateData, rejectedData) {
-            return Stack(
-              children: [
-                const Align(
-                  alignment: Alignment.topRight,
-                  child: DeleteArea(),
-                ),
-                for (PlacedAbility ability in ref.watch(abilityProvider))
-                  PlacedAbilityWidget(
-                    data: ability,
-                    ability: ability,
-                    id: ability.id,
-                    onDragEnd: (details) {
-                      RenderBox renderBox =
-                          context.findRenderObject() as RenderBox;
-                      Offset localOffset =
-                          renderBox.globalToLocal(details.offset);
-                      // Updating info
-
-                      Offset virtualOffset =
-                          coordinateSystem.screenToCoordinate(localOffset);
-                      Offset safeArea =
-                          ability.data.abilityData.getAnchorPoint();
-
-                      if (coordinateSystem.isOutOfBounds(
-                          virtualOffset.translate(safeArea.dx, safeArea.dy))) {
-                        ref
-                            .read(abilityProvider.notifier)
-                            .removeAbility(ability.id);
-                        return;
-                      }
-
-                      log(renderBox.size.toString());
-
-                      ability.updatePosition(
-                        coordinateSystem.screenToCoordinate(localOffset),
-                      );
-                      ref
-                          .read(abilityProvider.notifier)
-                          .bringFoward(ability.id);
-                    },
+        final interactionState = ref.watch(interactionStateProvider);
+        return IgnorePointer(
+          ignoring: interactionState == InteractionState.drawing ||
+              interactionState == InteractionState.erasing,
+          child: DragTarget<DraggableData>(
+            builder: (context, candidateData, rejectedData) {
+              return Stack(
+                children: [
+                  const Align(
+                    alignment: Alignment.topRight,
+                    child: DeleteArea(),
                   ),
-                for (PlacedAgent agent in ref.watch(agentProvider))
-                  Positioned(
-                    left:
-                        coordinateSystem.coordinateToScreen(agent.position).dx,
-                    top: coordinateSystem.coordinateToScreen(agent.position).dy,
-                    child: Draggable<PlacedWidget>(
-                      data: agent,
-                      feedback: AgentWidget(
-                        id: "",
-                        agent: AgentData.agents[agent.type]!,
-                      ),
-                      childWhenDragging: const SizedBox.shrink(),
+                  for (PlacedAbility ability in ref.watch(abilityProvider))
+                    PlacedAbilityWidget(
+                      data: ability,
+                      ability: ability,
+                      id: ability.id,
                       onDragEnd: (details) {
                         RenderBox renderBox =
                             context.findRenderObject() as RenderBox;
                         Offset localOffset =
                             renderBox.globalToLocal(details.offset);
+                        // Updating info
 
-                        //Basically makes sure that if more than half is of the screen it gets deleted
                         Offset virtualOffset =
                             coordinateSystem.screenToCoordinate(localOffset);
-                        double safeArea = Settings.agentSize / 2;
+                        Offset safeArea =
+                            ability.data.abilityData.getAnchorPoint();
 
-                        if (coordinateSystem.isOutOfBounds(
-                            virtualOffset.translate(safeArea, safeArea))) {
+                        if (coordinateSystem.isOutOfBounds(virtualOffset
+                            .translate(safeArea.dx, safeArea.dy))) {
                           ref
-                              .read(agentProvider.notifier)
-                              .removeAgent(agent.id);
+                              .read(abilityProvider.notifier)
+                              .removeAbility(ability.id);
                           return;
                         }
 
-                        //State updates aren't really clear with the current solution
-                        ref
-                            .read(agentProvider.notifier)
-                            .updatePosition(virtualOffset, agent.id);
-                      },
-                      child: AgentWidget(
-                        id: agent.id,
-                        agent: AgentData.agents[agent.type]!,
-                      ),
-                    ),
-                  ),
-                for (PlacedText placedText in ref.watch(textProvider))
-                  Positioned(
-                    left: coordinateSystem
-                        .coordinateToScreen(placedText.position)
-                        .dx,
-                    top: coordinateSystem
-                        .coordinateToScreen(placedText.position)
-                        .dy,
-                    child: Draggable<PlacedWidget>(
-                      data: placedText,
-                      feedback: TextWidget(
-                        id: placedText.id,
-                        text: placedText.text,
-                        isDragged: true,
-                      ),
-                      childWhenDragging: const SizedBox.shrink(),
-                      onDragEnd: (details) {
-                        RenderBox renderBox =
-                            context.findRenderObject() as RenderBox;
-                        Offset localOffset =
-                            renderBox.globalToLocal(details.offset);
+                        log(renderBox.size.toString());
 
-                        //Basically makes sure that if more than half is of the screen it gets deleted
-                        Offset virtualOffset =
-                            coordinateSystem.screenToCoordinate(localOffset);
-                        double safeArea = Settings.agentSize / 2;
-
-                        if (coordinateSystem.isOutOfBounds(
-                            virtualOffset.translate(safeArea, safeArea))) {
-                          ref
-                              .read(textProvider.notifier)
-                              .removeText(placedText.id);
-                          return;
-                        }
-
-                        placedText.updatePosition(
-                          virtualOffset,
+                        ability.updatePosition(
+                          coordinateSystem.screenToCoordinate(localOffset),
                         );
                         ref
-                            .read(textProvider.notifier)
-                            .bringFoward(placedText.id);
+                            .read(abilityProvider.notifier)
+                            .bringFoward(ability.id);
                       },
-                      child: TextWidget(
-                        text: placedText.text,
-                        id: placedText.id,
+                    ),
+                  for (PlacedAgent agent in ref.watch(agentProvider))
+                    Positioned(
+                      left: coordinateSystem
+                          .coordinateToScreen(agent.position)
+                          .dx,
+                      top: coordinateSystem
+                          .coordinateToScreen(agent.position)
+                          .dy,
+                      child: Draggable<PlacedWidget>(
+                        data: agent,
+                        feedback: AgentWidget(
+                          id: "",
+                          agent: AgentData.agents[agent.type]!,
+                        ),
+                        childWhenDragging: const SizedBox.shrink(),
+                        onDragEnd: (details) {
+                          RenderBox renderBox =
+                              context.findRenderObject() as RenderBox;
+                          Offset localOffset =
+                              renderBox.globalToLocal(details.offset);
+
+                          //Basically makes sure that if more than half is of the screen it gets deleted
+                          Offset virtualOffset =
+                              coordinateSystem.screenToCoordinate(localOffset);
+                          double safeArea = Settings.agentSize / 2;
+
+                          if (coordinateSystem.isOutOfBounds(
+                              virtualOffset.translate(safeArea, safeArea))) {
+                            ref
+                                .read(agentProvider.notifier)
+                                .removeAgent(agent.id);
+                            return;
+                          }
+
+                          //State updates aren't really clear with the current solution
+                          ref
+                              .read(agentProvider.notifier)
+                              .updatePosition(virtualOffset, agent.id);
+                        },
+                        child: AgentWidget(
+                          id: agent.id,
+                          agent: AgentData.agents[agent.type]!,
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            );
-          },
-          onAcceptWithDetails: (details) {
-            RenderBox renderBox = context.findRenderObject() as RenderBox;
-            Offset localOffset = renderBox.globalToLocal(details.offset);
-            Offset normalizedPosition =
-                coordinateSystem.screenToCoordinate(localOffset);
-            const uuid = Uuid();
-            if (details.data is AgentData) {
-              PlacedAgent placedAgent = PlacedAgent(
-                id: uuid.v4(),
-                type: (details.data as AgentData).type,
-                position: normalizedPosition,
-              );
+                  for (PlacedText placedText in ref.watch(textProvider))
+                    Positioned(
+                      left: coordinateSystem
+                          .coordinateToScreen(placedText.position)
+                          .dx,
+                      top: coordinateSystem
+                          .coordinateToScreen(placedText.position)
+                          .dy,
+                      child: Draggable<PlacedWidget>(
+                        data: placedText,
+                        feedback: TextWidget(
+                          id: placedText.id,
+                          text: placedText.text,
+                          isDragged: true,
+                        ),
+                        childWhenDragging: const SizedBox.shrink(),
+                        onDragEnd: (details) {
+                          RenderBox renderBox =
+                              context.findRenderObject() as RenderBox;
+                          Offset localOffset =
+                              renderBox.globalToLocal(details.offset);
 
-              ref.read(agentProvider.notifier).addAgent(placedAgent);
-            } else if (details.data is AbilityInfo) {
-              PlacedAbility placedAbility = PlacedAbility(
-                id: uuid.v4(),
-                data: details.data as AbilityInfo,
-                position: normalizedPosition,
-              );
+                          //Basically makes sure that if more than half is of the screen it gets deleted
+                          Offset virtualOffset =
+                              coordinateSystem.screenToCoordinate(localOffset);
+                          double safeArea = Settings.agentSize / 2;
 
-              ref.read(abilityProvider.notifier).addAbility(placedAbility);
-            }
-          },
-          onLeave: (data) {
-            log("I have left");
-          },
+                          if (coordinateSystem.isOutOfBounds(
+                              virtualOffset.translate(safeArea, safeArea))) {
+                            ref
+                                .read(textProvider.notifier)
+                                .removeText(placedText.id);
+                            return;
+                          }
+
+                          placedText.updatePosition(
+                            virtualOffset,
+                          );
+                          ref
+                              .read(textProvider.notifier)
+                              .bringFoward(placedText.id);
+                        },
+                        child: TextWidget(
+                          text: placedText.text,
+                          id: placedText.id,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+            onAcceptWithDetails: (details) {
+              RenderBox renderBox = context.findRenderObject() as RenderBox;
+              Offset localOffset = renderBox.globalToLocal(details.offset);
+              Offset normalizedPosition =
+                  coordinateSystem.screenToCoordinate(localOffset);
+              const uuid = Uuid();
+              if (details.data is AgentData) {
+                PlacedAgent placedAgent = PlacedAgent(
+                  id: uuid.v4(),
+                  type: (details.data as AgentData).type,
+                  position: normalizedPosition,
+                );
+
+                ref.read(agentProvider.notifier).addAgent(placedAgent);
+              } else if (details.data is AbilityInfo) {
+                PlacedAbility placedAbility = PlacedAbility(
+                  id: uuid.v4(),
+                  data: details.data as AbilityInfo,
+                  position: normalizedPosition,
+                );
+
+                ref.read(abilityProvider.notifier).addAbility(placedAbility);
+              }
+            },
+            onLeave: (data) {
+              log("I have left");
+            },
+          ),
         );
       },
     );
