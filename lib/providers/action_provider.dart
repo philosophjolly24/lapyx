@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 
@@ -61,8 +62,7 @@ class ActionProvider extends Notifier<List<UserAction>> {
       case ActionGroup.agent:
         ref.read(agentProvider.notifier).redoAction(poppedAction);
       case ActionGroup.ability:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        ref.read(abilityProvider.notifier).redoAction(poppedAction);
       case ActionGroup.drawing:
         ref.read(drawingProvider.notifier).redoAction(poppedAction);
     }
@@ -84,8 +84,7 @@ class ActionProvider extends Notifier<List<UserAction>> {
       case ActionGroup.agent:
         ref.read(agentProvider.notifier).undoAction(currentAction);
       case ActionGroup.ability:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        ref.read(abilityProvider.notifier).undoAction(currentAction);
       case ActionGroup.drawing:
         ref.read(drawingProvider.notifier).undoAction(currentAction);
     }

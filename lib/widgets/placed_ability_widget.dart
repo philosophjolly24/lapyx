@@ -6,6 +6,7 @@ import 'package:icarus/const/abilities.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/ability_provider.dart';
+import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/widgets/ability/rotatable_widget.dart';
 import 'dart:math' as math;
 
@@ -63,6 +64,9 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                 origin: widget.ability.data.abilityData.getAnchorPoint(),
                 onPanStart: (details) {
                   log("Rotation Start");
+                  ref
+                      .read(abilityProvider.notifier)
+                      .updateRotationHistory(index);
                   final box = context.findRenderObject() as RenderBox;
                   final bottomCenter = widget.ability.data.abilityData
                       .getAnchorPoint()
@@ -95,6 +99,12 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   setState(() {
                     rotationOrigin = Offset.zero;
                   });
+
+                  final action = UserAction(
+                      type: ActionType.edit,
+                      id: widget.ability.id,
+                      group: ActionGroup.ability);
+                  ref.read(actionProvider.notifier).addAction(action);
                 },
                 child: Draggable<PlacedWidget>(
                   data: widget.data,

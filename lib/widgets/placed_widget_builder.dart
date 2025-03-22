@@ -69,12 +69,9 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
 
                         log(renderBox.size.toString());
 
-                        ability.updatePosition(
-                          coordinateSystem.screenToCoordinate(localOffset),
-                        );
-                        ref
-                            .read(abilityProvider.notifier)
-                            .bringFoward(ability.id);
+                        ref.read(abilityProvider.notifier).updatePosition(
+                            coordinateSystem.screenToCoordinate(localOffset),
+                            ability.id);
                       },
                     ),
                   for (PlacedAgent agent in ref.watch(agentProvider))
@@ -111,7 +108,6 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                             return;
                           }
 
-                          //State updates aren't really clear with the current solution
                           ref
                               .read(agentProvider.notifier)
                               .updatePosition(virtualOffset, agent.id);

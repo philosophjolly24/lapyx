@@ -58,7 +58,6 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
   }
 
   void undoAction(UserAction action) {
-    // log("I got undone");
     log("I tried to remove a deleted item");
 
     switch (action.type) {
@@ -86,7 +85,7 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
     final index = PlacedWidget.getIndexByID(id, newState);
     if (index < 0) return;
 
-    newState[index].undoPosition();
+    newState[index].undoAction();
 
     state = newState;
   }
@@ -106,7 +105,7 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
           poppedAgents.add(newState.removeAt(index));
         case ActionType.edit:
           final index = PlacedWidget.getIndexByID(action.id, newState);
-          newState[index].redoPosition();
+          newState[index].redoAction();
       }
     } catch (_) {
       log("failed to find index");

@@ -1,14 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/maps.dart';
-import 'package:icarus/const/shortcut_info.dart';
-import 'package:icarus/providers/action_provider.dart';
+
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/widgets/dot_painter.dart';
 

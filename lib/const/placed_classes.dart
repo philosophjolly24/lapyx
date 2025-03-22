@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/json_converters.dart';
@@ -17,35 +15,50 @@ class PlacedWidget {
   final String id;
 
   @JsonKey(includeToJson: false, includeFromJson: false)
-  List<Offset> positionHistory = [];
+  List<WidgetAction> actionHistory = [];
 
   @JsonKey(includeToJson: false, includeFromJson: false)
-  List<Offset> poppedPosition = [];
+  List<WidgetAction> poppedAction = [];
 
   @OffsetConverter()
   Offset position;
 
   void updatePosition(Offset newPosition) {
-    positionHistory.add(position);
+    final action = PositionAction(position: position);
+    actionHistory.add(action);
     position = newPosition;
-
-    log(positionHistory.toString());
   }
 
-  void undoPosition() {
-    if (positionHistory.isEmpty) return;
+  void undoAction() {
+    if (actionHistory.isEmpty) return;
 
-    poppedPosition.add(position);
-    position = positionHistory.last;
-    positionHistory.removeLast();
+    if (actionHistory.last is PositionAction) {
+      _undoPosition();
+    }
   }
 
-  void redoPosition() {
-    if (poppedPosition.isEmpty) return;
+  void _undoPosition() {
+    final action = PositionAction(position: position);
 
-    positionHistory.add(position);
-    position = poppedPosition.last;
-    poppedPosition.removeLast();
+    poppedAction.add(action);
+    position = (actionHistory.last as PositionAction).position;
+    actionHistory.removeLast();
+  }
+
+  void redoAction() {
+    if (poppedAction.isEmpty) return;
+
+    if (poppedAction.last is PositionAction) {
+      _redoPosition();
+    }
+  }
+
+  void _redoPosition() {
+    final action = PositionAction(position: position);
+
+    actionHistory.add(action);
+    position = (poppedAction.last as PositionAction).position;
+    poppedAction.removeLast();
   }
 
   factory PlacedWidget.fromJson(Map<String, dynamic> json) =>
@@ -91,6 +104,55 @@ class PlacedAbility extends PlacedWidget {
 
   double rotation = 0;
 
+  void updateRotation(double newRotation) {
+    rotation = newRotation;
+  }
+
+  void updateRotationHistory() {
+    final action = RotationAction(rotation: rotation);
+    actionHistory.add(action);
+  }
+
+  @override
+  void undoAction() {
+    if (actionHistory.isEmpty) return;
+
+    if (actionHistory.last is PositionAction) {
+      _undoPosition();
+    } else if (actionHistory.last is RotationAction) {
+      _undoRotation();
+    }
+  }
+
+  @override
+  void redoAction() {
+    if (poppedAction.isEmpty) return;
+
+    if (poppedAction.last is PositionAction) {
+      _redoPosition();
+    } else if (poppedAction.last is RotationAction) {
+      _redoRotation();
+    }
+  }
+
+  void _undoRotation() {
+    final action = RotationAction(rotation: rotation);
+
+    poppedAction.add(action);
+    rotation = (actionHistory.last as RotationAction).rotation;
+    actionHistory.removeLast();
+  }
+
+  void _redoRotation() {
+    if (poppedAction.isEmpty) return;
+
+    final action = RotationAction(rotation: rotation);
+
+    actionHistory.add(action);
+    rotation = (poppedAction.last as RotationAction).rotation;
+    poppedAction.removeLast();
+  }
+
   PlacedAbility(
       {required this.data, required super.position, required super.id});
 
@@ -98,4 +160,18 @@ class PlacedAbility extends PlacedWidget {
       _$PlacedAbilityFromJson(json);
   @override
   Map<String, dynamic> toJson() => _$PlacedAbilityToJson(this);
+}
+
+abstract class WidgetAction {}
+
+class RotationAction extends WidgetAction {
+  final double rotation;
+
+  RotationAction({required this.rotation});
+}
+
+class PositionAction extends WidgetAction {
+  final Offset position;
+
+  PositionAction({required this.position});
 }
