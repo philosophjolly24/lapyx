@@ -5,8 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/maps.dart';
-import 'package:icarus/const/shortcut_info.dart';
-import 'package:icarus/providers/interaction_state_provider.dart';
+
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/widgets/dot_painter.dart';
 
@@ -33,61 +32,48 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
 
     return Row(
       children: [
-        Shortcuts(
-          shortcuts: ShortcutInfo.globalShortcuts,
-          child: Actions(
-            actions: {
-              UndoActionIntent: CallbackAction<UndoActionIntent>(
-                onInvoke: (intent) {
-                  return null;
-                },
-              )
-            },
-            child: Container(
-              width: coordinateSystem.playAreaSize.width,
-              height: coordinateSystem.playAreaSize.height,
-              color: const Color(0xFF1B1B1B),
-              child: InteractiveViewer(
-                child: Stack(
-                  children: [
-                    //Dot Grid
-                    const Positioned.fill(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: DotGrid(),
-                      ),
-                    ),
-
-                    // Map SVG
-                    Positioned.fill(
-                      child: SvgPicture.asset(
-                        assetName,
-                        semanticsLabel: 'Map',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-
-                    //Painting
-                    Positioned.fill(
-                      child: InteractivePainter(),
-                    ),
-
-                    //Agents
-                    Positioned.fill(
-                      child: PlacedWidgetBuilder(),
-                    ),
-
-                    // TODO: Later
-                    // Positioned.fill(
-                    //   child: MouseRegion(
-                    //     onHover: (event) {
-                    //       // if(ref.watch(interactionStateProvider).)
-                    //     },
-                    //   ),
-                    // )
-                  ],
+        Container(
+          width: coordinateSystem.playAreaSize.width,
+          height: coordinateSystem.playAreaSize.height,
+          color: const Color(0xFF1B1B1B),
+          child: InteractiveViewer(
+            child: Stack(
+              children: [
+                //Dot Grid
+                const Positioned.fill(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: DotGrid(),
+                  ),
                 ),
-              ),
+
+                // Map SVG
+                Positioned.fill(
+                  child: SvgPicture.asset(
+                    assetName,
+                    semanticsLabel: 'Map',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+
+                //Agents
+                Positioned.fill(
+                  child: PlacedWidgetBuilder(),
+                ),
+
+                //Painting
+                Positioned.fill(
+                  child: InteractivePainter(),
+                ),
+                // TODO: Later
+                // Positioned.fill(
+                //   child: MouseRegion(
+                //     onHover: (event) {
+                //       // if(ref.watch(interactionStateProvider).)
+                //     },
+                //   ),
+                // )
+              ],
             ),
           ),
         ),

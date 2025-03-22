@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/bounding_box.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/drawing_element.dart';
+import 'package:icarus/providers/action_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class DrawingState {
   final List<DrawingElement> elements;
@@ -59,9 +61,50 @@ final drawingProvider =
     NotifierProvider<DrawingProvider, DrawingState>(DrawingProvider.new);
 
 class DrawingProvider extends Notifier<DrawingState> {
+  List<DrawingElement> poppedElements = [];
+
   @override
   DrawingState build() {
     return DrawingState(elements: []);
+  }
+
+  void undoAction(UserAction action) {
+    final newElements = [...state.elements];
+    try {
+      switch (action.type) {
+        case ActionType.addition:
+          final index = DrawingElement.getIndexByID(action.id, newElements);
+          poppedElements.add(newElements.removeAt(index));
+
+        case ActionType.deletion:
+          final index = DrawingElement.getIndexByID(action.id, poppedElements);
+          newElements.add(poppedElements.removeAt(index));
+        default:
+      }
+    } catch (_) {
+      dev.log("Can't find index in undo action");
+    }
+    state = state.copyWith(elements: newElements);
+    _triggerRepaint();
+  }
+
+  void redoAction(UserAction action) {
+    final newElements = [...state.elements];
+    try {
+      switch (action.type) {
+        case ActionType.addition:
+          final index = DrawingElement.getIndexByID(action.id, poppedElements);
+          newElements.add(poppedElements.removeAt(index));
+        case ActionType.deletion:
+          final index = DrawingElement.getIndexByID(action.id, newElements);
+          poppedElements.add(newElements.removeAt(index));
+        default:
+      }
+    } catch (_) {
+      dev.log("Can't find index in redo action");
+    }
+    state = state.copyWith(elements: newElements);
+    _triggerRepaint();
   }
 
   String toJson() {
@@ -95,7 +138,16 @@ class DrawingProvider extends Notifier<DrawingState> {
     if (index < 0) return;
     final newElements = [...state.elements];
 
-    newElements.removeAt(index);
+    final poppedElement = newElements.removeAt(index);
+    poppedElements.add(poppedElement);
+
+    final action = UserAction(
+      type: ActionType.deletion,
+      id: poppedElement.id,
+      group: ActionGroup.drawing,
+    );
+    ref.read(actionProvider.notifier).addAction(action);
+
     state = state.copyWith(elements: [...newElements]);
     _triggerRepaint();
   }
@@ -158,11 +210,13 @@ class DrawingProvider extends Notifier<DrawingState> {
     }
     final Offset normalizedStart = coordinateSystem.screenToCoordinate(start);
 
+    final id = const Uuid().v4();
     FreeDrawing freeDrawing = FreeDrawing(
       hasArrow: hasArrow,
       isDotted: isDotted,
       color: activeColor,
       boundingBox: BoundingBox(min: normalizedStart, max: normalizedStart),
+      id: id,
     );
 
     freeDrawing.path.moveTo(start.dx, start.dy);
@@ -208,6 +262,13 @@ class DrawingProvider extends Notifier<DrawingState> {
     state = state.copyWithButEvil(
       elements: [...state.elements, simplifiedDrawing],
     );
+
+    final action = UserAction(
+        type: ActionType.addition,
+        id: simplifiedDrawing.id,
+        group: ActionGroup.drawing);
+    ref.read(actionProvider.notifier).addAction(action);
+
     _triggerRepaint();
   }
 

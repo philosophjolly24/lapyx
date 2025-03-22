@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
+import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 
@@ -34,7 +35,12 @@ class DeleteArea extends ConsumerWidget {
             final placedData = dragData.data;
 
             if (placedData is PlacedAgent) {
+              final action = UserAction(
+                  type: ActionType.deletion,
+                  id: placedData.id,
+                  group: ActionGroup.agent);
               ref.read(agentProvider.notifier).removeAgent(placedData.id);
+              ref.read(actionProvider.notifier).addAction(action);
             } else if (placedData is PlacedAbility) {
               ref.read(abilityProvider.notifier).removeAbility(placedData.id);
             } else if (placedData is PlacedText) {
