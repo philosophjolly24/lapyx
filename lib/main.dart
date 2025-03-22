@@ -22,20 +22,22 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: const ColorScheme.dark(
-          primary: Colors.blue,
-          secondary: Colors.teal,
-          error: Colors.red,
-          surface: Color(0xFF1B1B1B),
+    return GlobalShortcuts(
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: const ColorScheme.dark(
+            primary: Colors.blue,
+            secondary: Colors.teal,
+            error: Colors.red,
+            surface: Color(0xFF1B1B1B),
+          ),
+          dividerColor: Colors.transparent,
+          useMaterial3: true,
+          expansionTileTheme: const ExpansionTileThemeData(),
         ),
-        dividerColor: Colors.transparent,
-        useMaterial3: true,
-        expansionTileTheme: const ExpansionTileThemeData(),
+        home: const MyHomePage(title: 'Flutter Demo Home Page'),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
@@ -52,6 +54,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return const GlobalShortcuts(child: HomeView());
+    return const HomeView();
   }
 }

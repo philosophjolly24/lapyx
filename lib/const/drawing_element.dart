@@ -11,7 +11,7 @@ abstract class DrawingElement {
   final Color color;
   final bool isDotted;
   final bool hasArrow;
-
+  final String id;
   BoundingBox? boundingBox;
 
   DrawingElement({
@@ -19,7 +19,14 @@ abstract class DrawingElement {
     this.boundingBox,
     required this.isDotted,
     required this.hasArrow,
+    required this.id,
   });
+
+  static int getIndexByID(String id, List<DrawingElement> elements) {
+    return elements.indexWhere(
+      (element) => element.id == id,
+    );
+  }
 }
 
 class Line extends DrawingElement {
@@ -32,6 +39,7 @@ class Line extends DrawingElement {
     required super.color,
     required super.isDotted,
     required super.hasArrow,
+    required super.id,
   });
 
   void updateEndPoint(Offset endPoint) {
@@ -48,6 +56,7 @@ class FreeDrawing extends DrawingElement {
     super.boundingBox,
     required super.isDotted,
     required super.hasArrow,
+    required super.id,
   })  : listOfPoints = listOfPoints ?? [],
         path = path ?? Path();
 
@@ -107,6 +116,7 @@ class FreeDrawing extends DrawingElement {
     BoundingBox? boundingBox,
     bool? isDotted,
     bool? hasArrow,
+    String? id,
   }) {
     return FreeDrawing(
       color: color ?? this.color,
@@ -115,6 +125,7 @@ class FreeDrawing extends DrawingElement {
       boundingBox: boundingBox ?? this.boundingBox,
       isDotted: isDotted ?? this.isDotted,
       hasArrow: hasArrow ?? this.hasArrow,
+      id: id ?? this.id,
     );
   }
 

@@ -15,6 +15,7 @@ FreeDrawing _$FreeDrawingFromJson(Map<String, dynamic> json) => FreeDrawing(
           : BoundingBox.fromJson(json['boundingBox'] as Map<String, dynamic>),
       isDotted: json['isDotted'] as bool,
       hasArrow: json['hasArrow'] as bool,
+      id: json['id'] as String,
     );
 
 Map<String, dynamic> _$FreeDrawingToJson(FreeDrawing instance) =>
@@ -22,6 +23,7 @@ Map<String, dynamic> _$FreeDrawingToJson(FreeDrawing instance) =>
       'color': const ColorConverter().toJson(instance.color),
       'isDotted': instance.isDotted,
       'hasArrow': instance.hasArrow,
+      'id': instance.id,
       'boundingBox': instance.boundingBox,
       'listOfPoints': const OffsetListConverter().toJson(instance.listOfPoints),
     };

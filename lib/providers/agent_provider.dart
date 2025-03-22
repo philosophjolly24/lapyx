@@ -59,11 +59,22 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
 
   void undoAction(UserAction action) {
     // log("I got undone");
+    log("I tried to remove a deleted item");
+
     switch (action.type) {
       case ActionType.addition:
         log("We are attmepting to remove");
         removeAgent(action.id);
       case ActionType.deletion:
+        if (poppedAgents.isEmpty) {
+          log("Popped agents is empty");
+          return;
+        }
+        log("I tried to remove a deleted item");
+        final newState = [...state];
+
+        newState.add(poppedAgents.removeLast());
+        state = newState;
       case ActionType.edit:
         undoPosition(action.id);
     }
@@ -82,18 +93,23 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
 
   void redoAction(UserAction action) {
     final newState = [...state];
-    final index = PlacedWidget.getIndexByID(action.id, newState);
-    switch (action.type) {
-      case ActionType.addition:
-        log("I tried adding back-adding");
-        newState.add(poppedAgents.removeAt(index));
 
-      case ActionType.deletion:
-        poppedAgents.add(newState.removeAt(index));
-        log("I tried adding back=del");
-      case ActionType.edit:
-        log("I tried adding back=del");
-        newState[index].redoPosition();
+    try {
+      switch (action.type) {
+        case ActionType.addition:
+          final index = PlacedWidget.getIndexByID(action.id, poppedAgents);
+          newState.add(poppedAgents.removeAt(index));
+
+        case ActionType.deletion:
+          final index = PlacedWidget.getIndexByID(action.id, poppedAgents);
+
+          poppedAgents.add(newState.removeAt(index));
+        case ActionType.edit:
+          final index = PlacedWidget.getIndexByID(action.id, newState);
+          newState[index].redoPosition();
+      }
+    } catch (_) {
+      log("failed to find index");
     }
     state = newState;
   }
