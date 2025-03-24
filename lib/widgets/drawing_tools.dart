@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/custom_icons_icons.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/pen_provider.dart';
 import 'package:icarus/widgets/color_buttons.dart';
@@ -16,11 +17,13 @@ class _DrawingToolsState extends ConsumerState<DrawingTools> {
   Widget build(BuildContext context) {
     final isExpanded =
         ref.watch(interactionStateProvider) == InteractionState.drawing;
+    final isDotted = ref.watch(penProvider).isDotted;
     // if (!isExpanded) return const SizedBox.shrink();
+    final hasArrow = ref.watch(penProvider).hasArrow;
     return ClipRect(
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        height: isExpanded ? 120 : 0, // Change height based on state
+        height: isExpanded ? 150 : 0, // Change height based on state
         curve: Curves.easeInOut,
         child: !isExpanded
             ? const SizedBox.shrink()
@@ -52,6 +55,55 @@ class _DrawingToolsState extends ConsumerState<DrawingTools> {
                                 },
                               ),
                             ),
+                        ],
+                      ),
+                      const Text("Stroke"),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          SizedBox(
+                            height: 40,
+                            child: ToggleButtons(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8)),
+                              isSelected: [!isDotted, isDotted],
+                              fillColor: Colors.transparent,
+                              children: const [
+                                Icon(
+                                  CustomIcons.line,
+                                  size: 20,
+                                ),
+                                Icon(
+                                  CustomIcons.dottedline,
+                                  size: 21,
+                                ),
+                              ],
+                              onPressed: (index) {
+                                if (index == 0) {
+                                  ref
+                                      .read(penProvider.notifier)
+                                      .updateValue(isDotted: false);
+                                } else {
+                                  ref
+                                      .read(penProvider.notifier)
+                                      .updateValue(isDotted: true);
+                                }
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          IconButton(
+                            isSelected: hasArrow,
+                            onPressed: () {
+                              ref.read(penProvider.notifier).toggleArrow();
+                            },
+                            icon: const Icon(
+                              CustomIcons.arrow,
+                              size: 20,
+                            ),
+                          ),
                         ],
                       ),
                     ],

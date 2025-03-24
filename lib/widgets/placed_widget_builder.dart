@@ -31,12 +31,12 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final interactionState = ref.watch(interactionStateProvider);
-        return IgnorePointer(
-          ignoring: interactionState == InteractionState.drawing ||
-              interactionState == InteractionState.erasing,
-          child: DragTarget<DraggableData>(
-            builder: (context, candidateData, rejectedData) {
-              return Stack(
+        return DragTarget<DraggableData>(
+          builder: (context, candidateData, rejectedData) {
+            return IgnorePointer(
+              ignoring: interactionState == InteractionState.drawing ||
+                  interactionState == InteractionState.erasing,
+              child: Stack(
                 children: [
                   const Align(
                     alignment: Alignment.topRight,
@@ -167,36 +167,36 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                       ),
                     ),
                 ],
+              ),
+            );
+          },
+          onAcceptWithDetails: (details) {
+            RenderBox renderBox = context.findRenderObject() as RenderBox;
+            Offset localOffset = renderBox.globalToLocal(details.offset);
+            Offset normalizedPosition =
+                coordinateSystem.screenToCoordinate(localOffset);
+            const uuid = Uuid();
+            if (details.data is AgentData) {
+              PlacedAgent placedAgent = PlacedAgent(
+                id: uuid.v4(),
+                type: (details.data as AgentData).type,
+                position: normalizedPosition,
               );
-            },
-            onAcceptWithDetails: (details) {
-              RenderBox renderBox = context.findRenderObject() as RenderBox;
-              Offset localOffset = renderBox.globalToLocal(details.offset);
-              Offset normalizedPosition =
-                  coordinateSystem.screenToCoordinate(localOffset);
-              const uuid = Uuid();
-              if (details.data is AgentData) {
-                PlacedAgent placedAgent = PlacedAgent(
-                  id: uuid.v4(),
-                  type: (details.data as AgentData).type,
-                  position: normalizedPosition,
-                );
 
-                ref.read(agentProvider.notifier).addAgent(placedAgent);
-              } else if (details.data is AbilityInfo) {
-                PlacedAbility placedAbility = PlacedAbility(
-                  id: uuid.v4(),
-                  data: details.data as AbilityInfo,
-                  position: normalizedPosition,
-                );
+              ref.read(agentProvider.notifier).addAgent(placedAgent);
+            } else if (details.data is AbilityInfo) {
+              PlacedAbility placedAbility = PlacedAbility(
+                id: uuid.v4(),
+                data: details.data as AbilityInfo,
+                position: normalizedPosition,
+              );
 
-                ref.read(abilityProvider.notifier).addAbility(placedAbility);
-              }
-            },
-            onLeave: (data) {
-              log("I have left");
-            },
-          ),
+              ref.read(abilityProvider.notifier).addAbility(placedAbility);
+            }
+          },
+          onLeave: (data) {
+            log("I have left");
+          },
         );
       },
     );

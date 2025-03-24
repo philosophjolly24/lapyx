@@ -46,13 +46,13 @@ class ActionProvider extends Notifier<List<UserAction>> {
 
   void addAction(UserAction action) {
     state = [...state, action];
-    log("\n Current state \n ${state.toString()}");
+    // log("\n Current state \n ${state.toString()}");
   }
 
   void redoAction() {
     log(poppedItems.length.toString());
     if (poppedItems.isEmpty) {
-      log("Popped list is empty");
+      // log("Popped list is empty");
       return;
     }
 
@@ -70,11 +70,11 @@ class ActionProvider extends Notifier<List<UserAction>> {
     final newState = [...state];
     newState.add(poppedItems.removeLast());
     state = newState;
-    log("\n Current state \n ${state.toString()}");
+    // log("\n Current state \n ${state.toString()}");
   }
 
   void undoAction() {
-    log("Undo action was triggered");
+    // log("Undo action was triggered");
 
     if (state.isEmpty) return;
 
@@ -88,13 +88,13 @@ class ActionProvider extends Notifier<List<UserAction>> {
       case ActionGroup.drawing:
         ref.read(drawingProvider.notifier).undoAction(currentAction);
     }
-    log("Undo action was called");
+    // log("Undo action was called");
     final newState = [...state];
     poppedItems.add(newState.removeLast());
 
     state = newState;
-    log("\n Current state \n ${state.toString()}");
+    // log("\n Current state \n ${state.toString()}");
 
-    log("\n Popped State \n ${poppedItems.toString()}");
+    // log("\n Popped State \n ${poppedItems.toString()}");
   }
 }
