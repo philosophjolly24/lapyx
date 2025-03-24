@@ -326,6 +326,7 @@ class DrawingProvider extends Notifier<DrawingState> {
     }
 
     state = state.copyWith(elements: listOfElements);
+    _triggerRepaint();
   }
 
   void clearAll() {
