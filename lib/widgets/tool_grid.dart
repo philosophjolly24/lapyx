@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/custom_icons_icons.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/drawing_tools.dart';
-import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:uuid/uuid.dart';
 
 class ToolGrid extends ConsumerWidget {
@@ -61,7 +61,10 @@ class ToolGrid extends ConsumerWidget {
                           .update(InteractionState.erasing);
                   }
                 },
-                icon: const Icon(Symbols.ink_eraser_rounded),
+                icon: const Icon(
+                  CustomIcons.eraser,
+                  size: 20,
+                ),
                 isSelected: currentInteractionState == InteractionState.erasing,
               ),
               IconButton(

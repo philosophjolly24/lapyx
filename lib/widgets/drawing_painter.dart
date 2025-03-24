@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:math' as math;
 
+import 'package:dash_painter/dash_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/drawing_element.dart';
@@ -8,6 +10,7 @@ import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/pen_provider.dart';
+import 'package:icarus/widgets/dot_painter.dart';
 
 class InteractivePainter extends ConsumerStatefulWidget {
   const InteractivePainter({super.key});
@@ -142,6 +145,35 @@ class DrawingPainter extends CustomPainter {
       ..isAntiAlias = true
       ..strokeCap = StrokeCap.round;
 
+    // Helper function to draw an arrow
+    void drawArrow(Canvas canvas, Paint paint, Offset from, Offset to) {
+      const double arrowHeadSize = 13; // Size of the arrowhead
+      const double arrowAngle = math.pi / 4; // 30 degrees arrow head angle
+
+      // Calculate the direction angle from `from` to `to`
+      final angle = math.atan2(to.dy - from.dy, to.dx - from.dx);
+
+      // Calculate the points for the arrow head lines.
+      final arrowPoint1 = Offset(
+        to.dx - arrowHeadSize * math.cos(angle - arrowAngle),
+        to.dy - arrowHeadSize * math.sin(angle - arrowAngle),
+      );
+      final arrowPoint2 = Offset(
+        to.dx - arrowHeadSize * math.cos(angle + arrowAngle),
+        to.dy - arrowHeadSize * math.sin(angle + arrowAngle),
+      );
+
+      // Create a path for the arrowhead
+      final arrowPath = Path();
+      arrowPath.moveTo(to.dx, to.dy);
+      arrowPath.lineTo(arrowPoint1.dx, arrowPoint1.dy);
+      arrowPath.moveTo(to.dx, to.dy);
+      arrowPath.lineTo(arrowPoint2.dx, arrowPoint2.dy);
+
+      // Draw the arrowhead lines
+      canvas.drawPath(arrowPath, paint);
+    }
+
     for (int i = 0; i < elements.length; i++) {
       paint.color = elements[i].color;
       if (elements[i] is Line) {
@@ -155,10 +187,25 @@ class DrawingPainter extends CustomPainter {
         canvas.drawLine(screenStartOffset, screenEndOffset, paint);
       } else if (elements[i] is FreeDrawing) {
         FreeDrawing freeDrawing = elements[i] as FreeDrawing;
-        List<Offset> paths = freeDrawing.listOfPoints;
-        if (paths.length < 2) return;
+        List<Offset> points = freeDrawing.listOfPoints;
+        if (points.length < 2) return;
 
-        canvas.drawPath(freeDrawing.path, paint);
+        if (freeDrawing.isDotted) {
+          final space = coordinateSystem.scale(10);
+          DashPainter(span: space, step: space)
+              .paint(canvas, freeDrawing.path, paint);
+        } else {
+          canvas.drawPath(freeDrawing.path, paint);
+        }
+
+        if (freeDrawing.hasArrow) {
+          if (points.length < 2) return;
+
+          final from =
+              coordinateSystem.coordinateToScreen(points[points.length - 2]);
+          final to = coordinateSystem.coordinateToScreen(points.last);
+          drawArrow(canvas, paint, from, to);
+        }
       }
     }
 
@@ -167,7 +214,23 @@ class DrawingPainter extends CustomPainter {
       if (currentLine is FreeDrawing) {
         final drawingElement = currentLine as FreeDrawing;
 
-        canvas.drawPath(drawingElement.path, paint);
+        if (drawingElement.isDotted) {
+          final space = coordinateSystem.scale(10);
+
+          DashPainter(span: space, step: space)
+              .paint(canvas, drawingElement.path, paint);
+        } else {
+          canvas.drawPath(drawingElement.path, paint);
+        }
+
+        final points = drawingElement.listOfPoints;
+        if (drawingElement.hasArrow) {
+          if (points.length < 2) return;
+          final from =
+              coordinateSystem.coordinateToScreen(points[points.length - 2]);
+          final to = coordinateSystem.coordinateToScreen(points.last);
+          drawArrow(canvas, paint, from, to);
+        }
       }
     }
   }

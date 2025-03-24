@@ -20,7 +20,6 @@ dependencies:
   json_annotation: ^4.9.0
   file_picker: ^9.0.0
   uuid: ^4.5.1
-  material_symbols_icons: ^4.2810.1
   dash_painter: ^1.0.2
   # window_size:
   #   git:
@@ -37,7 +36,10 @@ dev_dependencies:
   flutter_lints: ^3.0.0
 
 flutter:
-
+  fonts:
+   - family: CustomIcons
+     fonts:
+      - asset: assets/fonts/CustomIcons.ttf
   assets:
     - assets/maps/
     - assets/maps/thumbnails/

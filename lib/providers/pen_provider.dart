@@ -41,7 +41,7 @@ class PenState {
       penMode: penMode ?? this.penMode,
       color: color ?? this.color,
       hasArrow: hasArrow ?? this.hasArrow,
-      isDotted: isDotted ?? this.hasArrow,
+      isDotted: isDotted ?? this.isDotted,
       opacity: opacity ?? this.opacity,
       thickness: thickness ?? this.thickness,
     );
@@ -95,5 +95,9 @@ class PenProvider extends Notifier<PenState> {
     }
 
     state = state.copyWith(listOfColors: newColors, color: selectedColor);
+  }
+
+  void toggleArrow() {
+    state = state.copyWith(hasArrow: !state.hasArrow);
   }
 }

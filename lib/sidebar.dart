@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/widgets/ability_bar.dart';
@@ -98,21 +99,28 @@ class _SideBarUIState extends State<SideBarUI> {
                                     padding: const EdgeInsets.all(1.0),
                                     child: Center(
                                       child: SizedBox(
-                                        child: Draggable(
-                                          data: agent,
-                                          feedback: AgentWidget(
-                                            id: null,
-                                            agent: agent,
-                                          ),
-                                          dragAnchorStrategy:
-                                              (draggable, context, position) =>
-                                                  const Offset(
-                                            Settings.agentSize / 2,
-                                            Settings.agentSize / 2,
-                                          ),
-                                          child: Consumer(
-                                              builder: (context, ref, child) {
-                                            return InkWell(
+                                        child: Consumer(
+                                            builder: (context, ref, child) {
+                                          return Draggable(
+                                            data: agent,
+                                            onDragStarted: () {
+                                              ref
+                                                  .read(interactionStateProvider
+                                                      .notifier)
+                                                  .update(InteractionState
+                                                      .navigation);
+                                            },
+                                            feedback: AgentWidget(
+                                              id: null,
+                                              agent: agent,
+                                            ),
+                                            dragAnchorStrategy: (draggable,
+                                                    context, position) =>
+                                                const Offset(
+                                              Settings.agentSize / 2,
+                                              Settings.agentSize / 2,
+                                            ),
+                                            child: InkWell(
                                               onTap: () {
                                                 ref
                                                     .read(activeAgentProvider
@@ -127,9 +135,9 @@ class _SideBarUIState extends State<SideBarUI> {
                                                   fit: BoxFit.contain,
                                                 ),
                                               ),
-                                            );
-                                          }),
-                                        ),
+                                            ),
+                                          );
+                                        }),
                                       ),
                                     ),
                                   );

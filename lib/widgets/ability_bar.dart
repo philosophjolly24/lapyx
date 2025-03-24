@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/providers/interaction_state_provider.dart';
 
 class AbiilityBar extends ConsumerWidget {
   const AbiilityBar(this.activeAgentProvider, {super.key});
@@ -30,6 +31,11 @@ class AbiilityBar extends ConsumerWidget {
             (index) {
               return Draggable<AbilityInfo>(
                 data: activeAgent.abilities[index],
+                onDragStarted: () {
+                  ref
+                      .read(interactionStateProvider.notifier)
+                      .update(InteractionState.navigation);
+                },
                 dragAnchorStrategy: (draggable, context, position) {
                   final info = draggable.data as AbilityInfo;
 
