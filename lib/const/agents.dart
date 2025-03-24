@@ -90,16 +90,16 @@ class AgentData implements DraggableData {
     required this.type,
     required this.role,
     required this.name,
-  })  : iconPath = 'assets/agents/$name/icon.png',
+  })  : iconPath = 'assets/agents/$name/icon.webp',
         abilities = List.generate(
           4,
           (index) => AbilityInfo(
               name: 'Ability ${index + 1}', // You can override this later
-              iconPath: 'assets/agents/$name/${index + 1}.png',
+              iconPath: 'assets/agents/$name/${index + 1}.webp',
               type: type,
               index: index,
               abilityData: BaseAbility(
-                  iconPath: 'assets/agents/$name/${index + 1}.png')),
+                  iconPath: 'assets/agents/$name/${index + 1}.webp')),
         );
 
   static Map<AgentType, AgentData> agents = {
@@ -113,9 +113,9 @@ class AgentData implements DraggableData {
         type: AgentType.jett,
         index: 0,
         name: "Cloudburst",
-        iconPath: 'assets/agents/Jett/1.png',
+        iconPath: 'assets/agents/Jett/1.webp',
         abilityData:
-            ImageAbility(imagePath: 'assets/agents/Jett/Smoke.png', size: 30),
+            ImageAbility(imagePath: 'assets/agents/Jett/Smoke.webp', size: 30),
       ),
     AgentType.raze: AgentData(
       type: AgentType.raze,
@@ -136,9 +136,9 @@ class AgentData implements DraggableData {
           type: AgentType.astra,
           index: 2,
           name: "Nebula",
-          iconPath: 'assets/agents/Astra/1.png',
+          iconPath: 'assets/agents/Astra/1.webp',
           abilityData: ImageAbility(
-            imagePath: 'assets/agents/Astra/Smoke.png',
+            imagePath: 'assets/agents/Astra/Smoke.webp',
             size: 4.75 * inGameMetersDiameter,
           ),
         );
@@ -189,9 +189,9 @@ class AgentData implements DraggableData {
           type: AgentType.viper,
           index: 1,
           name: "Sky Smoke",
-          iconPath: 'assets/agents/Viper/2.png',
+          iconPath: 'assets/agents/Viper/2.webp',
           abilityData: ImageAbility(
-            imagePath: 'assets/agents/Viper/Smoke.png',
+            imagePath: 'assets/agents/Viper/Smoke.webp',
             size: 4.5 * inGameMetersDiameter,
           ),
         );
@@ -326,9 +326,9 @@ class AgentData implements DraggableData {
           type: AgentType.brimstone,
           index: 2,
           name: "Sky Smoke",
-          iconPath: 'assets/agents/Brimstone/3.png',
+          iconPath: 'assets/agents/Brimstone/3.webp',
           abilityData: ImageAbility(
-            imagePath: 'assets/agents/Brimstone/Smoke.png',
+            imagePath: 'assets/agents/Brimstone/Smoke.webp',
             size: 4.15 * inGameMetersDiameter,
           ),
         );
@@ -456,9 +456,9 @@ class AgentData implements DraggableData {
           type: AgentType.omen,
           index: 2,
           name: "Smoke",
-          iconPath: 'assets/agents/Omen/3.png',
+          iconPath: 'assets/agents/Omen/3.webp',
           abilityData: ImageAbility(
-            imagePath: 'assets/agents/Omen/Smoke.png',
+            imagePath: 'assets/agents/Omen/Smoke.webp',
             size: 4.1 * inGameMetersDiameter,
           ),
         );

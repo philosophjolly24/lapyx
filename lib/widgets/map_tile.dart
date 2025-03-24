@@ -30,7 +30,7 @@ class MapTile extends ConsumerWidget {
                   child: Opacity(
                     opacity: .8,
                     child: Image.asset(
-                      "assets/maps/thumbnails/${name}_thumbnail.png",
+                      "assets/maps/thumbnails/${name}_thumbnail.webp",
                       fit: BoxFit.cover,
                     ),
                   ),
