@@ -10,7 +10,6 @@ import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/pen_provider.dart';
-import 'package:icarus/widgets/dot_painter.dart';
 
 class InteractivePainter extends ConsumerStatefulWidget {
   const InteractivePainter({super.key});

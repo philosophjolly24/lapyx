@@ -18,7 +18,8 @@ class InteractionStateProvider extends Notifier<InteractionState> {
     return InteractionState.navigation;
   }
 
-  void update(InteractionState state) {
-    this.state = state;
+  void update(InteractionState newState) {
+    if (newState == state) return;
+    state = newState;
   }
 }
