@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/agent_dragable.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
@@ -109,54 +110,9 @@ class _SideBarUIState extends State<SideBarUI> {
                               itemBuilder: (context, index) {
                                 final agent =
                                     AgentData.agents[AgentType.values[index]]!;
-
-                                return Padding(
-                                  padding: const EdgeInsets.all(1.0),
-                                  child: Center(
-                                    child: SizedBox(
-                                      child: Consumer(
-                                          builder: (context, ref, child) {
-                                        return RepaintBoundary(
-                                          child: Draggable(
-                                            data: agent,
-                                            onDragStarted: () {
-                                              ref
-                                                  .read(interactionStateProvider
-                                                      .notifier)
-                                                  .update(InteractionState
-                                                      .navigation);
-                                            },
-                                            feedback: AgentWidget(
-                                              id: null,
-                                              agent: agent,
-                                            ),
-                                            dragAnchorStrategy: (draggable,
-                                                    context, position) =>
-                                                const Offset(
-                                              Settings.agentSize / 2,
-                                              Settings.agentSize / 2,
-                                            ),
-                                            child: InkWell(
-                                              onTap: () {
-                                                ref
-                                                    .read(activeAgentProvider
-                                                        .notifier)
-                                                    .state = agent;
-                                              },
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                child: Image.asset(
-                                                  agent.iconPath,
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                  ),
+                                return AgentDragable(
+                                  agent: agent,
+                                  activeAgentProvider: activeAgentProvider,
                                 );
                               },
                             ),
