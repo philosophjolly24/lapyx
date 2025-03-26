@@ -13,6 +13,15 @@ enum MapValue {
 }
 
 class Maps {
+  static List<MapValue> availableMaps = [
+    MapValue.ascent,
+    MapValue.fracture,
+    MapValue.haven,
+    MapValue.icebox,
+    MapValue.lotus,
+    MapValue.pearl,
+    MapValue.split,
+  ];
   static Map<MapValue, String> maps = {
     MapValue.ascent: 'ascent',
     MapValue.breeze: 'breeze',

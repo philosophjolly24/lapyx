@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/agent_dragable.dart';
 import 'package:icarus/const/settings.dart';
-import 'package:icarus/providers/interaction_state_provider.dart';
-import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/widgets/ability_bar.dart';
 import 'package:icarus/widgets/agent_filter.dart';
@@ -29,15 +27,15 @@ class _SideBarUIState extends State<SideBarUI> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    for (int i = 0; i < AgentType.values.length; i++) {
-      final agent = AgentData.agents[AgentType.values[i]]!;
+  // @override
+  // void initState() {
+  //   for (int i = 0; i < AgentType.values.length; i++) {
+  //     final agent = AgentData.agents[AgentType.values[i]]!;
 
-      precacheImage(AssetImage(agent.iconPath), context);
-    }
-    super.initState();
-  }
+  //     precacheImage(AssetImage(agent.iconPath), context);
+  //   }
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {

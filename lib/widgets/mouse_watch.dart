@@ -22,32 +22,35 @@ class _MouseWatchState extends ConsumerState<MouseWatch> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) {
-        setState(() {
-          isMouseInRegion = true;
-          _focusNode.requestFocus();
-        });
-      },
-      onExit: (_) {
-        setState(() {
-          isMouseInRegion = false;
-          // _focusNode.unfocus();
-        });
-      },
-      child: FocusableActionDetector(
-        focusNode: _focusNode,
-        shortcuts: ShortcutInfo.widgetShortcuts,
-        actions: {
-          WidgetDeleteIntent: CallbackAction<WidgetDeleteIntent>(
-            onInvoke: (intent) {
-              if (!isMouseInRegion) return;
-
-              return widget.onDeleteKeyPressed?.call();
-            },
-          )
+    // return widget.child;
+    return RepaintBoundary(
+      child: MouseRegion(
+        onEnter: (_) {
+          setState(() {
+            isMouseInRegion = true;
+            _focusNode.requestFocus();
+          });
         },
-        child: widget.child,
+        onExit: (_) {
+          setState(() {
+            isMouseInRegion = false;
+            // _focusNode.unfocus();
+          });
+        },
+        child: FocusableActionDetector(
+          focusNode: _focusNode,
+          shortcuts: ShortcutInfo.widgetShortcuts,
+          actions: {
+            WidgetDeleteIntent: CallbackAction<WidgetDeleteIntent>(
+              onInvoke: (intent) {
+                if (!isMouseInRegion) return;
+
+                return widget.onDeleteKeyPressed?.call();
+              },
+            )
+          },
+          child: widget.child,
+        ),
       ),
     );
   }

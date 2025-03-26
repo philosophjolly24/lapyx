@@ -94,6 +94,10 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
                               itemBuilder: (context, index) {
                                 MapValue mapValue =
                                     Maps.maps.keys.elementAt(index);
+
+                                if (!Maps.availableMaps.contains(mapValue))
+                                  return const SizedBox.shrink();
+
                                 String mapName = Maps.maps[mapValue]!;
 
                                 return Padding(
