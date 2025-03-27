@@ -22,6 +22,7 @@ class Maps {
     MapValue.pearl,
     MapValue.split,
   ];
+
   static Map<MapValue, String> maps = {
     MapValue.ascent: 'ascent',
     MapValue.breeze: 'breeze',

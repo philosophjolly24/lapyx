@@ -16,29 +16,29 @@ class AgentDragable extends ConsumerWidget {
       padding: const EdgeInsets.all(1.0),
       child: Center(
         child: SizedBox(
-          child: IgnorePointer(
-            ignoring: false,
-            child: Draggable(
-              data: agent,
-              onDragStarted: () {
-                ref
-                    .read(interactionStateProvider.notifier)
-                    .update(InteractionState.drag);
-              },
-              onDragCompleted: () {
-                ref
-                    .read(interactionStateProvider.notifier)
-                    .update(InteractionState.navigation);
-              },
-              feedback: AgentWidget(
+          child: Draggable(
+            data: agent,
+            onDragStarted: () {
+              ref
+                  .read(interactionStateProvider.notifier)
+                  .update(InteractionState.drag);
+            },
+            onDragCompleted: () {
+              ref
+                  .read(interactionStateProvider.notifier)
+                  .update(InteractionState.navigation);
+            },
+            feedback: RepaintBoundary(
+              child: AgentWidget(
                 id: null,
                 agent: agent,
               ),
-              dragAnchorStrategy: (draggable, context, position) =>
-                  const Offset(
-                Settings.agentSize / 2,
-                Settings.agentSize / 2,
-              ),
+            ),
+            dragAnchorStrategy: (draggable, context, position) => const Offset(
+              Settings.agentSize / 2,
+              Settings.agentSize / 2,
+            ),
+            child: RepaintBoundary(
               child: InkWell(
                 onTap: () {
                   ref.read(activeAgentProvider.notifier).state = agent;
