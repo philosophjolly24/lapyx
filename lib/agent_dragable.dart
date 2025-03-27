@@ -16,30 +16,39 @@ class AgentDragable extends ConsumerWidget {
       padding: const EdgeInsets.all(1.0),
       child: Center(
         child: SizedBox(
-          child: Draggable(
-            data: agent,
-            onDragStarted: () {
-              ref
-                  .read(interactionStateProvider.notifier)
-                  .update(InteractionState.navigation);
-            },
-            feedback: AgentWidget(
-              id: null,
-              agent: agent,
-            ),
-            dragAnchorStrategy: (draggable, context, position) => const Offset(
-              Settings.agentSize / 2,
-              Settings.agentSize / 2,
-            ),
-            child: InkWell(
-              onTap: () {
-                ref.read(activeAgentProvider.notifier).state = agent;
+          child: IgnorePointer(
+            ignoring: false,
+            child: Draggable(
+              data: agent,
+              onDragStarted: () {
+                ref
+                    .read(interactionStateProvider.notifier)
+                    .update(InteractionState.drag);
               },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: Image.asset(
-                  agent.iconPath,
-                  fit: BoxFit.contain,
+              onDragCompleted: () {
+                ref
+                    .read(interactionStateProvider.notifier)
+                    .update(InteractionState.navigation);
+              },
+              feedback: AgentWidget(
+                id: null,
+                agent: agent,
+              ),
+              dragAnchorStrategy: (draggable, context, position) =>
+                  const Offset(
+                Settings.agentSize / 2,
+                Settings.agentSize / 2,
+              ),
+              child: InkWell(
+                onTap: () {
+                  ref.read(activeAgentProvider.notifier).state = agent;
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.asset(
+                    agent.iconPath,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),

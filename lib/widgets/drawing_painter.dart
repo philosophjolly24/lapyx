@@ -43,7 +43,7 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
 
     final currentInteractionState = ref.watch(interactionStateProvider);
 
-    bool isNavigating = currentInteractionState == InteractionState.navigation;
+    bool isNavigating = (currentInteractionState != InteractionState.drawing);
     return IgnorePointer(
       ignoring: isNavigating,
       child: RepaintBoundary(
