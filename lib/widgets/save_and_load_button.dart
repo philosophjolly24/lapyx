@@ -77,12 +77,12 @@ class SaveButtonAndLoad extends ConsumerWidget {
             },
             icon: const Icon(Icons.file_open),
           ),
-          IconButton(
-            onPressed: () async {
-              log(ref.read(drawingProvider).toString());
-            },
-            icon: const Icon(Icons.bug_report),
-          ),
+          // IconButton(
+          //   onPressed: () async {
+          //     log(ref.read(drawingProvider).toString());
+          //   },
+          //   icon: const Icon(Icons.bug_report),
+          // ),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,14 @@ class TextProvider extends Notifier<List<PlacedText>> {
   }
 
   void addText(PlacedText text) {
+    final action = UserAction(
+      type: ActionType.addition,
+      id: text.id,
+      group: ActionGroup.text,
+    );
+
+    ref.read(actionProvider.notifier).addAction(action);
+
     state = [...state, text];
   }
 
@@ -88,11 +97,13 @@ class TextProvider extends Notifier<List<PlacedText>> {
           poppedText.add(newState.removeAt(index));
 
         case ActionType.edit:
-          final index = PlacedWidget.getIndexByID(action.id, poppedText);
+          final index = PlacedWidget.getIndexByID(action.id, newState);
 
           newState[index].redoAction();
       }
-    } catch (_) {}
+    } catch (_) {
+      log("oops");
+    }
     state = newState;
   }
 
