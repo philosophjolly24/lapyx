@@ -1,12 +1,15 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/placed_classes.dart';
+import 'package:icarus/providers/action_provider.dart';
 
 final textProvider =
     NotifierProvider<TextProvider, List<PlacedText>>(TextProvider.new);
 
 class TextProvider extends Notifier<List<PlacedText>> {
+  List<PlacedText> poppedText = [];
   @override
   List<PlacedText> build() {
     return [];
@@ -16,12 +19,21 @@ class TextProvider extends Notifier<List<PlacedText>> {
     state = [...state, text];
   }
 
-  void bringFoward(String id) {
+  void updatePosition(Offset position, String id) {
     final newState = [...state];
 
-    int index = PlacedWidget.getIndexByID(id, newState);
+    final index = PlacedWidget.getIndexByID(id, newState);
+
     if (index < 0) return;
+
+    newState[index].updatePosition(position);
+
+    //Moving foward
     final temp = newState.removeAt(index);
+
+    final action =
+        UserAction(type: ActionType.edit, id: id, group: ActionGroup.text);
+    ref.read(actionProvider.notifier).addAction(action);
 
     state = [...newState, temp];
   }
@@ -38,10 +50,61 @@ class TextProvider extends Notifier<List<PlacedText>> {
     state = newState;
   }
 
+  void undoAction(UserAction action) {
+    switch (action.type) {
+      case ActionType.addition:
+        removeText(action.id);
+      case ActionType.deletion:
+        if (poppedText.isEmpty) return;
+
+        final newState = [...state];
+
+        newState.add(poppedText.removeLast());
+        state = newState;
+
+      case ActionType.edit:
+        final newState = [...state];
+
+        final index = PlacedWidget.getIndexByID(action.id, newState);
+
+        newState[index].undoAction();
+
+        state = newState;
+    }
+  }
+
+  void redoAction(UserAction action) {
+    final newState = [...state];
+
+    try {
+      switch (action.type) {
+        case ActionType.addition:
+          final index = PlacedWidget.getIndexByID(action.id, poppedText);
+          newState.add(poppedText.removeAt(index));
+
+        case ActionType.deletion:
+          final index = PlacedWidget.getIndexByID(action.id, poppedText);
+
+          poppedText.add(newState.removeAt(index));
+
+        case ActionType.edit:
+          final index = PlacedWidget.getIndexByID(action.id, poppedText);
+
+          newState[index].redoAction();
+      }
+    } catch (_) {}
+    state = newState;
+  }
+
   void removeText(String id) {
     final newState = [...state];
     final index = PlacedWidget.getIndexByID(id, newState);
-    newState.removeAt(index);
+
+    if (index < 0) return;
+
+    final text = newState.removeAt(index);
+    poppedText.add(text);
+
     state = newState;
   }
 

@@ -9,6 +9,7 @@ enum ActionGroup {
   agent,
   ability,
   drawing,
+  text,
 }
 
 enum ActionType {
@@ -65,6 +66,9 @@ class ActionProvider extends Notifier<List<UserAction>> {
         ref.read(abilityProvider.notifier).redoAction(poppedAction);
       case ActionGroup.drawing:
         ref.read(drawingProvider.notifier).redoAction(poppedAction);
+      case ActionGroup.text:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
 
     final newState = [...state];
@@ -87,6 +91,9 @@ class ActionProvider extends Notifier<List<UserAction>> {
         ref.read(abilityProvider.notifier).undoAction(currentAction);
       case ActionGroup.drawing:
         ref.read(drawingProvider.notifier).undoAction(currentAction);
+      case ActionGroup.text:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
     // log("Undo action was called");
     final newState = [...state];

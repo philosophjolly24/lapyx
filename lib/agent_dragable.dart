@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
-import 'package:icarus/widgets/ability/agent_widget.dart';
+import 'package:icarus/widgets/ability/feedback_widget.dart';
 
 class AgentDragable extends ConsumerWidget {
   const AgentDragable(
@@ -16,38 +16,38 @@ class AgentDragable extends ConsumerWidget {
       padding: const EdgeInsets.all(1.0),
       child: Center(
         child: SizedBox(
-          child: Draggable(
-            data: agent,
-            onDragStarted: () {
-              ref
-                  .read(interactionStateProvider.notifier)
-                  .update(InteractionState.drag);
-            },
-            onDragCompleted: () {
-              ref
-                  .read(interactionStateProvider.notifier)
-                  .update(InteractionState.navigation);
-            },
-            feedback: RepaintBoundary(
-              child: AgentWidget(
-                id: null,
-                agent: agent,
+          child: IgnorePointer(
+            ignoring:
+                ref.watch(interactionStateProvider) == InteractionState.drag,
+            child: Draggable(
+              data: agent,
+              onDragStarted: () {
+                ref
+                    .read(interactionStateProvider.notifier)
+                    .update(InteractionState.drag);
+              },
+              onDragCompleted: () {
+                ref
+                    .read(interactionStateProvider.notifier)
+                    .update(InteractionState.navigation);
+              },
+              feedback: AgentFeedback(agent: agent),
+              dragAnchorStrategy: (draggable, context, position) =>
+                  const Offset(
+                Settings.agentSize / 2,
+                Settings.agentSize / 2,
               ),
-            ),
-            dragAnchorStrategy: (draggable, context, position) => const Offset(
-              Settings.agentSize / 2,
-              Settings.agentSize / 2,
-            ),
-            child: RepaintBoundary(
-              child: InkWell(
-                onTap: () {
-                  ref.read(activeAgentProvider.notifier).state = agent;
-                },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Image.asset(
-                    agent.iconPath,
-                    fit: BoxFit.contain,
+              child: RepaintBoundary(
+                child: InkWell(
+                  onTap: () {
+                    ref.read(activeAgentProvider.notifier).state = agent;
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: Image.asset(
+                      agent.iconPath,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
               ),

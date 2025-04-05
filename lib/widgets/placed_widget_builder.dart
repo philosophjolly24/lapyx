@@ -155,12 +155,9 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                             return;
                           }
 
-                          placedText.updatePosition(
-                            virtualOffset,
-                          );
                           ref
                               .read(textProvider.notifier)
-                              .bringFoward(placedText.id);
+                              .updatePosition(virtualOffset, placedText.id);
                         },
                         child: TextWidget(
                           text: placedText.text,

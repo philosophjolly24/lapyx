@@ -69,6 +69,7 @@ class CustomSquareWidget extends ConsumerWidget {
                 height: scaledAbilitySize,
                 padding: EdgeInsets.all(coordinateSystem.scale(3)),
                 decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(3)),
                   color: Color(0xFF1B1B1B),
                 ),
                 child: Image.asset(
