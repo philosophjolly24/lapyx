@@ -3,7 +3,7 @@ description: "A new Flutter project."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.0+1
+version: 1.0.1+1
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -21,10 +21,8 @@ dependencies:
   file_picker: ^9.0.0
   uuid: ^4.5.1
   dash_painter: ^1.0.2
-  # window_size:
-  #   git:
-  #     url: https://github.com/google/flutter-desktop-embedding.git
-  #     path: plugins/window_size
+  window_manager: ^0.4.3
+ 
       
 dev_dependencies:
   flutter_test:
@@ -34,6 +32,15 @@ dev_dependencies:
   json_serializable: ^6.9.3
   riverpod_generator: ^2.6.3
   flutter_lints: ^3.0.0
+  msix: ^3.16.8
+
+msix_config:
+  display_name: 'Icarus: Valorant Strategies & Line ups'
+  publisher_display_name: Dara A
+  identity_name: DaraA.IcarusValorantStrategiesLineups
+  publisher: CN=39055448-F6AA-42E9-91F6-9CF8828C444C
+  msix_version: 1.0.1.0
+  store: true
 
 flutter:
   fonts:

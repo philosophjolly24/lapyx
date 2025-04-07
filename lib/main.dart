@@ -1,16 +1,23 @@
+import 'dart:io' as io;
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/home_view.dart';
 import 'package:icarus/widgets/global_shortcuts.dart';
+import 'package:window_manager/window_manager.dart';
 // import 'package:window_size/window_size.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // if (!kIsWeb &&   (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
-  //   setWindowTitle('Admin Dashboard');
-  //   setWindowMinSize(const Size(1300, 800));
-  //   setWindowMaxSize(Size.infinite);
-  // }
+  await windowManager.ensureInitialized();
+  WindowOptions windowOptions =
+      const WindowOptions(title: "Icarus: Valorant Strategies & Line ups");
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
+
   runApp(
     const ProviderScope(child: MyApp()),
   );
@@ -24,7 +31,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlobalShortcuts(
       child: MaterialApp(
-        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        title: 'Icarus',
         theme: ThemeData(
           colorScheme: const ColorScheme.dark(
             primary: Colors.blue,
@@ -36,16 +44,16 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           expansionTileTheme: const ExpansionTileThemeData(),
         ),
-        home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        home: const MyHomePage(),
       ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({
+    super.key,
+  });
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();

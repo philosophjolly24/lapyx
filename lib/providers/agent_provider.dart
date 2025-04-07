@@ -20,9 +20,10 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
 
   void addAgent(PlacedAgent placedAgent) {
     final action = UserAction(
-        type: ActionType.addition,
-        id: placedAgent.id,
-        group: ActionGroup.agent);
+      type: ActionType.addition,
+      id: placedAgent.id,
+      group: ActionGroup.agent,
+    );
 
     ref.read(actionProvider.notifier).addAction(action);
     state = [...state, placedAgent];
