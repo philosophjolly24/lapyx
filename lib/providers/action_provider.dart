@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/drawing_provider.dart';
+import 'package:icarus/providers/strategy_provider.dart';
 
 enum ActionGroup {
   agent,
@@ -46,7 +47,9 @@ class ActionProvider extends Notifier<List<UserAction>> {
   }
 
   void addAction(UserAction action) {
+    ref.read(strategyProvider.notifier).setFileStatus(false);
     state = [...state, action];
+
     // log("\n Current state \n ${state.toString()}");
   }
 
@@ -73,6 +76,9 @@ class ActionProvider extends Notifier<List<UserAction>> {
 
     final newState = [...state];
     newState.add(poppedItems.removeLast());
+
+    ref.read(strategyProvider.notifier).setFileStatus(false);
+
     state = newState;
     // log("\n Current state \n ${state.toString()}");
   }
@@ -98,6 +104,8 @@ class ActionProvider extends Notifier<List<UserAction>> {
     // log("Undo action was called");
     final newState = [...state];
     poppedItems.add(newState.removeLast());
+
+    ref.read(strategyProvider.notifier).setFileStatus(false);
 
     state = newState;
     // log("\n Current state \n ${state.toString()}");
