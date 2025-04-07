@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -38,7 +39,7 @@ class StrategyProvider extends Notifier<StrategyData> {
     state = state.copyWith(isSaved: status);
   }
 
-  void loadFile() async {
+  Future<void> loadFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
@@ -63,7 +64,7 @@ class StrategyProvider extends Notifier<StrategyData> {
     state = state.copyWith(fileName: result.files.first.path, isSaved: true);
   }
 
-  void saveFile() async {
+  Future<void> saveFile() async {
     String data = '''
                 {
                 "drawingData": ${ref.read(drawingProvider.notifier).toJson()},
@@ -75,6 +76,7 @@ class StrategyProvider extends Notifier<StrategyData> {
               ''';
 
     File file;
+    log("File name: ${state.fileName}");
 
     if (state.fileName != null) {
       file = File(state.fileName!);
@@ -97,6 +99,6 @@ class StrategyProvider extends Notifier<StrategyData> {
     file = File(outputFile);
 
     file.writeAsStringSync(data);
-    state.copyWith(fileName: file.path, isSaved: true);
+    state = state.copyWith(fileName: file.path, isSaved: true);
   }
 }

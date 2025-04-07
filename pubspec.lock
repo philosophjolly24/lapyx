@@ -174,8 +174,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
-<<<<<<< HEAD
-=======
   console:
     dependency: transitive
     description:
@@ -184,7 +182,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
->>>>>>> 2b2fa84930d721e2db102129d390c579ad5a94db
   convert:
     dependency: transitive
     description:
