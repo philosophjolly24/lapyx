@@ -3,7 +3,7 @@ description: "A new Flutter project."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.1+1
+version: 1.0.2+1
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -39,7 +39,8 @@ msix_config:
   publisher_display_name: Dara A
   identity_name: DaraA.IcarusValorantStrategiesLineups
   publisher: CN=39055448-F6AA-42E9-91F6-9CF8828C444C
-  msix_version: 1.0.1.0
+  logo_path: E:\Projects\icarus\windows\runner\resources\app_icon.ico
+  msix_version: 1.0.2.0
   store: true
 
 flutter:

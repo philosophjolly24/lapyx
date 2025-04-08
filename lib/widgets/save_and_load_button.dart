@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 
 class SaveButtonAndLoad extends ConsumerWidget {
@@ -14,6 +15,23 @@ class SaveButtonAndLoad extends ConsumerWidget {
           IconButton(
             onPressed: () async {
               await ref.read(strategyProvider.notifier).saveFile();
+
+              if (!context.mounted) return;
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Center(
+                    child: Text(
+                      "File Saved",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  duration: Duration(milliseconds: 350),
+                  backgroundColor: Settings.sideBarColor,
+                  behavior: SnackBarBehavior.floating,
+                  width: 200,
+                ),
+              );
             },
             icon: const Icon(Icons.save),
           ),
