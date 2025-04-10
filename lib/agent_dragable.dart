@@ -30,6 +30,11 @@ class AgentDragable extends ConsumerWidget {
                     .read(interactionStateProvider.notifier)
                     .update(InteractionState.drag);
               },
+              onDraggableCanceled: (velocity, offset) {
+                ref
+                    .read(interactionStateProvider.notifier)
+                    .update(InteractionState.navigation);
+              },
               onDragCompleted: () {
                 ref
                     .read(interactionStateProvider.notifier)

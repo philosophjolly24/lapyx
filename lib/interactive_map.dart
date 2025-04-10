@@ -51,16 +51,23 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
             child: Stack(
               children: [
                 //Dot Grid
-                const Positioned.fill(
-                  child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: DotGrid(),
+                Positioned.fill(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      ref.read(abilityBarProvider.notifier).updateData(null);
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: DotGrid(),
+                    ),
                   ),
                 ),
 
                 // Map SVG
                 Positioned.fill(
                   child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
                     onTap: () {
                       ref.read(abilityBarProvider.notifier).updateData(null);
                     },
