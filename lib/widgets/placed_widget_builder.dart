@@ -9,11 +9,13 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
+import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/widgets/delete_area.dart';
 import 'package:icarus/widgets/placed_ability_widget.dart';
 import 'package:icarus/widgets/text_widget.dart';
+import 'package:icarus/widgets/zoom_transform.dart';
 import 'package:uuid/uuid.dart';
 
 class PlacedWidgetBuilder extends ConsumerStatefulWidget {
@@ -84,9 +86,14 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                           .dy,
                       child: Draggable<PlacedWidget>(
                         data: agent,
-                        feedback: AgentWidget(
-                          id: "",
-                          agent: AgentData.agents[agent.type]!,
+                        dragAnchorStrategy: ref
+                            .read(screenZoomProvider.notifier)
+                            .zoomDragAnchorStrategy,
+                        feedback: ZoomTransform(
+                          child: AgentWidget(
+                            id: "",
+                            agent: AgentData.agents[agent.type]!,
+                          ),
                         ),
                         childWhenDragging: const SizedBox.shrink(),
                         onDragEnd: (details) {
@@ -130,12 +137,17 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                           .dy,
                       child: Draggable<PlacedWidget>(
                         data: placedText,
-                        feedback: TextWidget(
-                          id: placedText.id,
-                          text: placedText.text,
-                          isDragged: true,
+                        feedback: ZoomTransform(
+                          child: TextWidget(
+                            id: placedText.id,
+                            text: placedText.text,
+                            isDragged: true,
+                          ),
                         ),
                         childWhenDragging: const SizedBox.shrink(),
+                        dragAnchorStrategy: ref
+                            .read(screenZoomProvider.notifier)
+                            .zoomDragAnchorStrategy,
                         onDragEnd: (details) {
                           RenderBox renderBox =
                               context.findRenderObject() as RenderBox;

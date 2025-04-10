@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/providers/ability_bar_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
+import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/ability/feedback_widget.dart';
+import 'package:icarus/widgets/zoom_transform.dart';
 
 class AgentDragable extends ConsumerWidget {
-  const AgentDragable(
-      {super.key, required this.agent, required this.activeAgentProvider});
+  const AgentDragable({
+    super.key,
+    required this.agent,
+  });
   final AgentData agent;
-  final StateProvider<AgentData?> activeAgentProvider;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
@@ -31,16 +35,17 @@ class AgentDragable extends ConsumerWidget {
                     .read(interactionStateProvider.notifier)
                     .update(InteractionState.navigation);
               },
-              feedback: AgentFeedback(agent: agent),
+              feedback: ZoomTransform(child: AgentFeedback(agent: agent)),
               dragAnchorStrategy: (draggable, context, position) =>
                   const Offset(
-                Settings.agentSize / 2,
-                Settings.agentSize / 2,
-              ),
+                (Settings.agentSize / 2),
+                (Settings.agentSize / 2),
+              ).scale(ref.read(screenZoomProvider),
+                      ref.read(screenZoomProvider)),
               child: RepaintBoundary(
                 child: InkWell(
                   onTap: () {
-                    ref.read(activeAgentProvider.notifier).state = agent;
+                    ref.read(abilityBarProvider.notifier).updateData(agent);
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(6),

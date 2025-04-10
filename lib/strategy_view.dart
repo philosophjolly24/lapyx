@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/custom_icons.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/interactive_map.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/sidebar.dart';
 import 'package:icarus/widgets/map_selector.dart';
 import 'package:icarus/widgets/save_and_load_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 
 class StrategyView extends ConsumerStatefulWidget {
@@ -38,13 +40,39 @@ class _StrategyViewState extends ConsumerState<StrategyView>
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Column(
         children: [
-          Row(
-            children: [MapSelector()],
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 15, top: 15, bottom: 10, right: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const MapSelector(),
+                TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () async {
+                      await launchUrl(Settings.dicordLink);
+                    },
+                    child: const Row(
+                      children: [
+                        Text("Have any bugs? Join the Discord"),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Icon(
+                          CustomIcons.discord,
+                          color: Colors.white,
+                        )
+                      ],
+                    ))
+              ],
+            ),
           ),
-          Expanded(
+          const Expanded(
             child: Stack(
               children: [
                 Align(

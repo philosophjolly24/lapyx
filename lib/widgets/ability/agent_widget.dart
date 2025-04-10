@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/providers/agent_provider.dart';
+import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/mouse_watch.dart';
 
 class AgentWidget extends ConsumerWidget {
@@ -24,11 +25,16 @@ class AgentWidget extends ConsumerWidget {
         if (id == null) return;
         ref.read(agentProvider.notifier).removeAgent(id!);
       },
-      child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(3.0)),
-        child: Container(
-          color: const Color(0xFF1B1B1B),
-          width: coordinateSystem.scale(30),
+      child: Container(
+        decoration: BoxDecoration(
+            color: const Color(0xFF1B1B1B),
+            border: Border.all(
+              color: Colors.blueGrey,
+            ),
+            borderRadius: const BorderRadius.all(Radius.circular(3))),
+        width: coordinateSystem.scale(30),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(3.0)),
           child: Image.asset(agent.iconPath),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/providers/ability_bar_provider.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/drawing_provider.dart';
@@ -49,6 +50,9 @@ class ActionProvider extends Notifier<List<UserAction>> {
 
   void addAction(UserAction action) {
     ref.read(strategyProvider.notifier).setFileStatus(false);
+    if (action.group != ActionGroup.ability) {
+      ref.read(abilityBarProvider.notifier).updateData(null);
+    }
     state = [...state, action];
 
     // log("\n Current state \n ${state.toString()}");

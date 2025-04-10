@@ -47,105 +47,106 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
   Widget build(BuildContext context) {
     final currentMap = ref.watch(mapProvider);
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 15, top: 15, bottom: 10),
-      child: CompositedTransformTarget(
-        link: _link,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Settings.sideBarColor,
-            borderRadius: const BorderRadius.all(Radius.circular(10)),
-            border: Border.all(
-              color: Settings.highlightColor,
-              width: 2,
-            ),
+    return CompositedTransformTarget(
+      link: _link,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Settings.sideBarColor,
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          border: Border.all(
+            color: Settings.highlightColor,
+            width: 2,
           ),
-          width: 262,
-          height: 65,
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(
-              children: [
-                OverlayPortal(
-                  controller: _controller,
-                  overlayChildBuilder: (context) {
-                    return CompositedTransformFollower(
-                      link: _link,
-                      targetAnchor: Alignment.bottomLeft,
-                      child: Align(
-                        alignment: AlignmentDirectional.topStart,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            height: _containerHeight,
-                            width: 260,
-                            decoration: BoxDecoration(
-                              color: Settings.sideBarColor,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(10)),
-                              border: Border.all(
-                                color: Settings.highlightColor,
-                                width: 2,
-                              ),
+        ),
+        width: 262,
+        height: 65,
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Row(
+            children: [
+              OverlayPortal(
+                controller: _controller,
+                overlayChildBuilder: (context) {
+                  return CompositedTransformFollower(
+                    link: _link,
+                    targetAnchor: Alignment.bottomLeft,
+                    child: Align(
+                      alignment: AlignmentDirectional.topStart,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 6),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          height: _containerHeight,
+                          width: 260,
+                          decoration: BoxDecoration(
+                            color: Settings.sideBarColor,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(10)),
+                            border: Border.all(
+                              color: Settings.highlightColor,
+                              width: 2,
                             ),
-                            child: ListView.builder(
-                              itemCount: Maps.maps.length,
-                              itemBuilder: (context, index) {
-                                MapValue mapValue =
-                                    Maps.maps.keys.elementAt(index);
+                          ),
+                          child: ListView.builder(
+                            itemCount: Maps.maps.length,
+                            itemBuilder: (context, index) {
+                              MapValue mapValue =
+                                  Maps.maps.keys.elementAt(index);
 
-                                if (!Maps.availableMaps.contains(mapValue))
-                                  return const SizedBox.shrink();
+                              if (!Maps.availableMaps.contains(mapValue))
+                                return const SizedBox.shrink();
 
-                                String mapName = Maps.maps[mapValue]!;
+                              String mapName = Maps.maps[mapValue]!;
 
-                                return Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: MapTile(
-                                    name: mapName,
-                                    onTap: () {
-                                      ref
-                                          .read(mapProvider.notifier)
-                                          .updateMap(mapValue);
+                              return Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: MapTile(
+                                  name: mapName,
+                                  onTap: () {
+                                    ref
+                                        .read(mapProvider.notifier)
+                                        .updateMap(mapValue);
 
-                                      _closePortal();
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
+                                    _closePortal();
+                                  },
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
-                    );
-                  },
-                  child: MapTile(
-                      name: Maps.maps[currentMap]!,
-                      onTap: () {
-                        if (!_isOpen) {
-                          _openPortal();
-                        } else {
-                          _closePortal();
-                        }
-                      }),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                IconButton(
-                    onPressed: () {},
-                    icon: const Column(
-                      children: [
-                        Icon(
-                          Icons.upcoming,
-                          size: 17,
-                        ),
-                        Text("Attack")
-                      ],
-                    ))
-              ],
-            ),
+                    ),
+                  );
+                },
+                child: MapTile(
+                    name: Maps.maps[currentMap]!,
+                    onTap: () {
+                      if (!_isOpen) {
+                        _openPortal();
+                      } else {
+                        _closePortal();
+                      }
+                    }),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              IconButton(
+                  onPressed: () {},
+                  icon: const Column(
+                    children: [
+                      Icon(
+                        Icons.upcoming,
+                        size: 17,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        "Attack",
+                        style: TextStyle(color: Colors.grey),
+                      )
+                    ],
+                  ))
+            ],
           ),
         ),
       ),

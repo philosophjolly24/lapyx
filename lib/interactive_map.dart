@@ -1,12 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/maps.dart';
+import 'package:icarus/providers/ability_bar_provider.dart';
 
 import 'package:icarus/providers/map_provider.dart';
+import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/dot_painter.dart';
 
 import 'package:icarus/widgets/drawing_painter.dart';
@@ -20,6 +24,7 @@ class InteractiveMap extends ConsumerStatefulWidget {
 }
 
 class _InteractiveMapState extends ConsumerState<InteractiveMap> {
+  final controller = TransformationController();
   @override
   Widget build(BuildContext context) {
     String assetName =
@@ -37,6 +42,12 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
           height: coordinateSystem.playAreaSize.height,
           color: const Color(0xFF1B1B1B),
           child: InteractiveViewer(
+            transformationController: controller,
+            onInteractionEnd: (details) {
+              ref
+                  .read(screenZoomProvider.notifier)
+                  .updateZoom(controller.value.getMaxScaleOnAxis());
+            },
             child: Stack(
               children: [
                 //Dot Grid
@@ -49,10 +60,15 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
 
                 // Map SVG
                 Positioned.fill(
-                  child: SvgPicture.asset(
-                    assetName,
-                    semanticsLabel: 'Map',
-                    fit: BoxFit.contain,
+                  child: GestureDetector(
+                    onTap: () {
+                      ref.read(abilityBarProvider.notifier).updateData(null);
+                    },
+                    child: SvgPicture.asset(
+                      assetName,
+                      semanticsLabel: 'Map',
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
 

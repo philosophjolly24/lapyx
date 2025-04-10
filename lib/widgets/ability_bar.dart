@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/providers/ability_bar_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 
 class AbiilityBar extends ConsumerWidget {
-  const AbiilityBar(this.activeAgentProvider, {super.key});
-  final StateProvider<AgentData?> activeAgentProvider;
+  const AbiilityBar({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (ref.watch(activeAgentProvider) == null) //
+    if (ref.watch(abilityBarProvider) == null) //
       return const SizedBox.shrink();
 
-    AgentData activeAgent = ref.watch(activeAgentProvider)!;
+    AgentData activeAgent = ref.watch(abilityBarProvider)!;
     return Container(
       width: 90,
       height: 350,

@@ -19,4 +19,6 @@ class Settings {
     ColorOption(color: Colors.yellow, isSelected: false),
     ColorOption(color: Colors.green, isSelected: false),
   ];
+
+  static final Uri dicordLink = Uri.parse("https://discord.gg/PN2uKwCqYB");
 }

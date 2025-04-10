@@ -7,8 +7,11 @@ import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/action_provider.dart';
+import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/ability/rotatable_widget.dart';
 import 'dart:math' as math;
+
+import 'package:icarus/widgets/zoom_transform.dart';
 
 class PlacedAbilityWidget extends StatefulWidget {
   final PlacedAbility ability;
@@ -40,8 +43,11 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
           PlacedWidget.getIndexByID(widget.id, ref.watch(abilityProvider));
       if (index < 0) {
         return Draggable<PlacedWidget>(
+          dragAnchorStrategy:
+              ref.read(screenZoomProvider.notifier).zoomDragAnchorStrategy,
           data: widget.data,
-          feedback: widget.ability.data.abilityData.createWidget(null),
+          feedback: ZoomTransform(
+              child: widget.ability.data.abilityData.createWidget(null)),
           childWhenDragging: const SizedBox.shrink(),
           onDragEnd: widget.onDragEnd,
           child: widget.ability.data.abilityData.createWidget(widget.id),
@@ -53,8 +59,12 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
         top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
         child: (widget.ability.data.abilityData is! SquareAbility)
             ? Draggable<PlacedWidget>(
+                dragAnchorStrategy: ref
+                    .read(screenZoomProvider.notifier)
+                    .zoomDragAnchorStrategy,
                 data: widget.data,
-                feedback: widget.ability.data.abilityData.createWidget(null),
+                feedback: ZoomTransform(
+                    child: widget.ability.data.abilityData.createWidget(null)),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
                 child: widget.ability.data.abilityData.createWidget(widget.id),

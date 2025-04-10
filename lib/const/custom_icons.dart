@@ -14,4 +14,6 @@ class CustomIcons {
       IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData arrow =
       IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData discord =
+      IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

@@ -17,10 +17,6 @@ class SideBarUI extends StatefulWidget {
 class _SideBarUIState extends State<SideBarUI> {
   ScrollController gridScrollController = ScrollController();
 
-  final activeAgentProvider = StateProvider<AgentData?>((ref) {
-    return null;
-  });
-
   @override
   void dispose() {
     gridScrollController.dispose();
@@ -43,7 +39,7 @@ class _SideBarUIState extends State<SideBarUI> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        AbiilityBar(activeAgentProvider),
+        const AbiilityBar(),
         Padding(
           padding: const EdgeInsets.only(right: 8, bottom: 8),
           child: Container(
@@ -110,7 +106,6 @@ class _SideBarUIState extends State<SideBarUI> {
                                     AgentData.agents[AgentType.values[index]]!;
                                 return AgentDragable(
                                   agent: agent,
-                                  activeAgentProvider: activeAgentProvider,
                                 );
                               },
                             ),

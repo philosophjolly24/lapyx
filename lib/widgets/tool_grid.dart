@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/custom_icons_icons.dart';
+import 'package:icarus/const/custom_icons.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
@@ -75,6 +75,9 @@ class ToolGrid extends ConsumerWidget {
               ),
               IconButton(
                 onPressed: () {
+                  ref
+                      .read(interactionStateProvider.notifier)
+                      .update(InteractionState.navigation);
                   const uuid = Uuid();
                   ref.read(textProvider.notifier).addText(
                         PlacedText(

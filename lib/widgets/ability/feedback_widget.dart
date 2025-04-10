@@ -15,7 +15,12 @@ class AgentFeedback extends StatelessWidget {
     return ClipRRect(
       borderRadius: const BorderRadius.all(Radius.circular(3.0)),
       child: Container(
-        color: const Color(0xFF1B1B1B),
+        decoration: BoxDecoration(
+            color: const Color(0xFF1B1B1B),
+            border: Border.all(
+              color: Colors.blueGrey,
+            ),
+            borderRadius: const BorderRadius.all(Radius.circular(3))),
         width: coordinateSystem.scale(30),
         child: Image.asset(agent.iconPath),
       ),
