@@ -28,6 +28,7 @@ enum AgentType {
   sage,
   vyse,
   tejo,
+  waylay
 }
 
 enum AgentRole { controller, duelist, initiator, sentinel }
@@ -657,6 +658,27 @@ class AgentData implements DraggableData {
         height: 32 * inGameMeters,
         iconPath: agent.abilities.last.iconPath,
         color: Colors.orangeAccent,
+      );
+
+      return agent;
+    })(),
+    AgentType.waylay: (() {
+      final agent = AgentData(
+          type: AgentType.waylay, role: AgentRole.duelist, name: "Waylay");
+
+      agent.abilities.first.abilityData = CircleAbility(
+        iconPath: agent.abilities.first.iconPath,
+        size: 5,
+        outlineColor: Colors.deepPurpleAccent,
+        hasCenterDot: true,
+      );
+
+      agent.abilities.last.abilityData = SquareAbility(
+        width: 18 * inGameMeters,
+        height: 36 * inGameMeters,
+        iconPath: agent.abilities.last.iconPath,
+        distanceBetweenAOE: 3 * inGameMeters,
+        color: Colors.deepPurpleAccent,
       );
 
       return agent;

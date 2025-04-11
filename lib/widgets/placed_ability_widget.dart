@@ -118,18 +118,26 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                 },
                 child: Draggable<PlacedWidget>(
                   data: widget.data,
+                  dragAnchorStrategy: ref
+                      .read(screenZoomProvider.notifier)
+                      .zoomDragAnchorStrategy,
                   feedback: Transform.rotate(
                     angle: rotation,
                     alignment: Alignment.topLeft,
                     origin: widget.ability.data.abilityData
                         .getAnchorPoint()
-                        .scale(coordinateSystem.scaleFactor,
-                            coordinateSystem.scaleFactor),
-                    child: ref
-                        .watch(abilityProvider)[index]
-                        .data
-                        .abilityData
-                        .createWidget(widget.id, rotation),
+                        .scale(
+                            coordinateSystem.scaleFactor *
+                                ref.watch(screenZoomProvider),
+                            coordinateSystem.scaleFactor *
+                                ref.watch(screenZoomProvider)),
+                    child: ZoomTransform(
+                      child: ref
+                          .watch(abilityProvider)[index]
+                          .data
+                          .abilityData
+                          .createWidget(widget.id, rotation),
+                    ),
                   ),
                   childWhenDragging: const SizedBox.shrink(),
                   onDragEnd: widget.onDragEnd,
