@@ -5,15 +5,11 @@ import 'package:icarus/providers/ability_bar_provider.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/drawing_provider.dart';
+import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 
-enum ActionGroup {
-  agent,
-  ability,
-  drawing,
-  text,
-}
+enum ActionGroup { agent, ability, drawing, text, image }
 
 enum ActionType {
   addition,
@@ -76,6 +72,8 @@ class ActionProvider extends Notifier<List<UserAction>> {
         ref.read(drawingProvider.notifier).redoAction(poppedAction);
       case ActionGroup.text:
         ref.read(textProvider.notifier).redoAction(poppedAction);
+      case ActionGroup.image:
+        ref.read(imageProvider.notifier).redoAction(poppedAction);
     }
 
     final newState = [...state];
@@ -103,6 +101,8 @@ class ActionProvider extends Notifier<List<UserAction>> {
         ref.read(drawingProvider.notifier).undoAction(currentAction);
       case ActionGroup.text:
         ref.read(textProvider.notifier).undoAction(currentAction);
+      case ActionGroup.image:
+        ref.read(imageProvider.notifier).undoAction(currentAction);
     }
     // log("Undo action was called");
     final newState = [...state];

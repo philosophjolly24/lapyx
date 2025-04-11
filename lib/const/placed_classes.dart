@@ -85,6 +85,17 @@ class PlacedText extends PlacedWidget {
   Map<String, dynamic> toJson() => _$PlacedTextToJson(this);
 }
 
+class PlacedImage extends PlacedWidget {
+  PlacedImage({required super.position, required super.id});
+
+  Image? image;
+  String text = "";
+
+  void updateText(String newText) {
+    text = newText;
+  }
+}
+
 @JsonSerializable()
 class PlacedAgent extends PlacedWidget {
   final AgentType type;
