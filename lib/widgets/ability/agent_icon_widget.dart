@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/widgets/mouse_watch.dart';
 
-class ImageWidget extends StatelessWidget {
-  const ImageWidget(
+class AgentIconWidget extends StatelessWidget {
+  const AgentIconWidget(
       {super.key, required this.imagePath, required this.size, this.index});
   final double size;
   final String imagePath;

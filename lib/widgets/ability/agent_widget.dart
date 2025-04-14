@@ -29,7 +29,7 @@ class AgentWidget extends ConsumerWidget {
         decoration: BoxDecoration(
             color: const Color(0xFF1B1B1B),
             border: Border.all(
-              color: Colors.blueGrey,
+              color: const Color.fromARGB(255, 39, 149, 168),
             ),
             borderRadius: const BorderRadius.all(Radius.circular(3))),
         width: coordinateSystem.scale(30),

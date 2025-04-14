@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,14 +8,31 @@ import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/const/placed_classes.dart';
 
 final imageProvider =
-    NotifierProvider<ImageNotifier, List<PlacedImage>>(ImageNotifier.new);
+    NotifierProvider<ImageProvider, ImageState>(ImageProvider.new);
 
-class ImageNotifier extends Notifier<List<PlacedImage>> {
+class ImageState {
+  ImageState({required this.images, required this.currentImage});
+
+  final List<PlacedImage> images;
+  final Uint8List? currentImage;
+
+  ImageState copyWith({
+    List<PlacedImage>? images,
+    Uint8List? currentImage,
+  }) {
+    return ImageState(
+      images: images ?? this.images,
+      currentImage: currentImage ?? this.currentImage,
+    );
+  }
+}
+
+class ImageProvider extends Notifier<ImageState> {
   List<PlacedImage> poppedImages = [];
 
   @override
-  List<PlacedImage> build() {
-    return [];
+  ImageState build() {
+    return ImageState(images: [], currentImage: null);
   }
 
   void addImage(PlacedImage placedImage) {
@@ -25,36 +43,37 @@ class ImageNotifier extends Notifier<List<PlacedImage>> {
     );
 
     ref.read(actionProvider.notifier).addAction(action);
-    state = [...state, placedImage];
+    state = state.copyWith(images: [...state.images, placedImage]);
   }
 
   void removeImage(String id) {
-    final newState = [...state];
-
-    final index = PlacedWidget.getIndexByID(id, newState);
+    final newImages = [...state.images];
+    final index = PlacedWidget.getIndexByID(id, newImages);
 
     if (index < 0) return;
-    final image = newState.removeAt(index);
+    final image = newImages.removeAt(index);
     poppedImages.add(image);
 
-    state = newState;
+    state = state.copyWith(images: newImages);
   }
 
   void updatePosition(Offset position, String id) {
-    final newState = [...state];
-
-    final index = PlacedWidget.getIndexByID(id, newState);
+    final newImages = [...state.images];
+    final index = PlacedWidget.getIndexByID(id, newImages);
 
     if (index < 0) return;
-    newState[index].updatePosition(position);
+    newImages[index].updatePosition(position);
 
-    final temp = newState.removeAt(index);
+    final temp = newImages.removeAt(index);
 
-    final action =
-        UserAction(type: ActionType.edit, id: id, group: ActionGroup.image);
+    final action = UserAction(
+      type: ActionType.edit,
+      id: id,
+      group: ActionGroup.image,
+    );
     ref.read(actionProvider.notifier).addAction(action);
 
-    state = [...newState, temp];
+    state = state.copyWith(images: [...newImages, temp]);
   }
 
   void undoAction(UserAction action) {
@@ -68,51 +87,58 @@ class ImageNotifier extends Notifier<List<PlacedImage>> {
           log("Popped images is empty");
           return;
         }
-        final newState = [...state];
-        newState.add(poppedImages.removeLast());
-        state = newState;
+        final newImages = [...state.images];
+        newImages.add(poppedImages.removeLast());
+        state = state.copyWith(images: newImages);
       case ActionType.edit:
         undoPosition(action.id);
     }
   }
 
   void undoPosition(String id) {
-    final newState = [...state];
+    final newImages = [...state.images];
+    final index = PlacedWidget.getIndexByID(id, newImages);
 
-    final index = PlacedWidget.getIndexByID(id, newState);
     if (index < 0) return;
+    newImages[index].undoAction();
 
-    newState[index].undoAction();
-
-    state = newState;
+    state = state.copyWith(images: newImages);
   }
 
   void redoAction(UserAction action) {
-    final newState = [...state];
+    final newImages = [...state.images];
 
     try {
       switch (action.type) {
         case ActionType.addition:
           final index = PlacedWidget.getIndexByID(action.id, poppedImages);
-          newState.add(poppedImages.removeAt(index));
+          newImages.add(poppedImages.removeAt(index));
 
         case ActionType.deletion:
           final index = PlacedWidget.getIndexByID(action.id, poppedImages);
-          poppedImages.add(newState.removeAt(index));
+          poppedImages.add(newImages.removeAt(index));
 
         case ActionType.edit:
-          final index = PlacedWidget.getIndexByID(action.id, newState);
-          newState[index].redoAction();
+          final index = PlacedWidget.getIndexByID(action.id, newImages);
+          newImages[index].redoAction();
       }
     } catch (_) {
       log("Failed to find index");
     }
-    state = newState;
+    state = state.copyWith(images: newImages);
+  }
+
+  void changeCurrentImage(Uint8List newImage) {
+    state = state.copyWith(currentImage: newImage);
+  }
+
+  void clearCurrentImage() {
+    state = ImageState(images: [...state.images], currentImage: null);
   }
 
   String toJson() {
     final List<Map<String, dynamic>> jsonList =
-        state.map((image) => image.toJson()).toList();
+        state.images.map((image) => image.toJson()).toList();
     return jsonEncode(jsonList);
   }
 

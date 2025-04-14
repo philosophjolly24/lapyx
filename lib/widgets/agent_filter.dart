@@ -13,33 +13,31 @@ class AgentFilter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          for (final (index, String text) in _filterText.indexed)
-            TextButton(
-              onPressed: () {
-                final filterState = FilterState.values[index];
-                ref
-                    .read(agentFilterProvider.notifier)
-                    .updateFilterState(filterState);
-              },
-              // style: ButtonStyle(
-
-              // ),
-              child: Text(
-                text,
-                style: TextStyle(
-                  color: (ref.watch(agentFilterProvider).currentFilter ==
-                          FilterState.values[index])
-                      ? Colors.blue
-                      : Colors.grey,
-                ),
+    return Row(
+      children: [
+        for (final (index, String text) in _filterText.indexed)
+          TextButton(
+            onPressed: () {
+              final filterState = FilterState.values[index];
+              ref
+                  .read(agentFilterProvider.notifier)
+                  .updateFilterState(filterState);
+            },
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0), // Reduced from default
+            ),
+            child: Text(
+              text,
+              style: TextStyle(
+                color: (ref.watch(agentFilterProvider).currentFilter ==
+                        FilterState.values[index])
+                    ? Colors.blue
+                    : Colors.grey,
               ),
-            )
-        ],
-      ),
+            ),
+          )
+      ],
     );
   }
 }

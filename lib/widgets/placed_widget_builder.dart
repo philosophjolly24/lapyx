@@ -8,11 +8,13 @@ import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
+import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/widgets/delete_area.dart';
+import 'package:icarus/widgets/image_widget.dart';
 import 'package:icarus/widgets/placed_ability_widget.dart';
 import 'package:icarus/widgets/text_widget.dart';
 import 'package:icarus/widgets/zoom_transform.dart';
@@ -175,6 +177,56 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                           text: placedText.text,
                           id: placedText.id,
                         ),
+                      ),
+                    ),
+                  for (PlacedImage placedImage
+                      in ref.watch(imageProvider).images)
+                    Positioned(
+                      left: coordinateSystem
+                          .coordinateToScreen(placedImage.position)
+                          .dx,
+                      top: coordinateSystem
+                          .coordinateToScreen(placedImage.position)
+                          .dy,
+                      child: Draggable<PlacedWidget>(
+                        data: placedImage,
+                        feedback: ZoomTransform(
+                          child: IgnorePointer(
+                            child: ImageWidget(
+                                image: placedImage.image,
+                                text: placedImage.text),
+                          ),
+                        ),
+                        childWhenDragging: const SizedBox.shrink(),
+                        dragAnchorStrategy: ref
+                            .read(screenZoomProvider.notifier)
+                            .zoomDragAnchorStrategy,
+                        onDragEnd: (details) {
+                          RenderBox renderBox =
+                              context.findRenderObject() as RenderBox;
+                          Offset localOffset =
+                              renderBox.globalToLocal(details.offset);
+
+                          //Basically makes sure that if more than half is of the screen it gets deleted
+                          Offset virtualOffset =
+                              coordinateSystem.screenToCoordinate(localOffset);
+                          double safeArea = Settings.agentSize / 2;
+
+                          if (coordinateSystem.isOutOfBounds(
+                              virtualOffset.translate(safeArea, safeArea))) {
+                            ref
+                                .read(imageProvider.notifier)
+                                .removeImage(placedImage.id);
+
+                            return;
+                          }
+
+                          ref
+                              .read(imageProvider.notifier)
+                              .updatePosition(virtualOffset, placedImage.id);
+                        },
+                        child: ImageWidget(
+                            image: placedImage.image, text: placedImage.text),
                       ),
                     ),
                 ],

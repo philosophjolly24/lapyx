@@ -4,7 +4,7 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/ability/custom_circle_widget.dart';
 import 'package:icarus/widgets/ability/custom_square_widget.dart';
-import 'package:icarus/widgets/ability/image_widget.dart';
+import 'package:icarus/widgets/ability/agent_icon_widget.dart';
 
 abstract class Ability {
   Offset getAnchorPoint();
@@ -37,7 +37,7 @@ class ImageAbility extends Ability {
   ImageAbility({required this.imagePath, required this.size});
   @override
   Widget createWidget(String? id, [double? rotation]) {
-    return ImageWidget(imagePath: imagePath, size: size);
+    return AgentIconWidget(imagePath: imagePath, size: size);
   }
 
   @override

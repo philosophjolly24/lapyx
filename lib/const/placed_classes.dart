@@ -86,9 +86,10 @@ class PlacedText extends PlacedWidget {
 }
 
 class PlacedImage extends PlacedWidget {
-  PlacedImage({required super.position, required super.id});
+  PlacedImage(
+      {required super.position, required super.id, required this.image});
 
-  Image? image;
+  Image image;
   String text = "";
 
   void updateText(String newText) {
@@ -99,8 +100,15 @@ class PlacedImage extends PlacedWidget {
 @JsonSerializable()
 class PlacedAgent extends PlacedWidget {
   final AgentType type;
+  @JsonKey(defaultValue: true)
+  final bool isAlly;
 
-  PlacedAgent({required this.type, required super.position, required super.id});
+  PlacedAgent({
+    required this.type,
+    required super.position,
+    required super.id,
+    this.isAlly = true, // Default parameter value
+  });
 
   factory PlacedAgent.fromJson(Map<String, dynamic> json) =>
       _$PlacedAgentFromJson(json);
@@ -112,6 +120,9 @@ class PlacedAgent extends PlacedWidget {
 class PlacedAbility extends PlacedWidget {
   @AbilityInfoConverter()
   final AbilityInfo data;
+
+  @JsonKey(defaultValue: true)
+  final bool isAlly;
 
   double rotation = 0;
 
@@ -165,7 +176,10 @@ class PlacedAbility extends PlacedWidget {
   }
 
   PlacedAbility(
-      {required this.data, required super.position, required super.id});
+      {required this.data,
+      required super.position,
+      required super.id,
+      this.isAlly = true});
 
   factory PlacedAbility.fromJson(Map<String, dynamic> json) =>
       _$PlacedAbilityFromJson(json);

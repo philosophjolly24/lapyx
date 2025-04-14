@@ -5,6 +5,7 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/widgets/ability_bar.dart';
 import 'package:icarus/widgets/agent_filter.dart';
+import 'package:icarus/widgets/team_picker.dart';
 import 'package:icarus/widgets/tool_grid.dart';
 
 class SideBarUI extends StatefulWidget {
@@ -65,7 +66,13 @@ class _SideBarUIState extends State<SideBarUI> {
                     ),
                   ),
                 ),
-                AgentFilter(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [AgentFilter(), const TeamPicker()],
+                  ),
+                ),
                 Expanded(
                   child: RawScrollbar(
                     trackVisibility: true,
