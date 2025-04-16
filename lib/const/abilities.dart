@@ -8,7 +8,7 @@ import 'package:icarus/widgets/ability/agent_icon_widget.dart';
 
 abstract class Ability {
   Offset getAnchorPoint();
-  Widget createWidget(String? id, [double? rotation]);
+  Widget createWidget(String? id, bool isAlly, [double? rotation]);
 }
 
 class BaseAbility extends Ability {
@@ -17,8 +17,9 @@ class BaseAbility extends Ability {
   BaseAbility({required this.iconPath});
 
   @override
-  Widget createWidget(String? id, [double? rotation]) {
+  Widget createWidget(String? id, bool isAlly, [double? rotation]) {
     return AbilityWidget(
+      isAlly: isAlly,
       iconPath: iconPath,
       id: id,
     );
@@ -36,8 +37,11 @@ class ImageAbility extends Ability {
 
   ImageAbility({required this.imagePath, required this.size});
   @override
-  Widget createWidget(String? id, [double? rotation]) {
-    return AgentIconWidget(imagePath: imagePath, size: size);
+  Widget createWidget(String? id, bool isAlly, [double? rotation]) {
+    return AgentIconWidget(
+      imagePath: imagePath,
+      size: size,
+    );
   }
 
   @override
@@ -74,7 +78,7 @@ class CircleAbility extends Ability {
   }
 
   @override
-  Widget createWidget(String? id, [double? rotation]) {
+  Widget createWidget(String? id, bool isAlly, [double? rotation]) {
     return CustomCircleWidget(
       iconPath: iconPath,
       size: size,
@@ -85,6 +89,7 @@ class CircleAbility extends Ability {
       fillColor: fillColor,
       innerSize: perimeterSize,
       id: id,
+      isAlly: isAlly,
     );
   }
 }
@@ -114,7 +119,7 @@ class SquareAbility extends Ability {
   }
 
   @override
-  Widget createWidget(String? id, [double? rotation]) {
+  Widget createWidget(String? id, bool isAlly, [double? rotation]) {
     return CustomSquareWidget(
       color: color,
       width: width,
@@ -124,6 +129,7 @@ class SquareAbility extends Ability {
       rotation: rotation,
       origin: getAnchorPoint(),
       id: id,
+      isAlly: isAlly,
     );
   }
 }

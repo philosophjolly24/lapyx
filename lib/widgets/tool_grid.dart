@@ -48,7 +48,7 @@ class ToolGrid extends ConsumerWidget {
                   final image = PlacedImage(
                     position: const Offset(500, 500),
                     id: uuid.v4(),
-                    image: Image.memory(ref.read(imageProvider).currentImage!),
+                    image: ref.read(imageProvider).currentImage!,
                   );
                   ref.read(imageProvider.notifier).addImage(image);
                   ref.read(imageProvider.notifier).clearCurrentImage();

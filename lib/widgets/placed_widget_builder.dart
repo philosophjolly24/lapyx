@@ -11,6 +11,7 @@ import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
+import 'package:icarus/providers/team_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
 import 'package:icarus/widgets/delete_area.dart';
@@ -93,6 +94,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                             .zoomDragAnchorStrategy,
                         feedback: ZoomTransform(
                           child: AgentWidget(
+                            isAlly: agent.isAlly,
                             id: "",
                             agent: AgentData.agents[agent.type]!,
                           ),
@@ -123,6 +125,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                         },
                         child: RepaintBoundary(
                           child: AgentWidget(
+                            isAlly: agent.isAlly,
                             id: agent.id,
                             agent: AgentData.agents[agent.type]!,
                           ),
@@ -193,7 +196,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                         feedback: ZoomTransform(
                           child: IgnorePointer(
                             child: ImageWidget(
-                                image: placedImage.image,
+                                image: Image.memory(placedImage.image),
                                 text: placedImage.text),
                           ),
                         ),
@@ -226,7 +229,9 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                               .updatePosition(virtualOffset, placedImage.id);
                         },
                         child: ImageWidget(
-                            image: placedImage.image, text: placedImage.text),
+                          image: Image.memory(placedImage.image),
+                          text: placedImage.text,
+                        ),
                       ),
                     ),
                 ],
@@ -241,10 +246,10 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
             const uuid = Uuid();
             if (details.data is AgentData) {
               PlacedAgent placedAgent = PlacedAgent(
-                id: uuid.v4(),
-                type: (details.data as AgentData).type,
-                position: normalizedPosition,
-              );
+                  id: uuid.v4(),
+                  type: (details.data as AgentData).type,
+                  position: normalizedPosition,
+                  isAlly: ref.read(teamProvider));
 
               ref.read(agentProvider.notifier).addAgent(placedAgent);
             } else if (details.data is AbilityInfo) {
@@ -252,6 +257,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                 id: uuid.v4(),
                 data: details.data as AbilityInfo,
                 position: normalizedPosition,
+                isAlly: ref.read(teamProvider),
               );
 
               ref.read(abilityProvider.notifier).addAbility(placedAbility);

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/json_converters.dart';
@@ -85,16 +87,25 @@ class PlacedText extends PlacedWidget {
   Map<String, dynamic> toJson() => _$PlacedTextToJson(this);
 }
 
+@JsonSerializable()
 class PlacedImage extends PlacedWidget {
   PlacedImage(
       {required super.position, required super.id, required this.image});
 
-  Image image;
+  @Uint8ListConverter()
+  Uint8List image;
+
   String text = "";
 
   void updateText(String newText) {
     text = newText;
   }
+
+  factory PlacedImage.fromJson(Map<String, dynamic> json) =>
+      _$PlacedImageFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$PlacedImageToJson(this);
 }
 
 @JsonSerializable()

@@ -41,16 +41,19 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
     return Consumer(builder: (context, ref, child) {
       final index =
           PlacedWidget.getIndexByID(widget.id, ref.watch(abilityProvider));
+      final bool isAlly = ref.watch(abilityProvider)[index].isAlly;
       if (index < 0) {
         return Draggable<PlacedWidget>(
           dragAnchorStrategy:
               ref.read(screenZoomProvider.notifier).zoomDragAnchorStrategy,
           data: widget.data,
           feedback: ZoomTransform(
-              child: widget.ability.data.abilityData.createWidget(null)),
+              child:
+                  widget.ability.data.abilityData.createWidget(null, isAlly)),
           childWhenDragging: const SizedBox.shrink(),
           onDragEnd: widget.onDragEnd,
-          child: widget.ability.data.abilityData.createWidget(widget.id),
+          child:
+              widget.ability.data.abilityData.createWidget(widget.id, isAlly),
         );
       }
       double rotation = ref.watch(abilityProvider)[index].rotation;
@@ -64,10 +67,12 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     .zoomDragAnchorStrategy,
                 data: widget.data,
                 feedback: ZoomTransform(
-                    child: widget.ability.data.abilityData.createWidget(null)),
+                    child: widget.ability.data.abilityData
+                        .createWidget(null, isAlly)),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
-                child: widget.ability.data.abilityData.createWidget(widget.id),
+                child: widget.ability.data.abilityData
+                    .createWidget(widget.id, isAlly),
               )
             : RotatableWidget(
                 rotation: rotation,
@@ -136,7 +141,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                           .watch(abilityProvider)[index]
                           .data
                           .abilityData
-                          .createWidget(widget.id, rotation),
+                          .createWidget(widget.id, isAlly, rotation),
                     ),
                   ),
                   childWhenDragging: const SizedBox.shrink(),
@@ -146,7 +151,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                       .watch(abilityProvider)[index]
                       .data
                       .abilityData
-                      .createWidget(widget.id, rotation),
+                      .createWidget(widget.id, isAlly, rotation),
                 ),
               ),
       );

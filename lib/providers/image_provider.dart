@@ -142,19 +142,20 @@ class ImageProvider extends Notifier<ImageState> {
     return jsonEncode(jsonList);
   }
 
-  // void fromJson(String jsonString) {
-  //   final List<dynamic> jsonList = jsonDecode(jsonString);
-  //   state = jsonList
-  //       .map((json) => PlacedImage.fromJson(json as Map<String, dynamic>))
-  //       .toList();
-  // }
+  void fromJson(String jsonString) {
+    final List<dynamic> jsonList = jsonDecode(jsonString);
+    state = state.copyWith(
+        images: jsonList
+            .map((json) => PlacedImage.fromJson(json as Map<String, dynamic>))
+            .toList());
+  }
 
   // @override
   // String toString() {
   //   String output = "[";
 
   //   for (PlacedImage image in state) {
-  //     output += "Path: ${image.path}, Position: ${image.position}, ";
+  //     output += ", ";
   //   }
 
   //   output += "]";

@@ -16,8 +16,10 @@ class CustomCircleWidget extends ConsumerWidget {
     this.innerSize = 2,
     this.fillColor,
     required this.id,
+    required this.isAlly,
   });
 
+  final bool isAlly;
   final String? id;
   final String iconPath;
   final double size;
@@ -27,6 +29,7 @@ class CustomCircleWidget extends ConsumerWidget {
   final int? opacity;
   final double? innerSize;
   final Color? fillColor;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final coordinateSystem = CoordinateSystem.instance;
@@ -81,8 +84,8 @@ class CustomCircleWidget extends ConsumerWidget {
           color: hasPerimeter ? null : outlineColor.withAlpha(opacity ?? 70),
           shape: BoxShape.circle,
           border: Border.all(
-            color: outlineColor,
-            width: coordinateSystem.scale(5),
+            color: hasPerimeter ? outlineColor.withAlpha(100) : outlineColor,
+            width: coordinateSystem.scale(2),
           ),
         ),
       ),
@@ -121,15 +124,23 @@ class CustomCircleWidget extends ConsumerWidget {
             if (id == null) return;
             ref.watch(abilityProvider.notifier).removeAbility(id!);
           },
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(3)),
-            child: Container(
-              width: coordinateSystem.scale(25),
-              height: coordinateSystem.scale(25),
-              padding: EdgeInsets.all(coordinateSystem.scale(3)),
-              decoration: const BoxDecoration(
-                color: Color(0xFF1B1B1B),
+          child: Container(
+            width: coordinateSystem.scale(25),
+            height: coordinateSystem.scale(25),
+            padding: EdgeInsets.all(coordinateSystem.scale(3)),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(3),
               ),
+              color: const Color(0xFF1B1B1B),
+              border: Border.all(
+                color: isAlly
+                    ? const Color.fromARGB(106, 105, 240, 175)
+                    : const Color.fromARGB(139, 255, 82, 82),
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(3)),
               child: Image.asset(
                 iconPath,
                 fit: BoxFit.contain,
@@ -141,57 +152,3 @@ class CustomCircleWidget extends ConsumerWidget {
     );
   }
 }
-
-// class CustomCircleWidget extends StatelessWidget {
-//   const CustomCircleWidget({
-//     super.key,
-//     required this.iconPath,
-//     required this.size,
-//     required this.outlineColor,
-//     required this.hasCenterDot,
-//     required this.hasPerimeter,
-//     this.opacity = 70,
-//     this.innerSize = 2,
-//     this.fillColor,
-//     required this.index,
-//   });
-
-//   final int? index;
-//   final String iconPath;
-//   final double size;
-//   final Color outlineColor;
-//   final bool hasCenterDot;
-//   final bool hasPerimeter;
-//   final int? opacity;
-//   final double? innerSize;
-//   final Color? fillColor;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final coordinateSystem = CoordinateSystem.instance;
-//     final scaleSize = coordinateSystem.scale(size) - coordinateSystem.scale(5);
-//     final secondaryScaleSize =
-//         coordinateSystem.scale(innerSize ?? 2) - coordinateSystem.scale(2);
-
-//     // If no center dot is needed, return a simple circle
-//     if (!hasCenterDot) {
-//       return _buildSimpleCircle(coordinateSystem, scaleSize);
-//     }
-
-//     // With center dot, build appropriate stack based on perimeter setting
-//     return Stack(
-//       children: [
-//         // Outer circle/perimeter
-//         _buildOuterCircle(coordinateSystem, scaleSize, hasPerimeter),
-
-//         // Inner circle (only when has perimeter)
-//         if (hasPerimeter)
-//           _buildInnerCircle(coordinateSystem, secondaryScaleSize),
-
-//         // Icon in center
-//         _buildCenterIcon(coordinateSystem),
-//       ],
-//     );
-//   }
-
-// }

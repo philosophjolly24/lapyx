@@ -10,9 +10,11 @@ class AbilityWidget extends ConsumerWidget {
     super.key,
     required this.iconPath,
     required this.id,
+    required this.isAlly,
   });
 
   final String? id;
+  final bool isAlly;
   final String iconPath;
 
   @override
@@ -24,15 +26,23 @@ class AbilityWidget extends ConsumerWidget {
         if (id == null) return;
         ref.read(abilityProvider.notifier).removeAbility(id!);
       },
-      child: ClipRRect(
-        borderRadius: const BorderRadius.all(Radius.circular(3)),
-        child: Container(
-          width: coordinateSystem.scale(Settings.abilitySize),
-          height: coordinateSystem.scale(Settings.abilitySize),
-          padding: EdgeInsets.all(coordinateSystem.scale(3)),
-          decoration: const BoxDecoration(
-            color: Settings.abilityBGColor,
+      child: Container(
+        width: coordinateSystem.scale(Settings.abilitySize),
+        height: coordinateSystem.scale(Settings.abilitySize),
+        padding: EdgeInsets.all(coordinateSystem.scale(3)),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(3),
           ),
+          color: Settings.abilityBGColor,
+          border: Border.all(
+            color: isAlly
+                ? const Color.fromARGB(106, 105, 240, 175)
+                : const Color.fromARGB(139, 255, 82, 82),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(3)),
           child: Image.asset(
             iconPath,
             fit: BoxFit.contain,

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/drawing_provider.dart';
+import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 
@@ -61,6 +62,7 @@ class StrategyProvider extends Notifier<StrategyData> {
     ref.read(mapProvider.notifier).fromJson(jsonEncode(json["mapData"]));
     ref.read(textProvider.notifier).fromJson(jsonEncode(json["textData"]));
 
+    ref.read(imageProvider.notifier).fromJson(jsonEncode(json["imageData"]));
     state = state.copyWith(fileName: result.files.first.path, isSaved: true);
   }
 
@@ -71,7 +73,8 @@ class StrategyProvider extends Notifier<StrategyData> {
                 "agentData": ${ref.read(agentProvider.notifier).toJson()},
                 "abilityData": ${ref.read(abilityProvider.notifier).toJson()},
                 "textData": ${ref.read(textProvider.notifier).toJson()},
-                "mapData": ${ref.read(mapProvider.notifier).toJson()}
+                "mapData": ${ref.read(mapProvider.notifier).toJson()},
+                "imageData":${ref.read(imageProvider.notifier).toJson()}
                 }
               ''';
 

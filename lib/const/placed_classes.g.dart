@@ -34,11 +34,27 @@ Map<String, dynamic> _$PlacedTextToJson(PlacedText instance) =>
       'size': instance.size,
     };
 
+PlacedImage _$PlacedImageFromJson(Map<String, dynamic> json) => PlacedImage(
+      position: const OffsetConverter()
+          .fromJson(json['position'] as Map<String, dynamic>),
+      id: json['id'] as String,
+      image: const Uint8ListConverter().fromJson(json['image'] as String),
+    )..text = json['text'] as String;
+
+Map<String, dynamic> _$PlacedImageToJson(PlacedImage instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'position': const OffsetConverter().toJson(instance.position),
+      'image': const Uint8ListConverter().toJson(instance.image),
+      'text': instance.text,
+    };
+
 PlacedAgent _$PlacedAgentFromJson(Map<String, dynamic> json) => PlacedAgent(
       type: $enumDecode(_$AgentTypeEnumMap, json['type']),
       position: const OffsetConverter()
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
+      isAlly: json['isAlly'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$PlacedAgentToJson(PlacedAgent instance) =>
@@ -46,6 +62,7 @@ Map<String, dynamic> _$PlacedAgentToJson(PlacedAgent instance) =>
       'id': instance.id,
       'position': const OffsetConverter().toJson(instance.position),
       'type': _$AgentTypeEnumMap[instance.type]!,
+      'isAlly': instance.isAlly,
     };
 
 const _$AgentTypeEnumMap = {
@@ -75,6 +92,7 @@ const _$AgentTypeEnumMap = {
   AgentType.sage: 'sage',
   AgentType.vyse: 'vyse',
   AgentType.tejo: 'tejo',
+  AgentType.waylay: 'waylay',
 };
 
 PlacedAbility _$PlacedAbilityFromJson(Map<String, dynamic> json) =>
@@ -84,6 +102,7 @@ PlacedAbility _$PlacedAbilityFromJson(Map<String, dynamic> json) =>
       position: const OffsetConverter()
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
+      isAlly: json['isAlly'] as bool? ?? true,
     )..rotation = (json['rotation'] as num).toDouble();
 
 Map<String, dynamic> _$PlacedAbilityToJson(PlacedAbility instance) =>
@@ -91,5 +110,6 @@ Map<String, dynamic> _$PlacedAbilityToJson(PlacedAbility instance) =>
       'id': instance.id,
       'position': const OffsetConverter().toJson(instance.position),
       'data': const AbilityInfoConverter().toJson(instance.data),
+      'isAlly': instance.isAlly,
       'rotation': instance.rotation,
     };
