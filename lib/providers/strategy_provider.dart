@@ -62,7 +62,9 @@ class StrategyProvider extends Notifier<StrategyData> {
     ref.read(mapProvider.notifier).fromJson(jsonEncode(json["mapData"]));
     ref.read(textProvider.notifier).fromJson(jsonEncode(json["textData"]));
 
-    ref.read(imageProvider.notifier).fromJson(jsonEncode(json["imageData"]));
+    ref
+        .read(placedImageProvider.notifier)
+        .fromJson(jsonEncode(json["imageData"]));
     state = state.copyWith(fileName: result.files.first.path, isSaved: true);
   }
 
@@ -74,7 +76,7 @@ class StrategyProvider extends Notifier<StrategyData> {
                 "abilityData": ${ref.read(abilityProvider.notifier).toJson()},
                 "textData": ${ref.read(textProvider.notifier).toJson()},
                 "mapData": ${ref.read(mapProvider.notifier).toJson()},
-                "imageData":${ref.read(imageProvider.notifier).toJson()}
+                "imageData":${ref.read(placedImageProvider.notifier).toJson()}
                 }
               ''';
 

@@ -90,15 +90,23 @@ class PlacedText extends PlacedWidget {
 @JsonSerializable()
 class PlacedImage extends PlacedWidget {
   PlacedImage(
-      {required super.position, required super.id, required this.image});
+      {required super.position,
+      required super.id,
+      required this.image,
+      required this.aspectRatio,
+      required this.scale});
 
   @Uint8ListConverter()
-  Uint8List image;
+  final Uint8List image;
 
-  String text = "";
+  final double aspectRatio;
 
-  void updateText(String newText) {
-    text = newText;
+  double scale;
+
+  String link = "";
+
+  void updateLink(String link) {
+    this.link = link;
   }
 
   factory PlacedImage.fromJson(Map<String, dynamic> json) =>

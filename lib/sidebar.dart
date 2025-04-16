@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/agent_dragable.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/const/agents.dart';

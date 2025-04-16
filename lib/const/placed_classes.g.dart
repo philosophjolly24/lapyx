@@ -39,14 +39,18 @@ PlacedImage _$PlacedImageFromJson(Map<String, dynamic> json) => PlacedImage(
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
       image: const Uint8ListConverter().fromJson(json['image'] as String),
-    )..text = json['text'] as String;
+      aspectRatio: (json['aspectRatio'] as num).toDouble(),
+      scale: (json['scale'] as num).toDouble(),
+    )..link = json['link'] as String;
 
 Map<String, dynamic> _$PlacedImageToJson(PlacedImage instance) =>
     <String, dynamic>{
       'id': instance.id,
       'position': const OffsetConverter().toJson(instance.position),
       'image': const Uint8ListConverter().toJson(instance.image),
-      'text': instance.text,
+      'aspectRatio': instance.aspectRatio,
+      'scale': instance.scale,
+      'link': instance.link,
     };
 
 PlacedAgent _$PlacedAgentFromJson(Map<String, dynamic> json) => PlacedAgent(

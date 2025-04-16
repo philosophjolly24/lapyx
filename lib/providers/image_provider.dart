@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/const/placed_classes.dart';
 
-final imageProvider =
+final placedImageProvider =
     NotifierProvider<ImageProvider, ImageState>(ImageProvider.new);
 
 class ImageState {
@@ -148,6 +148,14 @@ class ImageProvider extends Notifier<ImageState> {
         images: jsonList
             .map((json) => PlacedImage.fromJson(json as Map<String, dynamic>))
             .toList());
+  }
+
+  void updateScale(int index, double scale) {
+    final newState = state.copyWith();
+
+    newState.images[index].scale = scale;
+
+    state = newState;
   }
 
   // @override

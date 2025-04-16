@@ -14,8 +14,8 @@ import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/providers/team_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/ability/agent_widget.dart';
+import 'package:icarus/widgets/ability/placed_image_builder.dart';
 import 'package:icarus/widgets/delete_area.dart';
-import 'package:icarus/widgets/image_widget.dart';
 import 'package:icarus/widgets/placed_ability_widget.dart';
 import 'package:icarus/widgets/text_widget.dart';
 import 'package:icarus/widgets/zoom_transform.dart';
@@ -49,6 +49,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                   ),
                   for (PlacedAbility ability in ref.watch(abilityProvider))
                     PlacedAbilityWidget(
+                      rotation: ability.rotation,
                       data: ability,
                       ability: ability,
                       id: ability.id,
@@ -183,57 +184,41 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                       ),
                     ),
                   for (PlacedImage placedImage
-                      in ref.watch(imageProvider).images)
+                      in ref.watch(placedImageProvider).images)
                     Positioned(
-                      left: coordinateSystem
-                          .coordinateToScreen(placedImage.position)
-                          .dx,
-                      top: coordinateSystem
-                          .coordinateToScreen(placedImage.position)
-                          .dy,
-                      child: Draggable<PlacedWidget>(
-                        data: placedImage,
-                        feedback: ZoomTransform(
-                          child: IgnorePointer(
-                            child: ImageWidget(
-                                image: Image.memory(placedImage.image),
-                                text: placedImage.text),
-                          ),
-                        ),
-                        childWhenDragging: const SizedBox.shrink(),
-                        dragAnchorStrategy: ref
-                            .read(screenZoomProvider.notifier)
-                            .zoomDragAnchorStrategy,
-                        onDragEnd: (details) {
-                          RenderBox renderBox =
-                              context.findRenderObject() as RenderBox;
-                          Offset localOffset =
-                              renderBox.globalToLocal(details.offset);
+                        left: coordinateSystem
+                            .coordinateToScreen(placedImage.position)
+                            .dx,
+                        top: coordinateSystem
+                            .coordinateToScreen(placedImage.position)
+                            .dy,
+                        child: PlacedImageBuilder(
+                          placedImage: placedImage,
+                          onDragEnd: (details) {
+                            RenderBox renderBox =
+                                context.findRenderObject() as RenderBox;
+                            Offset localOffset =
+                                renderBox.globalToLocal(details.offset);
 
-                          //Basically makes sure that if more than half is of the screen it gets deleted
-                          Offset virtualOffset =
-                              coordinateSystem.screenToCoordinate(localOffset);
-                          double safeArea = Settings.agentSize / 2;
+                            //Basically makes sure that if more than half is of the screen it gets deleted
+                            Offset virtualOffset = coordinateSystem
+                                .screenToCoordinate(localOffset);
+                            double safeArea = Settings.agentSize / 2;
 
-                          if (coordinateSystem.isOutOfBounds(
-                              virtualOffset.translate(safeArea, safeArea))) {
+                            if (coordinateSystem.isOutOfBounds(
+                                virtualOffset.translate(safeArea, safeArea))) {
+                              ref
+                                  .read(placedImageProvider.notifier)
+                                  .removeImage(placedImage.id);
+
+                              return;
+                            }
+
                             ref
-                                .read(imageProvider.notifier)
-                                .removeImage(placedImage.id);
-
-                            return;
-                          }
-
-                          ref
-                              .read(imageProvider.notifier)
-                              .updatePosition(virtualOffset, placedImage.id);
-                        },
-                        child: ImageWidget(
-                          image: Image.memory(placedImage.image),
-                          text: placedImage.text,
-                        ),
-                      ),
-                    ),
+                                .read(placedImageProvider.notifier)
+                                .updatePosition(virtualOffset, placedImage.id);
+                          },
+                        )),
                 ],
               ),
             );

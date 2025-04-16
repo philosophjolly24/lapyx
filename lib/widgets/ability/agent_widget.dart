@@ -4,7 +4,6 @@ import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/agent_provider.dart';
-import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/mouse_watch.dart';
 
 class AgentWidget extends ConsumerWidget {

@@ -75,6 +75,20 @@
       "search": [
         "discord"
       ]
+    },
+    {
+      "uid": "d1fd475c8b05b93915cbb7c507e78feb",
+      "css": "resize_corner",
+      "code": 59402,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M100 800H800V100C800 44.8 844.8 0 900 0 955.2 0 1000 44.8 1000 100V900C1000 955.2 955.2 1000 900 1000H800 100C44.8 1000 0 955.2 0 900 0 844.8 44.8 800 100 800Z",
+        "width": 1000
+      },
+      "search": [
+        "resize_corner"
+      ]
     }
   ]
 }
