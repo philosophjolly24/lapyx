@@ -42,7 +42,10 @@ class ToolGrid extends ConsumerWidget {
             title: const Text("Choose Image"),
             content: const Column(
               mainAxisSize: MainAxisSize.min,
-              children: [ImageSelector(), SizedBox(child: TextField())],
+              children: [
+                ImageSelector(),
+                // SizedBox(child: TextField()),
+              ],
             ),
             actions: [
               TextButton(
@@ -55,6 +58,10 @@ class ToolGrid extends ConsumerWidget {
               TextButton(
                 child: const Text('Save'),
                 onPressed: () async {
+                  if (ref.read(placedImageProvider).currentImage == null) {
+                    Navigator.of(context).pop(); // Just close the dialog
+                    return;
+                  }
                   const uuid = Uuid();
                   final imageBytes =
                       ref.read(placedImageProvider).currentImage!;

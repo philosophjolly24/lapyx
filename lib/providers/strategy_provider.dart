@@ -64,7 +64,7 @@ class StrategyProvider extends Notifier<StrategyData> {
 
     ref
         .read(placedImageProvider.notifier)
-        .fromJson(jsonEncode(json["imageData"]));
+        .fromJson(jsonEncode(json["imageData"] ?? []));
     state = state.copyWith(fileName: result.files.first.path, isSaved: true);
   }
 
