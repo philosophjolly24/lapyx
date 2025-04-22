@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/home_view.dart';
 import 'package:icarus/widgets/global_shortcuts.dart';
 import 'package:window_manager/window_manager.dart';
-// import 'package:window_size/window_size.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

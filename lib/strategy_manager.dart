@@ -1,5 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:icarus/const/drawing_element.dart';
+import 'package:icarus/const/maps.dart';
+import 'package:icarus/const/placed_classes.dart';
+
+class StrategyData extends HiveObject {
+  final int versionNumber;
+  final List<DrawingElement> drawingData;
+  final List<PlacedAgent> agentData;
+  final List<PlacedAbility> abilityData;
+  final List<PlacedText> textData;
+  final List<PlacedImage> imageData;
+  final MapValue mapData;
+
+  StrategyData({
+    required this.drawingData,
+    required this.agentData,
+    required this.abilityData,
+    required this.textData,
+    required this.imageData,
+    required this.mapData,
+    required this.versionNumber,
+  });
+}
 
 class StrategyManager extends ConsumerWidget {
   const StrategyManager({super.key});

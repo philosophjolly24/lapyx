@@ -23,6 +23,7 @@ dependencies:
   dash_painter: ^1.0.2
   window_manager: ^0.4.3
   url_launcher: ^6.3.1
+  hive_ce: ^2.10.1
  
       
 dev_dependencies:

@@ -373,6 +373,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
+  hive_ce:
+    dependency: "direct main"
+    description:
+      name: hive_ce
+      sha256: ac66daee46ad46486a1ed12cf91e9d7479c875fb46889be8d2c96b557406647f
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.10.1"
   http:
     dependency: transitive
     description:
