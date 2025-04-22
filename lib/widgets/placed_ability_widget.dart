@@ -6,7 +6,6 @@ import 'package:icarus/const/abilities.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/ability_provider.dart';
-import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/ability/rotatable_widget.dart';
 import 'dart:math' as math;
@@ -18,12 +17,14 @@ class PlacedAbilityWidget extends StatefulWidget {
   final Function(DraggableDetails details) onDragEnd;
   final String id;
   final PlacedWidget data;
+  final double rotation;
   const PlacedAbilityWidget({
     super.key,
     required this.ability,
     required this.onDragEnd,
     required this.id,
     required this.data,
+    required this.rotation,
   });
 
   @override
@@ -34,26 +35,48 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
   Offset rotationOrigin = Offset.zero;
   GlobalKey globalKey = GlobalKey();
 
+  double? localRotation;
+
+  @override
+  void initState() {
+    super.initState();
+    localRotation ??= widget.rotation;
+  }
+
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
 
+    if (localRotation == null) {
+      return const SizedBox.shrink();
+    }
+
     return Consumer(builder: (context, ref, child) {
       final index =
           PlacedWidget.getIndexByID(widget.id, ref.watch(abilityProvider));
+      final bool isAlly = ref.watch(abilityProvider)[index].isAlly;
+
+      //Linking the local rotation with global rotation for things like undo redo
+      if (ref.watch(abilityProvider)[index].rotation != localRotation! &&
+          rotationOrigin == Offset.zero) {
+        localRotation = ref.read(abilityProvider)[index].rotation;
+      }
+
       if (index < 0) {
         return Draggable<PlacedWidget>(
           dragAnchorStrategy:
               ref.read(screenZoomProvider.notifier).zoomDragAnchorStrategy,
           data: widget.data,
           feedback: ZoomTransform(
-              child: widget.ability.data.abilityData.createWidget(null)),
+              child:
+                  widget.ability.data.abilityData.createWidget(null, isAlly)),
           childWhenDragging: const SizedBox.shrink(),
           onDragEnd: widget.onDragEnd,
-          child: widget.ability.data.abilityData.createWidget(widget.id),
+          child:
+              widget.ability.data.abilityData.createWidget(widget.id, isAlly),
         );
       }
-      double rotation = ref.watch(abilityProvider)[index].rotation;
+
       return Positioned(
         left: coordinateSystem.coordinateToScreen(widget.ability.position).dx,
         top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
@@ -64,13 +87,15 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     .zoomDragAnchorStrategy,
                 data: widget.data,
                 feedback: ZoomTransform(
-                    child: widget.ability.data.abilityData.createWidget(null)),
+                    child: widget.ability.data.abilityData
+                        .createWidget(null, isAlly)),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
-                child: widget.ability.data.abilityData.createWidget(widget.id),
+                child: widget.ability.data.abilityData
+                    .createWidget(widget.id, isAlly),
               )
             : RotatableWidget(
-                rotation: rotation,
+                rotation: localRotation!,
                 origin: widget.ability.data.abilityData.getAnchorPoint(),
                 onPanStart: (details) {
                   log("Rotation Start");
@@ -101,20 +126,18 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
 
                   // // Update rotation
                   final newRotation = (currentAngle) + (math.pi / 2);
-                  ref
-                      .read(abilityProvider.notifier)
-                      .updateRotation(index, newRotation);
+
+                  setState(() {
+                    localRotation = newRotation;
+                  });
                 },
                 onPanEnd: (details) {
+                  ref
+                      .read(abilityProvider.notifier)
+                      .updateRotation(index, localRotation!);
                   setState(() {
                     rotationOrigin = Offset.zero;
                   });
-
-                  final action = UserAction(
-                      type: ActionType.edit,
-                      id: widget.ability.id,
-                      group: ActionGroup.ability);
-                  ref.read(actionProvider.notifier).addAction(action);
                 },
                 child: Draggable<PlacedWidget>(
                   data: widget.data,
@@ -122,7 +145,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                       .read(screenZoomProvider.notifier)
                       .zoomDragAnchorStrategy,
                   feedback: Transform.rotate(
-                    angle: rotation,
+                    angle: localRotation!,
                     alignment: Alignment.topLeft,
                     origin: widget.ability.data.abilityData
                         .getAnchorPoint()
@@ -136,7 +159,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                           .watch(abilityProvider)[index]
                           .data
                           .abilityData
-                          .createWidget(widget.id, rotation),
+                          .createWidget(widget.id, isAlly, localRotation!),
                     ),
                   ),
                   childWhenDragging: const SizedBox.shrink(),
@@ -146,7 +169,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                       .watch(abilityProvider)[index]
                       .data
                       .abilityData
-                      .createWidget(widget.id, rotation),
+                      .createWidget(widget.id, isAlly, localRotation!),
                 ),
               ),
       );

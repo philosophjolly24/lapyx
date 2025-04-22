@@ -4,7 +4,7 @@ import 'package:icarus/const/color_option.dart';
 
 class Settings {
   static const double agentSize = 30;
-  static const double abilitySize = 30;
+  static const double abilitySize = 25;
   static const Color abilityBGColor = Color(0xFF1B1B1B);
 
   static const double brushSize = 5;
@@ -19,6 +19,12 @@ class Settings {
     ColorOption(color: Colors.yellow, isSelected: false),
     ColorOption(color: Colors.green, isSelected: false),
   ];
+
+  static const Color enemyBGColor = Color.fromARGB(255, 119, 39, 39);
+  static const Color allyBGColor = Color.fromARGB(255, 58, 126, 93);
+
+  static const Color enemyOutlineColor = Color.fromARGB(139, 255, 82, 82);
+  static const Color allyOutlineColor = Color.fromARGB(106, 105, 240, 175);
 
   static final Uri dicordLink = Uri.parse("https://discord.gg/PN2uKwCqYB");
 }

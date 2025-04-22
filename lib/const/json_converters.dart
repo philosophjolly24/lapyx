@@ -1,3 +1,6 @@
+import 'dart:convert' as convert;
+import 'dart:typed_data' as typed;
+
 import 'package:flutter/material.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -62,6 +65,20 @@ class AbilityInfoConverter
       'type': _agentTypeEnumMap[abilityInfo.type],
       'index': abilityInfo.index
     };
+  }
+}
+
+class Uint8ListConverter implements JsonConverter<typed.Uint8List, String> {
+  const Uint8ListConverter();
+
+  @override
+  typed.Uint8List fromJson(String json) {
+    return convert.base64Decode(json);
+  }
+
+  @override
+  String toJson(typed.Uint8List bytes) {
+    return convert.base64Encode(bytes);
   }
 }
 

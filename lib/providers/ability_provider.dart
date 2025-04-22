@@ -48,7 +48,11 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
     final newState = [...state];
 
     newState[index].updateRotation(rotation);
-
+    final action = UserAction(
+        type: ActionType.edit,
+        id: newState[index].id,
+        group: ActionGroup.ability);
+    ref.read(actionProvider.notifier).addAction(action);
     state = newState;
   }
 

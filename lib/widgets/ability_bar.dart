@@ -6,6 +6,7 @@ import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/providers/ability_bar_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
+import 'package:icarus/providers/team_provider.dart';
 
 class AbiilityBar extends ConsumerWidget {
   const AbiilityBar({super.key});
@@ -45,8 +46,10 @@ class AbiilityBar extends ConsumerWidget {
                       .getAnchorPoint()
                       .scale(scaleFactor, scaleFactor);
                 },
-                feedback:
-                    activeAgent.abilities[index].abilityData.createWidget(null),
+                feedback: activeAgent.abilities[index].abilityData.createWidget(
+                  null,
+                  ref.watch(teamProvider),
+                ),
 
                 // dragAnchorStrategy: centerDragStrategy,
                 child: InkWell(

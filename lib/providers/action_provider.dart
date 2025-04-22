@@ -73,7 +73,7 @@ class ActionProvider extends Notifier<List<UserAction>> {
       case ActionGroup.text:
         ref.read(textProvider.notifier).redoAction(poppedAction);
       case ActionGroup.image:
-        ref.read(imageProvider.notifier).redoAction(poppedAction);
+        ref.read(placedImageProvider.notifier).redoAction(poppedAction);
     }
 
     final newState = [...state];
@@ -102,7 +102,7 @@ class ActionProvider extends Notifier<List<UserAction>> {
       case ActionGroup.text:
         ref.read(textProvider.notifier).undoAction(currentAction);
       case ActionGroup.image:
-        ref.read(imageProvider.notifier).undoAction(currentAction);
+        ref.read(placedImageProvider.notifier).undoAction(currentAction);
     }
     // log("Undo action was called");
     final newState = [...state];

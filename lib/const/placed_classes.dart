@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/json_converters.dart';
@@ -85,22 +87,47 @@ class PlacedText extends PlacedWidget {
   Map<String, dynamic> toJson() => _$PlacedTextToJson(this);
 }
 
+@JsonSerializable()
 class PlacedImage extends PlacedWidget {
-  PlacedImage({required super.position, required super.id});
+  PlacedImage(
+      {required super.position,
+      required super.id,
+      required this.image,
+      required this.aspectRatio,
+      required this.scale});
 
-  Image? image;
-  String text = "";
+  @Uint8ListConverter()
+  final Uint8List image;
 
-  void updateText(String newText) {
-    text = newText;
+  final double aspectRatio;
+
+  double scale;
+
+  String link = "";
+
+  void updateLink(String link) {
+    this.link = link;
   }
+
+  factory PlacedImage.fromJson(Map<String, dynamic> json) =>
+      _$PlacedImageFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$PlacedImageToJson(this);
 }
 
 @JsonSerializable()
 class PlacedAgent extends PlacedWidget {
   final AgentType type;
+  @JsonKey(defaultValue: true)
+  final bool isAlly;
 
-  PlacedAgent({required this.type, required super.position, required super.id});
+  PlacedAgent({
+    required this.type,
+    required super.position,
+    required super.id,
+    this.isAlly = true, // Default parameter value
+  });
 
   factory PlacedAgent.fromJson(Map<String, dynamic> json) =>
       _$PlacedAgentFromJson(json);
@@ -112,6 +139,9 @@ class PlacedAgent extends PlacedWidget {
 class PlacedAbility extends PlacedWidget {
   @AbilityInfoConverter()
   final AbilityInfo data;
+
+  @JsonKey(defaultValue: true)
+  final bool isAlly;
 
   double rotation = 0;
 
@@ -165,7 +195,10 @@ class PlacedAbility extends PlacedWidget {
   }
 
   PlacedAbility(
-      {required this.data, required super.position, required super.id});
+      {required this.data,
+      required super.position,
+      required super.id,
+      this.isAlly = true});
 
   factory PlacedAbility.fromJson(Map<String, dynamic> json) =>
       _$PlacedAbilityFromJson(json);

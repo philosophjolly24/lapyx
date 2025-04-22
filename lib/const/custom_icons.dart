@@ -16,4 +16,6 @@ class CustomIcons {
       IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData discord =
       IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData resizeCorner =
+      IconData(0xe80a, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }
