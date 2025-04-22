@@ -10,17 +10,41 @@ import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:icarus/const/drawing_element.dart';
+import 'package:icarus/const/maps.dart';
+import 'package:icarus/const/placed_classes.dart';
 
-class StrategyData {
-  StrategyData({required this.isSaved, required this.fileName});
+class StrategyData extends HiveObject {
+  final int versionNumber;
+  final List<DrawingElement> drawingData;
+  final List<PlacedAgent> agentData;
+  final List<PlacedAbility> abilityData;
+  final List<PlacedText> textData;
+  final List<PlacedImage> imageData;
+  final MapValue mapData;
+
+  StrategyData({
+    required this.drawingData,
+    required this.agentData,
+    required this.abilityData,
+    required this.textData,
+    required this.imageData,
+    required this.mapData,
+    required this.versionNumber,
+  });
+}
+
+class StrategyState {
+  StrategyState({required this.isSaved, required this.fileName});
   final bool isSaved;
   final String? fileName;
 
-  StrategyData copyWith({
+  StrategyState copyWith({
     bool? isSaved,
     String? fileName,
   }) {
-    return StrategyData(
+    return StrategyState(
       isSaved: isSaved ?? this.isSaved,
       fileName: fileName ?? this.fileName,
     );
@@ -28,12 +52,12 @@ class StrategyData {
 }
 
 final strategyProvider =
-    NotifierProvider<StrategyProvider, StrategyData>(StrategyProvider.new);
+    NotifierProvider<StrategyProvider, StrategyState>(StrategyProvider.new);
 
-class StrategyProvider extends Notifier<StrategyData> {
+class StrategyProvider extends Notifier<StrategyState> {
   @override
-  StrategyData build() {
-    return StrategyData(isSaved: false, fileName: null);
+  StrategyState build() {
+    return StrategyState(isSaved: false, fileName: null);
   }
 
   void setFileStatus(bool status) {
