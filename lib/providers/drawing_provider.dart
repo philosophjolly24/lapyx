@@ -115,6 +115,10 @@ class DrawingProvider extends Notifier<DrawingState> {
     return jsonEncode(jsonList);
   }
 
+  void fromHive(List<DrawingElement> drawing) {
+    state = state.copyWith(elements: drawing);
+  }
+
   void fromJson(String jsonString) {
     final List<dynamic> jsonList = jsonDecode(jsonString);
     final coordinateSystem = CoordinateSystem.instance;

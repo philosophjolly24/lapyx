@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/drawing_provider.dart';
@@ -16,6 +18,8 @@ import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/placed_classes.dart';
 
 class StrategyData extends HiveObject {
+  final String id;
+  final String name;
   final int versionNumber;
   final List<DrawingElement> drawingData;
   final List<PlacedAgent> agentData;
@@ -25,6 +29,8 @@ class StrategyData extends HiveObject {
   final MapValue mapData;
 
   StrategyData({
+    required this.id,
+    required this.name,
     required this.drawingData,
     required this.agentData,
     required this.abilityData,
@@ -65,69 +71,98 @@ class StrategyProvider extends Notifier<StrategyState> {
   }
 
   Future<void> loadFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ["ica"],
-    );
+    final newStrat = Hive.box<StrategyData>(strategiesBox)
+        .values
+        .where((StrategyData strategy) {
+      return strategy.id == 'newTest';
+    }).firstOrNull;
 
-    if (result == null) return;
-    final data = await result.files.first.xFile.readAsString();
+    if (newStrat == null) return;
 
-    Map<String, dynamic> json = jsonDecode(data);
+    ref.read(agentProvider.notifier).fromHive(newStrat.agentData);
+    // FilePickerResult? result = await FilePicker.platform.pickFiles(
+    //   allowMultiple: false,
+    //   type: FileType.custom,
+    //   allowedExtensions: ["ica"],
+    // );
 
-    ref
-        .read(drawingProvider.notifier)
-        .fromJson(jsonEncode(json["drawingData"]));
-    ref.read(agentProvider.notifier).fromJson(jsonEncode(json["agentData"]));
-    ref
-        .read(abilityProvider.notifier)
-        .fromJson(jsonEncode(json["abilityData"]));
-    ref.read(mapProvider.notifier).fromJson(jsonEncode(json["mapData"]));
-    ref.read(textProvider.notifier).fromJson(jsonEncode(json["textData"]));
+    // if (result == null) return;
+    // final data = await result.files.first.xFile.readAsString();
 
-    ref
-        .read(placedImageProvider.notifier)
-        .fromJson(jsonEncode(json["imageData"] ?? []));
-    state = state.copyWith(fileName: result.files.first.path, isSaved: true);
+    // Map<String, dynamic> json = jsonDecode(data);
+
+    // ref
+    //     .read(drawingProvider.notifier)
+    //     .fromJson(jsonEncode(json["drawingData"]));
+    // ref.read(agentProvider.notifier).fromJson(jsonEncode(json["agentData"]));
+    // ref
+    //     .read(abilityProvider.notifier)
+    //     .fromJson(jsonEncode(json["abilityData"]));
+    // ref.read(mapProvider.notifier).fromJson(jsonEncode(json["mapData"]));
+    // ref.read(textProvider.notifier).fromJson(jsonEncode(json["textData"]));
+
+    // ref
+    //     .read(placedImageProvider.notifier)
+    //     .fromJson(jsonEncode(json["imageData"] ?? []));
+    // state = state.copyWith(fileName: result.files.first.path, isSaved: true);
   }
 
   Future<void> saveFile() async {
-    String data = '''
-                {
-                "drawingData": ${ref.read(drawingProvider.notifier).toJson()},
-                "agentData": ${ref.read(agentProvider.notifier).toJson()},
-                "abilityData": ${ref.read(abilityProvider.notifier).toJson()},
-                "textData": ${ref.read(textProvider.notifier).toJson()},
-                "mapData": ${ref.read(mapProvider.notifier).toJson()},
-                "imageData":${ref.read(placedImageProvider.notifier).toJson()}
-                }
-              ''';
+    final drawingData = ref.read(drawingProvider).elements;
+    final agentData = ref.read(agentProvider);
+    final abilityData = ref.read(abilityProvider);
+    final textData = ref.read(textProvider);
+    final mapData = ref.read(mapProvider);
+    final imageData = ref.read(placedImageProvider).images;
 
-    File file;
-    log("File name: ${state.fileName}");
-
-    if (state.fileName != null) {
-      file = File(state.fileName!);
-
-      if (file.existsSync()) {
-        file.writeAsStringSync(data);
-        state = state.copyWith(isSaved: false);
-        return;
-      }
-    }
-
-    String? outputFile = await FilePicker.platform.saveFile(
-      type: FileType.custom,
-      dialogTitle: 'Please select an output file:',
-      fileName: 'strategy.ica',
-      allowedExtensions: [".ica"],
+    final currentStategy = StrategyData(
+      drawingData: drawingData,
+      agentData: agentData,
+      abilityData: abilityData,
+      textData: textData,
+      imageData: imageData,
+      mapData: mapData,
+      versionNumber: 1,
+      id: 'newTest',
+      name: 'new strat',
     );
 
-    if (outputFile == null) return;
-    file = File(outputFile);
+    await Hive.box<StrategyData>(strategiesBox).add(currentStategy);
+    // String data = '''
+    //             {
+    //             "drawingData": ${ref.read(drawingProvider.notifier).toJson()},
+    //             "agentData": ${ref.read(agentProvider.notifier).toJson()},
+    //             "abilityData": ${ref.read(abilityProvider.notifier).toJson()},
+    //             "textData": ${ref.read(textProvider.notifier).toJson()},
+    //             "mapData": ${ref.read(mapProvider.notifier).toJson()},
+    //             "imageData":${ref.read(placedImageProvider.notifier).toJson()}
+    //             }
+    //           ''';
 
-    file.writeAsStringSync(data);
-    state = state.copyWith(fileName: file.path, isSaved: true);
+    // File file;
+    // log("File name: ${state.fileName}");
+
+    // if (state.fileName != null) {
+    //   file = File(state.fileName!);
+
+    //   if (file.existsSync()) {
+    //     file.writeAsStringSync(data);
+    //     state = state.copyWith(isSaved: false);
+    //     return;
+    //   }
+    // }
+
+    // String? outputFile = await FilePicker.platform.saveFile(
+    //   type: FileType.custom,
+    //   dialogTitle: 'Please select an output file:',
+    //   fileName: 'strategy.ica',
+    //   allowedExtensions: [".ica"],
+    // );
+
+    // if (outputFile == null) return;
+    // file = File(outputFile);
+
+    // file.writeAsStringSync(data);
+    // state = state.copyWith(fileName: file.path, isSaved: true);
   }
 }

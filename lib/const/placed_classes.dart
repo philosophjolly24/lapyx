@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:hive_ce/hive.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/json_converters.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -9,33 +9,36 @@ import 'package:json_annotation/json_annotation.dart';
 part "placed_classes.g.dart";
 
 @JsonSerializable()
-class PlacedWidget {
+class PlacedWidget extends HiveObject {
   PlacedWidget({
     required this.position,
     required this.id,
+    this.isDeleted = false,
   });
 
   final String id;
 
-  @JsonKey(includeToJson: false, includeFromJson: false)
-  List<WidgetAction> actionHistory = [];
+  bool isDeleted;
 
   @JsonKey(includeToJson: false, includeFromJson: false)
-  List<WidgetAction> poppedAction = [];
+  final List<WidgetAction> _actionHistory = [];
+
+  @JsonKey(includeToJson: false, includeFromJson: false)
+  final List<WidgetAction> _poppedAction = [];
 
   @OffsetConverter()
   Offset position;
 
   void updatePosition(Offset newPosition) {
     final action = PositionAction(position: position);
-    actionHistory.add(action);
+    _actionHistory.add(action);
     position = newPosition;
   }
 
   void undoAction() {
-    if (actionHistory.isEmpty) return;
+    if (_actionHistory.isEmpty) return;
 
-    if (actionHistory.last is PositionAction) {
+    if (_actionHistory.last is PositionAction) {
       _undoPosition();
     }
   }
@@ -43,15 +46,15 @@ class PlacedWidget {
   void _undoPosition() {
     final action = PositionAction(position: position);
 
-    poppedAction.add(action);
-    position = (actionHistory.last as PositionAction).position;
-    actionHistory.removeLast();
+    _poppedAction.add(action);
+    position = (_actionHistory.last as PositionAction).position;
+    _actionHistory.removeLast();
   }
 
   void redoAction() {
-    if (poppedAction.isEmpty) return;
+    if (_poppedAction.isEmpty) return;
 
-    if (poppedAction.last is PositionAction) {
+    if (_poppedAction.last is PositionAction) {
       _redoPosition();
     }
   }
@@ -59,9 +62,9 @@ class PlacedWidget {
   void _redoPosition() {
     final action = PositionAction(position: position);
 
-    actionHistory.add(action);
-    position = (poppedAction.last as PositionAction).position;
-    poppedAction.removeLast();
+    _actionHistory.add(action);
+    position = (_poppedAction.last as PositionAction).position;
+    _poppedAction.removeLast();
   }
 
   factory PlacedWidget.fromJson(Map<String, dynamic> json) =>
@@ -121,7 +124,7 @@ class PlacedImage extends PlacedWidget {
 class PlacedAgent extends PlacedWidget {
   final AgentType type;
   @JsonKey(defaultValue: true)
-  final bool isAlly;
+  bool isAlly;
 
   PlacedAgent({
     required this.type,
@@ -152,27 +155,27 @@ class PlacedAbility extends PlacedWidget {
 
   void updateRotationHistory() {
     final action = RotationAction(rotation: rotation);
-    actionHistory.add(action);
+    _actionHistory.add(action);
   }
 
   @override
   void undoAction() {
-    if (actionHistory.isEmpty) return;
+    if (_actionHistory.isEmpty) return;
 
-    if (actionHistory.last is PositionAction) {
+    if (_actionHistory.last is PositionAction) {
       _undoPosition();
-    } else if (actionHistory.last is RotationAction) {
+    } else if (_actionHistory.last is RotationAction) {
       _undoRotation();
     }
   }
 
   @override
   void redoAction() {
-    if (poppedAction.isEmpty) return;
+    if (_poppedAction.isEmpty) return;
 
-    if (poppedAction.last is PositionAction) {
+    if (_poppedAction.last is PositionAction) {
       _redoPosition();
-    } else if (poppedAction.last is RotationAction) {
+    } else if (_poppedAction.last is RotationAction) {
       _redoRotation();
     }
   }
@@ -180,19 +183,19 @@ class PlacedAbility extends PlacedWidget {
   void _undoRotation() {
     final action = RotationAction(rotation: rotation);
 
-    poppedAction.add(action);
-    rotation = (actionHistory.last as RotationAction).rotation;
-    actionHistory.removeLast();
+    _poppedAction.add(action);
+    rotation = (_actionHistory.last as RotationAction).rotation;
+    _actionHistory.removeLast();
   }
 
   void _redoRotation() {
-    if (poppedAction.isEmpty) return;
+    if (_poppedAction.isEmpty) return;
 
     final action = RotationAction(rotation: rotation);
 
-    actionHistory.add(action);
-    rotation = (poppedAction.last as RotationAction).rotation;
-    poppedAction.removeLast();
+    _actionHistory.add(action);
+    rotation = (_poppedAction.last as RotationAction).rotation;
+    _poppedAction.removeLast();
   }
 
   PlacedAbility(

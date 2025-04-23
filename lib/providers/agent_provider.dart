@@ -120,6 +120,10 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
     return jsonEncode(jsonList);
   }
 
+  void fromHive(List<PlacedAgent> hiveAgents) {
+    state = hiveAgents;
+  }
+
   void fromJson(String jsonString) {
     final List<dynamic> jsonList = jsonDecode(jsonString);
     state = jsonList

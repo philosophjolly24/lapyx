@@ -7,6 +7,14 @@ import 'package:icarus/hive/hive_adapters.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
+    registerAdapter(AgentTypeAdapter());
+    registerAdapter(MapValueAdapter());
+    registerAdapter(OffsetAdapter());
+    registerAdapter(PlacedAbilityAdapter());
+    registerAdapter(PlacedAgentAdapter());
+    registerAdapter(PlacedImageAdapter());
+    registerAdapter(PlacedTextAdapter());
+    registerAdapter(PlacedWidgetAdapter());
     registerAdapter(StrategyDataAdapter());
   }
 }

@@ -10,11 +10,13 @@ PlacedWidget _$PlacedWidgetFromJson(Map<String, dynamic> json) => PlacedWidget(
       position: const OffsetConverter()
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
+      isDeleted: json['isDeleted'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$PlacedWidgetToJson(PlacedWidget instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'isDeleted': instance.isDeleted,
       'position': const OffsetConverter().toJson(instance.position),
     };
 
@@ -23,12 +25,14 @@ PlacedText _$PlacedTextFromJson(Map<String, dynamic> json) => PlacedText(
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
     )
+      ..isDeleted = json['isDeleted'] as bool
       ..text = json['text'] as String
       ..size = (json['size'] as num?)?.toDouble();
 
 Map<String, dynamic> _$PlacedTextToJson(PlacedText instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'isDeleted': instance.isDeleted,
       'position': const OffsetConverter().toJson(instance.position),
       'text': instance.text,
       'size': instance.size,
@@ -41,11 +45,14 @@ PlacedImage _$PlacedImageFromJson(Map<String, dynamic> json) => PlacedImage(
       image: const Uint8ListConverter().fromJson(json['image'] as String),
       aspectRatio: (json['aspectRatio'] as num).toDouble(),
       scale: (json['scale'] as num).toDouble(),
-    )..link = json['link'] as String;
+    )
+      ..isDeleted = json['isDeleted'] as bool
+      ..link = json['link'] as String;
 
 Map<String, dynamic> _$PlacedImageToJson(PlacedImage instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'isDeleted': instance.isDeleted,
       'position': const OffsetConverter().toJson(instance.position),
       'image': const Uint8ListConverter().toJson(instance.image),
       'aspectRatio': instance.aspectRatio,
@@ -59,11 +66,12 @@ PlacedAgent _$PlacedAgentFromJson(Map<String, dynamic> json) => PlacedAgent(
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
       isAlly: json['isAlly'] as bool? ?? true,
-    );
+    )..isDeleted = json['isDeleted'] as bool;
 
 Map<String, dynamic> _$PlacedAgentToJson(PlacedAgent instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'isDeleted': instance.isDeleted,
       'position': const OffsetConverter().toJson(instance.position),
       'type': _$AgentTypeEnumMap[instance.type]!,
       'isAlly': instance.isAlly,
@@ -107,11 +115,14 @@ PlacedAbility _$PlacedAbilityFromJson(Map<String, dynamic> json) =>
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
       isAlly: json['isAlly'] as bool? ?? true,
-    )..rotation = (json['rotation'] as num).toDouble();
+    )
+      ..isDeleted = json['isDeleted'] as bool
+      ..rotation = (json['rotation'] as num).toDouble();
 
 Map<String, dynamic> _$PlacedAbilityToJson(PlacedAbility instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'isDeleted': instance.isDeleted,
       'position': const OffsetConverter().toJson(instance.position),
       'data': const AbilityInfoConverter().toJson(instance.data),
       'isAlly': instance.isAlly,
