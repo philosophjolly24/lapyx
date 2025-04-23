@@ -69,11 +69,11 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
           data: widget.data,
           feedback: ZoomTransform(
               child:
-                  widget.ability.data.abilityData.createWidget(null, isAlly)),
+                  widget.ability.data.abilityData!.createWidget(null, isAlly)),
           childWhenDragging: const SizedBox.shrink(),
           onDragEnd: widget.onDragEnd,
           child:
-              widget.ability.data.abilityData.createWidget(widget.id, isAlly),
+              widget.ability.data.abilityData!.createWidget(widget.id, isAlly),
         );
       }
 
@@ -87,23 +87,23 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     .zoomDragAnchorStrategy,
                 data: widget.data,
                 feedback: ZoomTransform(
-                    child: widget.ability.data.abilityData
+                    child: widget.ability.data.abilityData!
                         .createWidget(null, isAlly)),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
-                child: widget.ability.data.abilityData
+                child: widget.ability.data.abilityData!
                     .createWidget(widget.id, isAlly),
               )
             : RotatableWidget(
                 rotation: localRotation!,
-                origin: widget.ability.data.abilityData.getAnchorPoint(),
+                origin: widget.ability.data.abilityData!.getAnchorPoint(),
                 onPanStart: (details) {
                   log("Rotation Start");
                   ref
                       .read(abilityProvider.notifier)
                       .updateRotationHistory(index);
                   final box = context.findRenderObject() as RenderBox;
-                  final bottomCenter = widget.ability.data.abilityData
+                  final bottomCenter = widget.ability.data.abilityData!
                       .getAnchorPoint()
                       .scale(coordinateSystem.scaleFactor,
                           coordinateSystem.scaleFactor);
@@ -147,7 +147,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   feedback: Transform.rotate(
                     angle: localRotation!,
                     alignment: Alignment.topLeft,
-                    origin: widget.ability.data.abilityData
+                    origin: widget.ability.data.abilityData!
                         .getAnchorPoint()
                         .scale(
                             coordinateSystem.scaleFactor *
@@ -158,7 +158,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                       child: ref
                           .watch(abilityProvider)[index]
                           .data
-                          .abilityData
+                          .abilityData!
                           .createWidget(widget.id, isAlly, localRotation!),
                     ),
                   ),
@@ -168,7 +168,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   child: ref
                       .watch(abilityProvider)[index]
                       .data
-                      .abilityData
+                      .abilityData!
                       .createWidget(widget.id, isAlly, localRotation!),
                 ),
               ),

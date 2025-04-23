@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 import 'package:icarus/const/bounding_box.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/json_converters.dart';
@@ -29,7 +30,7 @@ abstract class DrawingElement {
   }
 }
 
-class Line extends DrawingElement {
+class Line extends DrawingElement with HiveObjectMixin {
   final Offset lineStart;
   Offset lineEnd;
 
@@ -48,7 +49,7 @@ class Line extends DrawingElement {
 }
 
 @JsonSerializable()
-class FreeDrawing extends DrawingElement {
+class FreeDrawing extends DrawingElement with HiveObjectMixin {
   FreeDrawing({
     List<Offset>? listOfPoints,
     Path? path,

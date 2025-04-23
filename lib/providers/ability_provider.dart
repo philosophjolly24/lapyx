@@ -127,6 +127,10 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
     state = newState;
   }
 
+  void fromHive(List<PlacedAbility> hiveAbilities) {
+    state = hiveAbilities;
+  }
+
   String toJson() {
     final List<Map<String, dynamic>> jsonList =
         state.map((ability) => ability.toJson()).toList();

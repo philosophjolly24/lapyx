@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:icarus/const/abilities.dart';
 
 enum AgentType {
@@ -36,12 +37,20 @@ enum AgentRole { controller, duelist, initiator, sentinel }
 abstract class DraggableData {}
 
 // Virtual distance to valorant distance is valmeters * 4.952941176470588 = vitual distance
-class AbilityInfo implements DraggableData {
+@HiveType(typeId: 9)
+class AbilityInfo extends HiveObject implements DraggableData {
+  // Even though you might have more properties at runtime,
+  // only these two are persisted.
+  @HiveField(0)
+  final AgentType type;
+
+  @HiveField(1)
+  final int index;
+
+  /// The following fields are not persisted.
   final String name;
   final String iconPath;
-  final AgentType type;
-  final int index;
-  Ability abilityData;
+  Ability? abilityData;
   bool isTransformable = false;
   Offset? centerPoint;
 
@@ -50,32 +59,84 @@ class AbilityInfo implements DraggableData {
     required this.iconPath,
     required this.type,
     required this.index,
-    required this.abilityData,
-  });
+    Ability? abilityData,
+  }) : abilityData = abilityData ?? _lookupAbility(type, index);
 
   AbilityInfo copyWith({
     String? name,
-    bool? hasSpecialInteraction,
     String? iconPath,
     Ability? abilityData,
-    String? imagePath,
-    double? width,
-    Offset? centerPoint,
     AgentType? type,
     int? index,
   }) {
     return AbilityInfo(
       name: name ?? this.name,
       iconPath: iconPath ?? this.iconPath,
-      abilityData: abilityData ?? this.abilityData,
       type: type ?? this.type,
       index: index ?? this.index,
+      abilityData: abilityData ?? this.abilityData,
     );
   }
 
   void updateCenterPoint(Offset centerPoint) {
     this.centerPoint = centerPoint;
   }
+
+  /// Helper method to perform the lookup on deserialization.
+  static Ability? _lookupAbility(AgentType type, int index) {
+    final agentEntry = AgentData.agents[type];
+    if (agentEntry != null &&
+        index >= 0 &&
+        index < agentEntry.abilities.length) {
+      return agentEntry.abilities[index].abilityData;
+    }
+    return null;
+  }
+}
+
+// This is the custom Hive adapter for AbilityInfo.
+// It only stores the AgentType and index.
+class AbilityInfoAdapter extends TypeAdapter<AbilityInfo> {
+  @override
+  final int typeId = 9;
+
+  @override
+  AbilityInfo read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (var i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+
+    // Retrieve stored type and index
+    final agentType = fields[0] as AgentType;
+    final index = fields[1] as int;
+
+    // Lookup the complete AbilityInfo data.
+    final ability = AgentData.agents[agentType]?.abilities[index];
+
+    return ability!;
+  }
+
+  @override
+  void write(BinaryWriter writer, AbilityInfo obj) {
+    // Only persist type and index.
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.type)
+      ..writeByte(1)
+      ..write(obj.index);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AbilityInfoAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }
 
 class AgentData implements DraggableData {

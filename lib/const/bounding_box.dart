@@ -1,11 +1,12 @@
 import 'dart:ui';
 
+import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:icarus/const/json_converters.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'bounding_box.g.dart';
 
 @JsonSerializable()
-class BoundingBox {
+class BoundingBox extends HiveObject {
   @OffsetConverter()
   final Offset min;
 

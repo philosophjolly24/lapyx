@@ -45,6 +45,7 @@ PlacedImage _$PlacedImageFromJson(Map<String, dynamic> json) => PlacedImage(
       image: const Uint8ListConverter().fromJson(json['image'] as String),
       aspectRatio: (json['aspectRatio'] as num).toDouble(),
       scale: (json['scale'] as num).toDouble(),
+      path: json['path'] as String? ?? "",
     )
       ..isDeleted = json['isDeleted'] as bool
       ..link = json['link'] as String;
@@ -55,6 +56,7 @@ Map<String, dynamic> _$PlacedImageToJson(PlacedImage instance) =>
       'isDeleted': instance.isDeleted,
       'position': const OffsetConverter().toJson(instance.position),
       'image': const Uint8ListConverter().toJson(instance.image),
+      'path': instance.path,
       'aspectRatio': instance.aspectRatio,
       'scale': instance.scale,
       'link': instance.link,

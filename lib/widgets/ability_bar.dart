@@ -41,12 +41,13 @@ class AbiilityBar extends ConsumerWidget {
                   final info = draggable.data as AbilityInfo;
 
                   double scaleFactor = CoordinateSystem.instance.scaleFactor;
-                  log("Center point dragging value${info.abilityData.getAnchorPoint().scale(scaleFactor, scaleFactor).toString()}");
-                  return info.abilityData
+                  log("Center point dragging value${info.abilityData!.getAnchorPoint().scale(scaleFactor, scaleFactor).toString()}");
+                  return info.abilityData!
                       .getAnchorPoint()
                       .scale(scaleFactor, scaleFactor);
                 },
-                feedback: activeAgent.abilities[index].abilityData.createWidget(
+                feedback:
+                    activeAgent.abilities[index].abilityData!.createWidget(
                   null,
                   ref.watch(teamProvider),
                 ),

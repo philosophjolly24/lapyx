@@ -260,6 +260,7 @@ class PlacedImageAdapter extends TypeAdapter<PlacedImage> {
       image: fields[0] as Uint8List,
       aspectRatio: (fields[1] as num).toDouble(),
       scale: (fields[2] as num).toDouble(),
+      path: fields[7] == null ? "" : fields[7] as String,
     )
       ..link = fields[3] as String
       ..isDeleted = fields[5] as bool;
@@ -268,7 +269,7 @@ class PlacedImageAdapter extends TypeAdapter<PlacedImage> {
   @override
   void write(BinaryWriter writer, PlacedImage obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.image)
       ..writeByte(1)
@@ -282,7 +283,9 @@ class PlacedImageAdapter extends TypeAdapter<PlacedImage> {
       ..writeByte(5)
       ..write(obj.isDeleted)
       ..writeByte(6)
-      ..write(obj.position);
+      ..write(obj.position)
+      ..writeByte(7)
+      ..write(obj.path);
   }
 
   @override
@@ -539,6 +542,109 @@ class OffsetAdapter extends TypeAdapter<Offset> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is OffsetAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class FreeDrawingAdapter extends TypeAdapter<FreeDrawing> {
+  @override
+  final int typeId = 11;
+
+  @override
+  FreeDrawing read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return FreeDrawing(
+      listOfPoints: (fields[0] as List?)?.cast<Offset>(),
+      path: fields[1] as Path?,
+      color: fields[2] as Color,
+      boundingBox: fields[6] as BoundingBox?,
+      isDotted: fields[3] as bool,
+      hasArrow: fields[4] as bool,
+      id: fields[5] as String,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, FreeDrawing obj) {
+    writer
+      ..writeByte(7)
+      ..writeByte(0)
+      ..write(obj.listOfPoints)
+      ..writeByte(1)
+      ..write(obj.path)
+      ..writeByte(2)
+      ..write(obj.color)
+      ..writeByte(3)
+      ..write(obj.isDotted)
+      ..writeByte(4)
+      ..write(obj.hasArrow)
+      ..writeByte(5)
+      ..write(obj.id)
+      ..writeByte(6)
+      ..write(obj.boundingBox);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FreeDrawingAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class LineAdapter extends TypeAdapter<Line> {
+  @override
+  final int typeId = 12;
+
+  @override
+  Line read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Line(
+      lineStart: fields[0] as Offset,
+      lineEnd: fields[1] as Offset,
+      color: fields[2] as Color,
+      isDotted: fields[3] as bool,
+      hasArrow: fields[4] as bool,
+      id: fields[5] as String,
+    )..boundingBox = fields[6] as BoundingBox?;
+  }
+
+  @override
+  void write(BinaryWriter writer, Line obj) {
+    writer
+      ..writeByte(7)
+      ..writeByte(0)
+      ..write(obj.lineStart)
+      ..writeByte(1)
+      ..write(obj.lineEnd)
+      ..writeByte(2)
+      ..write(obj.color)
+      ..writeByte(3)
+      ..write(obj.isDotted)
+      ..writeByte(4)
+      ..write(obj.hasArrow)
+      ..writeByte(5)
+      ..write(obj.id)
+      ..writeByte(6)
+      ..write(obj.boundingBox);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LineAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

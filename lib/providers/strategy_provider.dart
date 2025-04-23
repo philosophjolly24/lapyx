@@ -74,12 +74,15 @@ class StrategyProvider extends Notifier<StrategyState> {
     final newStrat = Hive.box<StrategyData>(strategiesBox)
         .values
         .where((StrategyData strategy) {
-      return strategy.id == 'newTest';
+      return strategy.id == 'bleach';
     }).firstOrNull;
 
     if (newStrat == null) return;
 
     ref.read(agentProvider.notifier).fromHive(newStrat.agentData);
+    ref.read(abilityProvider.notifier).fromHive(newStrat.abilityData);
+    ref.read(drawingProvider.notifier).fromHive(newStrat.drawingData);
+
     // FilePickerResult? result = await FilePicker.platform.pickFiles(
     //   allowMultiple: false,
     //   type: FileType.custom,
@@ -123,7 +126,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       imageData: imageData,
       mapData: mapData,
       versionNumber: 1,
-      id: 'newTest',
+      id: 'bleach',
       name: 'new strat',
     );
 

@@ -3,11 +3,15 @@
 // Check in to version control
 
 import 'package:hive_ce/hive.dart';
+import 'package:icarus/const/agents.dart';
 import 'package:icarus/hive/hive_adapters.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
+    registerAdapter(AbilityInfoAdapter());
     registerAdapter(AgentTypeAdapter());
+    registerAdapter(FreeDrawingAdapter());
+    registerAdapter(LineAdapter());
     registerAdapter(MapValueAdapter());
     registerAdapter(OffsetAdapter());
     registerAdapter(PlacedAbilityAdapter());

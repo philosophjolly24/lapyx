@@ -63,7 +63,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                         Offset virtualOffset =
                             coordinateSystem.screenToCoordinate(localOffset);
                         Offset safeArea =
-                            ability.data.abilityData.getAnchorPoint();
+                            ability.data.abilityData!.getAnchorPoint();
 
                         if (coordinateSystem.isOutOfBounds(virtualOffset
                             .translate(safeArea.dx, safeArea.dy))) {
