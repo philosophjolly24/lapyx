@@ -71,7 +71,7 @@ class ToolGrid extends ConsumerWidget {
                     id: uuid.v4(),
                     aspectRatio: await getImageAspectRatio(imageBytes),
                     scale: 200,
-                    image: imageBytes,
+                    path: "",
                   );
 
                   ref.read(placedImageProvider.notifier).addImage(image);

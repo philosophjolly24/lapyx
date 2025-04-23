@@ -257,7 +257,6 @@ class PlacedImageAdapter extends TypeAdapter<PlacedImage> {
     return PlacedImage(
       position: fields[6] as Offset,
       id: fields[4] as String,
-      image: fields[0] as Uint8List,
       aspectRatio: (fields[1] as num).toDouble(),
       scale: (fields[2] as num).toDouble(),
       path: fields[7] == null ? "" : fields[7] as String,
@@ -269,9 +268,7 @@ class PlacedImageAdapter extends TypeAdapter<PlacedImage> {
   @override
   void write(BinaryWriter writer, PlacedImage obj) {
     writer
-      ..writeByte(8)
-      ..writeByte(0)
-      ..write(obj.image)
+      ..writeByte(7)
       ..writeByte(1)
       ..write(obj.aspectRatio)
       ..writeByte(2)

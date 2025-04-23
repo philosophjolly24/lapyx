@@ -83,8 +83,6 @@ types:
     typeId: 5
     nextIndex: 8
     fields:
-      image:
-        index: 0
       aspectRatio:
         index: 1
       scale:

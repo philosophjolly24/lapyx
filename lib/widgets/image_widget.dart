@@ -22,14 +22,14 @@ class _TriangleClipper extends CustomClipper<Path> {
 class ImageWidget extends ConsumerWidget {
   const ImageWidget({
     super.key,
-    required this.imageBytes,
+    required this.filePath,
     required this.link,
     required this.aspectRatio,
     required this.scale,
   });
-  final Uint8List imageBytes;
   final double aspectRatio;
-  final String link;
+  final String? link;
+  final String filePath;
   final double scale;
 
   @override
@@ -66,8 +66,8 @@ class ImageWidget extends ConsumerWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(3),
-                      child: Image.memory(
-                        imageBytes,
+                      child: Image.file(
+                        filePath,
                         fit: BoxFit.cover,
                       ),
                     ),

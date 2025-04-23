@@ -96,15 +96,12 @@ class PlacedImage extends PlacedWidget {
   PlacedImage({
     required super.position,
     required super.id,
-    required this.image,
     required this.aspectRatio,
     required this.scale,
-    this.path = "",
+    required this.path,
   });
 
   @Uint8ListConverter()
-  final Uint8List image;
-
   final String path;
   final double aspectRatio;
 
