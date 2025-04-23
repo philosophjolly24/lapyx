@@ -7,8 +7,6 @@ part of 'drawing_element.dart';
 // **************************************************************************
 
 FreeDrawing _$FreeDrawingFromJson(Map<String, dynamic> json) => FreeDrawing(
-      listOfPoints: _$JsonConverterFromJson<List<dynamic>, List<Offset>>(
-          json['listOfPoints'], const OffsetListConverter().fromJson),
       color: const ColorConverter().fromJson(json['color'] as String),
       boundingBox: json['boundingBox'] == null
           ? null
@@ -25,11 +23,4 @@ Map<String, dynamic> _$FreeDrawingToJson(FreeDrawing instance) =>
       'hasArrow': instance.hasArrow,
       'id': instance.id,
       'boundingBox': instance.boundingBox,
-      'listOfPoints': const OffsetListConverter().toJson(instance.listOfPoints),
     };
-
-Value? _$JsonConverterFromJson<Json, Value>(
-  Object? json,
-  Value? Function(Json json) fromJson,
-) =>
-    json == null ? null : fromJson(json as Json);

@@ -59,13 +59,14 @@ class FreeDrawing extends DrawingElement with HiveObjectMixin {
     required super.hasArrow,
     required super.id,
   })  : listOfPoints = listOfPoints ?? [],
-        path = path ?? Path();
+        _path = path ?? Path();
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @OffsetListConverter()
   List<Offset> listOfPoints = [];
 
   @JsonKey(includeFromJson: false, includeToJson: false)
-  Path path = Path();
+  Path _path = Path();
 
   factory FreeDrawing.fromJson(Map<String, dynamic> json) =>
       _$FreeDrawingFromJson(json);
@@ -74,7 +75,7 @@ class FreeDrawing extends DrawingElement with HiveObjectMixin {
   Map<String, dynamic> toJson() => _$FreeDrawingToJson(this);
 
   void updatePath(Path newPath) {
-    path = newPath;
+    _path = newPath;
   }
 
   void rebuildPath(CoordinateSystem coordinateSystem) {
@@ -107,7 +108,7 @@ class FreeDrawing extends DrawingElement with HiveObjectMixin {
 
     path.lineTo(previousPoint!.dx, previousPoint.dy);
 
-    this.path = path;
+    _path = path;
   }
 
   FreeDrawing copyWith({
@@ -122,7 +123,7 @@ class FreeDrawing extends DrawingElement with HiveObjectMixin {
     return FreeDrawing(
       color: color ?? this.color,
       listOfPoints: listOfPoints ?? this.listOfPoints,
-      path: path ?? this.path,
+      path: path ?? _path,
       boundingBox: boundingBox ?? this.boundingBox,
       isDotted: isDotted ?? this.isDotted,
       hasArrow: hasArrow ?? this.hasArrow,
@@ -188,4 +189,8 @@ class FreeDrawing extends DrawingElement with HiveObjectMixin {
 
     return smoothPoints;
   }
+}
+
+extension FreeDrawingx on FreeDrawing {
+  Path get path => _path;
 }

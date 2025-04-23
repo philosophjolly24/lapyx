@@ -558,7 +558,6 @@ class FreeDrawingAdapter extends TypeAdapter<FreeDrawing> {
     };
     return FreeDrawing(
       listOfPoints: (fields[0] as List?)?.cast<Offset>(),
-      path: fields[1] as Path?,
       color: fields[2] as Color,
       boundingBox: fields[6] as BoundingBox?,
       isDotted: fields[3] as bool,
@@ -570,11 +569,9 @@ class FreeDrawingAdapter extends TypeAdapter<FreeDrawing> {
   @override
   void write(BinaryWriter writer, FreeDrawing obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.listOfPoints)
-      ..writeByte(1)
-      ..write(obj.path)
       ..writeByte(2)
       ..write(obj.color)
       ..writeByte(3)
@@ -645,6 +642,43 @@ class LineAdapter extends TypeAdapter<Line> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is LineAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class BoundingBoxAdapter extends TypeAdapter<BoundingBox> {
+  @override
+  final int typeId = 13;
+
+  @override
+  BoundingBox read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return BoundingBox(
+      min: fields[0] as Offset,
+      max: fields[1] as Offset,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, BoundingBox obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.min)
+      ..writeByte(1)
+      ..write(obj.max);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BoundingBoxAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

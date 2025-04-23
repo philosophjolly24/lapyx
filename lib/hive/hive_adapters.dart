@@ -22,5 +22,6 @@ import 'package:icarus/providers/strategy_provider.dart';
   AdapterSpec<Offset>(),
   AdapterSpec<FreeDrawing>(),
   AdapterSpec<Line>(),
+  AdapterSpec<BoundingBox>(),
 ])
 part 'hive_adapters.g.dart';

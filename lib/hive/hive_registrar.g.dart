@@ -10,6 +10,7 @@ extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(AbilityInfoAdapter());
     registerAdapter(AgentTypeAdapter());
+    registerAdapter(BoundingBoxAdapter());
     registerAdapter(FreeDrawingAdapter());
     registerAdapter(LineAdapter());
     registerAdapter(MapValueAdapter());

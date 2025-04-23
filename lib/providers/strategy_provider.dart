@@ -74,14 +74,18 @@ class StrategyProvider extends Notifier<StrategyState> {
     final newStrat = Hive.box<StrategyData>(strategiesBox)
         .values
         .where((StrategyData strategy) {
-      return strategy.id == 'bleach';
+      return strategy.id == 'newPrincipalTest';
     }).firstOrNull;
 
-    if (newStrat == null) return;
-
+    if (newStrat == null) {
+      log("Couldn't find save");
+      return;
+    }
     ref.read(agentProvider.notifier).fromHive(newStrat.agentData);
     ref.read(abilityProvider.notifier).fromHive(newStrat.abilityData);
     ref.read(drawingProvider.notifier).fromHive(newStrat.drawingData);
+    ref.read(mapProvider.notifier).updateMap(newStrat.mapData);
+    ref.read(textProvider.notifier).fromHive(newStrat.textData);
 
     // FilePickerResult? result = await FilePicker.platform.pickFiles(
     //   allowMultiple: false,
@@ -126,7 +130,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       imageData: imageData,
       mapData: mapData,
       versionNumber: 1,
-      id: 'bleach',
+      id: 'newPrincipalTest',
       name: 'new strat',
     );
 

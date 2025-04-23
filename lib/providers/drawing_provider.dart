@@ -115,8 +115,17 @@ class DrawingProvider extends Notifier<DrawingState> {
     return jsonEncode(jsonList);
   }
 
-  void fromHive(List<DrawingElement> drawing) {
-    state = state.copyWith(elements: drawing);
+  void fromHive(List<DrawingElement> hiveDrawings) {
+    final coordinateSystem = CoordinateSystem.instance;
+    final newDrawings = hiveDrawings.map((drawing) {
+      if (drawing is FreeDrawing) {
+        drawing.rebuildPath(coordinateSystem);
+      }
+      return drawing;
+    }).toList();
+
+    state = state.copyWith(elements: newDrawings);
+    _triggerRepaint();
   }
 
   void fromJson(String jsonString) {

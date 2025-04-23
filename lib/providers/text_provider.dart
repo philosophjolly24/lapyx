@@ -125,6 +125,10 @@ class TextProvider extends Notifier<List<PlacedText>> {
     return jsonEncode(jsonList);
   }
 
+  void fromHive(List<PlacedText> hiveText) {
+    state = hiveText;
+  }
+
   void fromJson(String jsonString) {
     final List<dynamic> jsonList = jsonDecode(jsonString);
     state = jsonList
