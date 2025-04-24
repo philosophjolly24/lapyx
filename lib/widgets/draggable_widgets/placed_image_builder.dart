@@ -7,7 +7,7 @@ import 'package:icarus/providers/image_provider.dart';
 
 import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/draggable_widgets/image/image_widget.dart';
-import 'package:icarus/widgets/draggable_widgets/scalable_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/image/scalable_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 
 class PlacedImageBuilder extends StatefulWidget {
@@ -28,6 +28,7 @@ class PlacedImageBuilder extends StatefulWidget {
 class _PlacedImageBuilderState extends State<PlacedImageBuilder> {
   double? localScale; // Make localScale nullable to check if it's initialized
   bool isPanning = false;
+  bool isDragging = false;
   // Optionally define min and max scale values
   static const double minScale = 200;
   static const double maxScale = 800;
@@ -42,9 +43,6 @@ class _PlacedImageBuilderState extends State<PlacedImageBuilder> {
   Widget build(BuildContext context) {
     if (localScale == null) {
       return const SizedBox.shrink();
-
-      // return const SizedBox
-      //     .shrink(); // Or a loading indicator, or some other placeholder
     }
 
     return Consumer(builder: (context, ref, child) {
@@ -57,6 +55,7 @@ class _PlacedImageBuilderState extends State<PlacedImageBuilder> {
       }
 
       return ScalableWidget(
+        isDragging: isDragging,
         onPanUpdate: (details) {
           log("I'm being panned");
           setState(() {
@@ -95,7 +94,17 @@ class _PlacedImageBuilderState extends State<PlacedImageBuilder> {
           childWhenDragging: const SizedBox.shrink(),
           dragAnchorStrategy:
               ref.read(screenZoomProvider.notifier).zoomDragAnchorStrategy,
-          onDragEnd: widget.onDragEnd,
+          onDragStarted: () {
+            setState(() {
+              isDragging = true;
+            });
+          },
+          onDragEnd: (details) {
+            widget.onDragEnd(details);
+            setState(() {
+              isDragging = false;
+            });
+          },
           child: ImageWidget(
             fileExtension: widget.placedImage.fileExtension,
             aspectRatio: widget.placedImage.aspectRatio,
