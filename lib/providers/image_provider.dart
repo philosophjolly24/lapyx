@@ -1,28 +1,38 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/const/placed_classes.dart';
+import 'package:icarus/providers/strategy_provider.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 final placedImageProvider =
     NotifierProvider<ImageProvider, ImageState>(ImageProvider.new);
 
 class ImageState {
-  ImageState({required this.images, required this.currentImage});
+  ImageState(
+      {required this.images,
+      required this.currentImage,
+      required this.imageExtenstion});
 
   final List<PlacedImage> images;
   final Uint8List? currentImage;
+  final String? imageExtenstion;
 
   ImageState copyWith({
     List<PlacedImage>? images,
     Uint8List? currentImage,
+    String? imageExtenstion,
   }) {
     return ImageState(
       images: images ?? this.images,
       currentImage: currentImage ?? this.currentImage,
+      imageExtenstion: imageExtenstion ?? this.imageExtenstion,
     );
   }
 }
@@ -32,7 +42,11 @@ class ImageProvider extends Notifier<ImageState> {
 
   @override
   ImageState build() {
-    return ImageState(images: [], currentImage: null);
+    return ImageState(
+      images: [],
+      currentImage: null,
+      imageExtenstion: null,
+    );
   }
 
   void addImage(PlacedImage placedImage) {
@@ -128,12 +142,14 @@ class ImageProvider extends Notifier<ImageState> {
     state = state.copyWith(images: newImages);
   }
 
-  void changeCurrentImage(Uint8List newImage) {
-    state = state.copyWith(currentImage: newImage);
+  void changeCurrentImage(Uint8List newImage, String fileExtension) {
+    state =
+        state.copyWith(currentImage: newImage, imageExtenstion: fileExtension);
   }
 
   void clearCurrentImage() {
-    state = ImageState(images: [...state.images], currentImage: null);
+    state = ImageState(
+        images: [...state.images], currentImage: null, imageExtenstion: null);
   }
 
   String toJson() {
@@ -158,6 +174,41 @@ class ImageProvider extends Notifier<ImageState> {
     state = newState;
   }
 
+  Future<void> saveSecureImage(
+    Uint8List imageBytes,
+    String imageID,
+    String fileExtenstion,
+  ) async {
+    final strategyID = ref.read(strategyProvider).id;
+    // Get the system's application support directory.
+    final directory = await getApplicationSupportDirectory();
+
+    // Create a custom directory inside the application support directory.
+
+    final customDirectory = Directory(path.join(directory.path, strategyID));
+
+    if (!await customDirectory.exists()) {
+      await customDirectory.create(recursive: true);
+    }
+
+    // Now create the full file path.
+    final filePath = path.join(
+      customDirectory.path,
+      'images',
+      '$imageID$fileExtenstion',
+    );
+
+    log(filePath);
+    // Ensure the images subdirectory exists.
+    final imagesDir = Directory(path.join(customDirectory.path, 'images'));
+    if (!await imagesDir.exists()) {
+      await imagesDir.create(recursive: true);
+    }
+
+    // Write the file.
+    final file = File(filePath);
+    await file.writeAsBytes(imageBytes);
+  }
   // @override
   // String toString() {
   //   String output = "[";

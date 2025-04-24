@@ -14,7 +14,8 @@ Future<void> main() async {
 
   Hive.registerAdapters();
 
-  await Hive.openBox<StrategyData>(strategiesBox);
+  await Hive.openBox(strategiesBox);
+  await Hive.box(strategiesBox).clear();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
     title: "Icarus: Valorant Strategies & Line ups",
@@ -53,16 +54,26 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerWidget {
   const MyHomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return const HomeView();
+  Widget build(BuildContext context, WidgetRef ref) {
+    return FutureBuilder(
+        future: ref.read(strategyProvider.notifier).setStorageDirectory(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return const HomeView();
+            default:
+              return const Scaffold(
+                body: Center(
+                  child: SizedBox(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              );
+          }
+        });
   }
 }

@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/providers/strategy_provider.dart';
+import 'package:path/path.dart' as path;
 
 class _TriangleClipper extends CustomClipper<Path> {
   @override
@@ -22,18 +25,24 @@ class _TriangleClipper extends CustomClipper<Path> {
 class ImageWidget extends ConsumerWidget {
   const ImageWidget({
     super.key,
-    required this.filePath,
     required this.link,
     required this.aspectRatio,
     required this.scale,
+    required this.fileExtension,
+    required this.id,
   });
   final double aspectRatio;
   final String? link;
-  final String filePath;
   final double scale;
-
+  final String fileExtension;
+  final String id;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final filePath = path.join(
+      ref.read(strategyProvider).storageDirectory!,
+      'images',
+      '$id$fileExtension',
+    );
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: scale),
       child: AspectRatio(
@@ -67,7 +76,7 @@ class ImageWidget extends ConsumerWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(3),
                       child: Image.file(
-                        filePath,
+                        File(filePath),
                         fit: BoxFit.cover,
                       ),
                     ),

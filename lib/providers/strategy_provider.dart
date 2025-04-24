@@ -16,6 +16,8 @@ import 'package:hive_ce/hive.dart';
 import 'package:icarus/const/drawing_element.dart';
 import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/placed_classes.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class StrategyData extends HiveObject {
   final String id;
@@ -42,17 +44,23 @@ class StrategyData extends HiveObject {
 }
 
 class StrategyState {
-  StrategyState({required this.isSaved, required this.fileName});
+  StrategyState({
+    required this.isSaved,
+    required this.fileName,
+    required this.id,
+    required this.storageDirectory,
+  });
   final bool isSaved;
   final String? fileName;
-
-  StrategyState copyWith({
-    bool? isSaved,
-    String? fileName,
-  }) {
+  final String id;
+  final String? storageDirectory;
+  StrategyState copyWith(
+      {bool? isSaved, String? fileName, String? id, String? storageDirectory}) {
     return StrategyState(
       isSaved: isSaved ?? this.isSaved,
       fileName: fileName ?? this.fileName,
+      id: id ?? this.id,
+      storageDirectory: storageDirectory ?? this.storageDirectory,
     );
   }
 }
@@ -63,11 +71,28 @@ final strategyProvider =
 class StrategyProvider extends Notifier<StrategyState> {
   @override
   StrategyState build() {
-    return StrategyState(isSaved: false, fileName: null);
+    return StrategyState(
+        isSaved: false, fileName: null, id: "testID", storageDirectory: null);
   }
 
   void setFileStatus(bool status) {
     state = state.copyWith(isSaved: status);
+  }
+
+  Future<void> setStorageDirectory() async {
+    final strategyID = state.id;
+    // Get the system's application support directory.
+    final directory = await getApplicationSupportDirectory();
+
+    // Create a custom directory inside the application support directory.
+
+    final customDirectory = Directory(path.join(directory.path, strategyID));
+
+    if (!await customDirectory.exists()) {
+      await customDirectory.create(recursive: true);
+    }
+
+    state = state.copyWith(storageDirectory: customDirectory.path);
   }
 
   Future<void> loadFile() async {

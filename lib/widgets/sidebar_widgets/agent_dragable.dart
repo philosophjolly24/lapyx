@@ -5,8 +5,8 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_bar_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
-import 'package:icarus/widgets/ability/agent_feedback_widget.dart';
-import 'package:icarus/widgets/zoom_transform.dart';
+import 'package:icarus/widgets/draggable_widgets/agents/agent_feedback_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 
 class AgentDragable extends ConsumerWidget {
   const AgentDragable({

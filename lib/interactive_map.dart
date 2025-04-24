@@ -12,7 +12,7 @@ import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/dot_painter.dart';
 
 import 'package:icarus/widgets/drawing_painter.dart';
-import 'package:icarus/widgets/placed_widget_builder.dart';
+import 'package:icarus/widgets/draggable_widgets/placed_widget_builder.dart';
 
 class InteractiveMap extends ConsumerStatefulWidget {
   const InteractiveMap({super.key});

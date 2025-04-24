@@ -259,7 +259,7 @@ class PlacedImageAdapter extends TypeAdapter<PlacedImage> {
       id: fields[4] as String,
       aspectRatio: (fields[1] as num).toDouble(),
       scale: (fields[2] as num).toDouble(),
-      path: fields[7] == null ? "" : fields[7] as String,
+      fileExtension: fields[8] as String,
     )
       ..link = fields[3] as String
       ..isDeleted = fields[5] as bool;
@@ -281,8 +281,8 @@ class PlacedImageAdapter extends TypeAdapter<PlacedImage> {
       ..write(obj.isDeleted)
       ..writeByte(6)
       ..write(obj.position)
-      ..writeByte(7)
-      ..write(obj.path);
+      ..writeByte(8)
+      ..write(obj.fileExtension);
   }
 
   @override

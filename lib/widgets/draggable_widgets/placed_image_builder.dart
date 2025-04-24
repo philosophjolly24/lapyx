@@ -4,9 +4,9 @@ import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/image_provider.dart';
 
 import 'package:icarus/providers/screen_zoom_provider.dart';
-import 'package:icarus/widgets/image_widget.dart';
-import 'package:icarus/widgets/scalable_widget.dart';
-import 'package:icarus/widgets/zoom_transform.dart';
+import 'package:icarus/widgets/draggable_widgets/image/image_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/scalable_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 
 class PlacedImageBuilder extends ConsumerStatefulWidget {
   const PlacedImageBuilder({
@@ -62,10 +62,11 @@ class _PlacedImageBuilderState extends ConsumerState<PlacedImageBuilder> {
         feedback: ZoomTransform(
           child: IgnorePointer(
             child: ImageWidget(
-              imageBytes: widget.placedImage.image,
               link: widget.placedImage.link,
               aspectRatio: widget.placedImage.aspectRatio,
               scale: localScale!,
+              fileExtension: widget.placedImage.fileExtension,
+              id: widget.placedImage.id,
             ),
           ),
         ),
@@ -74,10 +75,11 @@ class _PlacedImageBuilderState extends ConsumerState<PlacedImageBuilder> {
             ref.read(screenZoomProvider.notifier).zoomDragAnchorStrategy,
         onDragEnd: widget.onDragEnd,
         child: ImageWidget(
+          fileExtension: widget.placedImage.fileExtension,
           aspectRatio: widget.placedImage.aspectRatio,
-          imageBytes: widget.placedImage.image,
           link: widget.placedImage.link,
           scale: localScale!,
+          id: widget.placedImage.id,
         ),
       ),
     );

@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/settings.dart';
-import 'package:icarus/widgets/ability/ability_widget.dart';
-import 'package:icarus/widgets/ability/custom_circle_widget.dart';
-import 'package:icarus/widgets/ability/custom_square_widget.dart';
-import 'package:icarus/widgets/ability/agent_icon_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/ability/custom_circle_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/ability/custom_square_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/agents/agent_icon_widget.dart';
 
 abstract class Ability {
   Offset getAnchorPoint();

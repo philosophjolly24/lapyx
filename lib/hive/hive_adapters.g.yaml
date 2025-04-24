@@ -81,7 +81,7 @@ types:
         index: 4
   PlacedImage:
     typeId: 5
-    nextIndex: 8
+    nextIndex: 9
     fields:
       aspectRatio:
         index: 1
@@ -95,8 +95,8 @@ types:
         index: 5
       position:
         index: 6
-      path:
-        index: 7
+      fileExtension:
+        index: 8
   MapValue:
     typeId: 6
     nextIndex: 11

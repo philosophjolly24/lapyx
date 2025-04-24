@@ -7,10 +7,10 @@ import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
-import 'package:icarus/widgets/ability/rotatable_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/ability/rotatable_widget.dart';
 import 'dart:math' as math;
 
-import 'package:icarus/widgets/zoom_transform.dart';
+import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 
 class PlacedAbilityWidget extends StatefulWidget {
   final PlacedAbility ability;

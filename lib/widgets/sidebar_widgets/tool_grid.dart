@@ -1,4 +1,6 @@
 import 'dart:async' show Completer;
+import 'dart:convert' show ascii;
+import 'dart:developer';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -10,8 +12,11 @@ import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
+import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
-import 'package:icarus/widgets/drawing_tools.dart';
+import 'package:icarus/widgets/sidebar_widgets/drawing_tools.dart';
+import 'package:icarus/widgets/sidebar_widgets/image_selector.dart';
+import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
 class ToolGrid extends ConsumerWidget {
@@ -62,16 +67,23 @@ class ToolGrid extends ConsumerWidget {
                     Navigator.of(context).pop(); // Just close the dialog
                     return;
                   }
-                  const uuid = Uuid();
+
+                  final imageID = const Uuid().v4();
                   final imageBytes =
                       ref.read(placedImageProvider).currentImage!;
+                  final fileExtension =
+                      ref.read(placedImageProvider).imageExtenstion!;
+
+                  await ref
+                      .read(placedImageProvider.notifier)
+                      .saveSecureImage(imageBytes, imageID, fileExtension);
 
                   final image = PlacedImage(
+                    fileExtension: fileExtension,
                     position: const Offset(500, 500),
-                    id: uuid.v4(),
+                    id: imageID,
                     aspectRatio: await getImageAspectRatio(imageBytes),
                     scale: 200,
-                    path: "",
                   );
 
                   ref.read(placedImageProvider.notifier).addImage(image);
@@ -175,55 +187,6 @@ class ToolGrid extends ConsumerWidget {
           ),
           const DrawingTools()
         ],
-      ),
-    );
-  }
-}
-
-class ImageSelector extends ConsumerWidget {
-  const ImageSelector({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ClipRRect(
-      borderRadius: const BorderRadius.all(Radius.circular(3)),
-      child: InkWell(
-        onTap: () async {
-          FilePickerResult? result = await FilePicker.platform.pickFiles(
-            allowMultiple: false,
-            type: FileType.custom,
-            allowedExtensions: ["png", "jpg", "gif", "webp"],
-          );
-
-          if (result == null) return;
-          final data = result.files.first.xFile;
-          final Uint8List newImage = await data.readAsBytes();
-
-          ref.read(placedImageProvider.notifier).changeCurrentImage(newImage);
-        },
-        child: (ref.watch(placedImageProvider).currentImage == null)
-            ? Container(
-                height: 200,
-                width: 200,
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 20, 20, 20),
-                ),
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.image,
-                      size: 40,
-                    ),
-                    Text("Click to add new image"),
-                  ],
-                ),
-              )
-            : Image.memory(
-                ref.watch(placedImageProvider).currentImage!,
-                width: 200,
-                height: 200,
-              ),
       ),
     );
   }

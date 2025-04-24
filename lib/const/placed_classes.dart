@@ -98,13 +98,12 @@ class PlacedImage extends PlacedWidget {
     required super.id,
     required this.aspectRatio,
     required this.scale,
-    required this.path,
+    required this.fileExtension,
   });
 
-  @Uint8ListConverter()
-  final String path;
   final double aspectRatio;
 
+  final String fileExtension;
   double scale;
 
   String link = "";

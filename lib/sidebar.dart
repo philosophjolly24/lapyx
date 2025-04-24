@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:icarus/agent_dragable.dart';
+import 'package:icarus/widgets/sidebar_widgets/agent_dragable.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/const/agents.dart';
-import 'package:icarus/widgets/ability_bar.dart';
-import 'package:icarus/widgets/agent_filter.dart';
-import 'package:icarus/widgets/team_picker.dart';
-import 'package:icarus/widgets/tool_grid.dart';
+import 'package:icarus/widgets/sidebar_widgets/ability_bar.dart';
+import 'package:icarus/widgets/sidebar_widgets/agent_filter.dart';
+import 'package:icarus/widgets/sidebar_widgets/team_picker.dart';
+import 'package:icarus/widgets/sidebar_widgets/tool_grid.dart';
 
 class SideBarUI extends StatefulWidget {
   const SideBarUI({super.key});

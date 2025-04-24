@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
+            VALUE "CompanyName", "xyz.icarus-strats" "\0"
             VALUE "FileDescription", "icarus" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "icarus" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 xyz.icarus-strats. All rights reserved." "\0"
             VALUE "OriginalFilename", "icarus.exe" "\0"
             VALUE "ProductName", "icarus" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
