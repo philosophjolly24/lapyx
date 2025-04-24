@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/providers/ability_provider.dart';
@@ -111,6 +110,7 @@ class StrategyProvider extends Notifier<StrategyState> {
     ref.read(drawingProvider.notifier).fromHive(newStrat.drawingData);
     ref.read(mapProvider.notifier).updateMap(newStrat.mapData);
     ref.read(textProvider.notifier).fromHive(newStrat.textData);
+    ref.read(placedImageProvider.notifier).fromHive(newStrat.imageData);
 
     // FilePickerResult? result = await FilePicker.platform.pickFiles(
     //   allowMultiple: false,

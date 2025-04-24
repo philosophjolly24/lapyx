@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -38,6 +39,7 @@ class ImageWidget extends ConsumerWidget {
   final String id;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    log(scale.toString());
     final filePath = path.join(
       ref.read(strategyProvider).storageDirectory!,
       'images',

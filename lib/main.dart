@@ -14,8 +14,8 @@ Future<void> main() async {
 
   Hive.registerAdapters();
 
-  await Hive.openBox(strategiesBox);
-  await Hive.box(strategiesBox).clear();
+  await Hive.openBox<StrategyData>(strategiesBox);
+  // await Hive.box(strategiesBox).clear();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
     title: "Icarus: Valorant Strategies & Line ups",

@@ -209,6 +209,10 @@ class ImageProvider extends Notifier<ImageState> {
     final file = File(filePath);
     await file.writeAsBytes(imageBytes);
   }
+
+  void fromHive(List<PlacedImage> hiveImages) {
+    state = state.copyWith(images: hiveImages);
+  }
   // @override
   // String toString() {
   //   String output = "[";

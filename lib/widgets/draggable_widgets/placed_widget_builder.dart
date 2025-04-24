@@ -194,6 +194,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                             .dy,
                         child: PlacedImageBuilder(
                           placedImage: placedImage,
+                          scale: placedImage.scale,
                           onDragEnd: (details) {
                             RenderBox renderBox =
                                 context.findRenderObject() as RenderBox;

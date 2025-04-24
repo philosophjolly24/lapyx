@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/custom_icons.dart';
@@ -28,6 +30,9 @@ class ScalableWidget extends ConsumerWidget {
             child: MouseRegion(
               cursor: SystemMouseCursors.resizeDownRight,
               child: GestureDetector(
+                  onTap: () {
+                    log("Hi");
+                  },
                   onPanUpdate: onPanUpdate,
                   // Update the scale based on horizontal drag changes.
                   // onPanUpdate: (details) {
