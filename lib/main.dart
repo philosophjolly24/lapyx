@@ -14,7 +14,7 @@ Future<void> main() async {
 
   Hive.registerAdapters();
 
-  await Hive.openBox<StrategyData>(strategiesBox);
+  await Hive.openBox<StrategyData>(HiveBoxNames.strategiesBox);
   // await Hive.box(strategiesBox).clear();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(

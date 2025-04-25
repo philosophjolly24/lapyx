@@ -95,7 +95,7 @@ class StrategyProvider extends Notifier<StrategyState> {
   }
 
   Future<void> loadFile() async {
-    final newStrat = Hive.box<StrategyData>(strategiesBox)
+    final newStrat = Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .values
         .where((StrategyData strategy) {
       return strategy.id == 'newPrincipalTest';
@@ -159,7 +159,8 @@ class StrategyProvider extends Notifier<StrategyState> {
       name: 'new strat',
     );
 
-    await Hive.box<StrategyData>(strategiesBox).add(currentStategy);
+    await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
+        .add(currentStategy);
     // String data = '''
     //             {
     //             "drawingData": ${ref.read(drawingProvider.notifier).toJson()},

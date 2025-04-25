@@ -1,1 +1,3 @@
-const strategiesBox = "strategy_box";
+class HiveBoxNames {
+  static const strategiesBox = "strategy_box";
+}
