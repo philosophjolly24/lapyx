@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/providers/ability_provider.dart';
+import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
@@ -17,6 +18,7 @@ import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class StrategyData extends HiveObject {
   final String id;
@@ -45,19 +47,23 @@ class StrategyData extends HiveObject {
 class StrategyState {
   StrategyState({
     required this.isSaved,
-    required this.fileName,
+    required this.stratName,
     required this.id,
     required this.storageDirectory,
   });
   final bool isSaved;
-  final String? fileName;
+  final String? stratName;
   final String id;
   final String? storageDirectory;
+
   StrategyState copyWith(
-      {bool? isSaved, String? fileName, String? id, String? storageDirectory}) {
+      {bool? isSaved,
+      String? stratName,
+      String? id,
+      String? storageDirectory}) {
     return StrategyState(
       isSaved: isSaved ?? this.isSaved,
-      fileName: fileName ?? this.fileName,
+      stratName: stratName ?? this.stratName,
       id: id ?? this.id,
       storageDirectory: storageDirectory ?? this.storageDirectory,
     );
@@ -71,7 +77,7 @@ class StrategyProvider extends Notifier<StrategyState> {
   @override
   StrategyState build() {
     return StrategyState(
-        isSaved: false, fileName: null, id: "testID", storageDirectory: null);
+        isSaved: false, stratName: null, id: "testID", storageDirectory: null);
   }
 
   void setFileStatus(bool status) {
@@ -94,11 +100,11 @@ class StrategyProvider extends Notifier<StrategyState> {
     state = state.copyWith(storageDirectory: customDirectory.path);
   }
 
-  Future<void> loadFile() async {
+  Future<void> loadFile(String id) async {
     final newStrat = Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .values
         .where((StrategyData strategy) {
-      return strategy.id == 'newPrincipalTest';
+      return strategy.id == id;
     }).firstOrNull;
 
     if (newStrat == null) {
@@ -111,7 +117,13 @@ class StrategyProvider extends Notifier<StrategyState> {
     ref.read(mapProvider.notifier).updateMap(newStrat.mapData);
     ref.read(textProvider.notifier).fromHive(newStrat.textData);
     ref.read(placedImageProvider.notifier).fromHive(newStrat.imageData);
+    ref.read(actionProvider.notifier).clearAllActions();
 
+    state = state.copyWith(
+      isSaved: true,
+      stratName: newStrat.name,
+      id: id,
+    );
     // FilePickerResult? result = await FilePicker.platform.pickFiles(
     //   allowMultiple: false,
     //   type: FileType.custom,
@@ -139,7 +151,25 @@ class StrategyProvider extends Notifier<StrategyState> {
     // state = state.copyWith(fileName: result.files.first.path, isSaved: true);
   }
 
-  Future<void> saveFile() async {
+  Future<void> createNewStrategy(String name) async {
+    final newID = const Uuid().v4();
+    final newStrategy = StrategyData(
+      drawingData: [],
+      agentData: [],
+      abilityData: [],
+      textData: [],
+      imageData: [],
+      mapData: MapValue.ascent,
+      versionNumber: 1,
+      id: newID,
+      name: name,
+    );
+
+    await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
+        .put(newStrategy.id, newStrategy);
+  }
+
+  Future<void> saveFile(String id) async {
     final drawingData = ref.read(drawingProvider).elements;
     final agentData = ref.read(agentProvider);
     final abilityData = ref.read(abilityProvider);
@@ -155,12 +185,12 @@ class StrategyProvider extends Notifier<StrategyState> {
       imageData: imageData,
       mapData: mapData,
       versionNumber: 1,
-      id: 'newPrincipalTest',
+      id: id,
       name: 'new strat',
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
-        .add(currentStategy);
+        .put(currentStategy.id, currentStategy);
     // String data = '''
     //             {
     //             "drawingData": ${ref.read(drawingProvider.notifier).toJson()},

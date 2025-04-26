@@ -126,6 +126,7 @@ class TextProvider extends Notifier<List<PlacedText>> {
   }
 
   void fromHive(List<PlacedText> hiveText) {
+    poppedText = [];
     state = hiveText;
   }
 

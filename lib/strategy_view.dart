@@ -49,7 +49,17 @@ class _StrategyViewState extends ConsumerState<StrategyView>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const MapSelector(),
+                Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(Icons.home)),
+                    const SizedBox(width: 5),
+                    const MapSelector(),
+                  ],
+                ),
                 TextButton(
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.white,
@@ -133,7 +143,9 @@ class _StrategyViewState extends ConsumerState<StrategyView>
             TextButton(
               child: const Text('Save'),
               onPressed: () async {
-                await ref.read(strategyProvider.notifier).saveFile();
+                await ref
+                    .read(strategyProvider.notifier)
+                    .saveFile(ref.read(strategyProvider).id);
                 if (!mounted) return;
                 Navigator.of(context).pop(); // Close the dialog *after* saving
                 await windowManager.destroy(); // Then close the window/app

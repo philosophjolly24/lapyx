@@ -14,7 +14,9 @@ class SaveButtonAndLoad extends ConsumerWidget {
         children: [
           IconButton(
             onPressed: () async {
-              await ref.read(strategyProvider.notifier).saveFile();
+              await ref
+                  .read(strategyProvider.notifier)
+                  .saveFile(ref.read(strategyProvider).id);
 
               if (!context.mounted) return;
 
@@ -37,7 +39,7 @@ class SaveButtonAndLoad extends ConsumerWidget {
           ),
           IconButton(
             onPressed: () async {
-              await ref.read(strategyProvider.notifier).loadFile();
+              await ref.read(strategyProvider.notifier).loadFile("");
             },
             icon: const Icon(Icons.file_open),
           ),

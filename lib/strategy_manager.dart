@@ -2,88 +2,116 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:icarus/const/hive_boxes.dart';
-import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
+import 'package:icarus/strategy_tile.dart';
+import 'package:icarus/widgets/bg_dot_painter.dart';
+
+final strategiesProvider = StreamProvider<List<StrategyData>>((ref) {
+  return Hive.box<StrategyData>(HiveBoxNames.strategiesBox).watch().map(
+      (event) =>
+          Hive.box<StrategyData>(HiveBoxNames.strategiesBox).values.toList());
+});
 
 class StrategyManager extends ConsumerWidget {
   const StrategyManager({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final strategies =
-        Hive.box<StrategyData>(HiveBoxNames.strategiesBox).values.toList();
-    return Scaffold(
-      body: GridView.builder(
-        itemCount: strategies.length,
-        padding: const EdgeInsets.all(16),
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 268,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1,
-        ),
-        itemBuilder: (context, index) {
-          // if (newIndex == 0) {
-          //   return InkWell(
-          //     child: Container(
-          //       decoration: const BoxDecoration(
-          //         color: Color(0xFF151515),
-          //         borderRadius: BorderRadius.all(Radius.circular(24)),
-          //       ),
-          //       child: const Column(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           Icon(Icons.add),
-          //           SizedBox(height: 20),
-          //           Text("Make new Strategy")
-          //         ],
-          //       ),
-          //     ),
-          //     onTap: () {},
-          //   );
-          // }
-          return InkWell(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Settings.sideBarColor,
-                border: Border.all(
-                  color: Settings.highlightColor,
-                  width: 2,
-                ),
-                borderRadius: const BorderRadius.all(Radius.circular(24)),
-              ),
-              child: Column(
-                children: [
-                  Expanded(
-                    flex: 193,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(24)),
-                        color: Colors.red,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(strategies[index].name),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 8, bottom: 8),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(""),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            onTap: () {},
+    void showCreateDialog() {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Name Strategy"),
+            content: const TextField(),
+            actions: [
+              TextButton(
+                onPressed: () async {
+                  await ref
+                      .read(strategyProvider.notifier)
+                      .createNewStrategy("other one");
+                  if (!context.mounted) return;
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Create"),
+              )
+            ],
           );
         },
+      );
+    }
+
+    final AsyncValue<List<StrategyData>> strategies =
+        ref.watch(strategiesProvider);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Strategies"),
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              showCreateDialog();
+            },
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text(
+              "Create Strategy",
+              style: TextStyle(color: Colors.white),
+            ),
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return const Color.fromARGB(0, 224, 224, 224);
+                  }
+                  return Colors.transparent;
+                },
+              ),
+              overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+                  if (states.contains(WidgetState.pressed)) {
+                    return Colors.white.withAlpha(51);
+                  }
+                  return null; // Use the default ripple color.
+                },
+              ),
+            ),
+          )
+        ],
+      ),
+      body:
+          // StrategyTile(strategyData: strategies[0])
+
+          Stack(
+        children: [
+          Positioned.fill(child: LayoutBuilder(builder: (context, constraints) {
+            return BGDotGrid(
+                size: Size(constraints.maxWidth, constraints.maxHeight));
+          })),
+          Positioned.fill(
+            child: strategies.when(
+              data: (strategies) {
+                return GridView.builder(
+                  itemCount: strategies.length,
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 306,
+                    mainAxisExtent: 250,
+                  ),
+                  itemBuilder: (context, index) {
+                    return StrategyTile(strategyData: strategies[index]);
+                  },
+                );
+              },
+              loading: () => const Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+              error: (error, stackTrace) => Text('Error: $error'),
+            ),
+          ),
+        ],
       ),
     );
   }

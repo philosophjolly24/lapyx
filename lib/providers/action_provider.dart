@@ -115,4 +115,9 @@ class ActionProvider extends Notifier<List<UserAction>> {
 
     // log("\n Popped State \n ${poppedItems.toString()}");
   }
+
+  void clearAllActions() {
+    poppedItems = [];
+    state = [];
+  }
 }

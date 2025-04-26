@@ -121,6 +121,7 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
   }
 
   void fromHive(List<PlacedAgent> hiveAgents) {
+    poppedAgents = [];
     state = hiveAgents;
   }
 

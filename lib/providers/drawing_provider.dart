@@ -124,6 +124,7 @@ class DrawingProvider extends Notifier<DrawingState> {
       return drawing;
     }).toList();
 
+    poppedElements = [];
     state = state.copyWith(elements: newDrawings);
     _triggerRepaint();
   }

@@ -128,6 +128,7 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
   }
 
   void fromHive(List<PlacedAbility> hiveAbilities) {
+    poppedAbility = [];
     state = hiveAbilities;
   }
 

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:icarus/const/hive_boxes.dart';
+import 'package:icarus/const/routes.dart';
 import 'package:icarus/hive/hive_registrar.g.dart';
 import 'package:icarus/home_view.dart';
 import 'package:icarus/providers/strategy_provider.dart';
+import 'package:icarus/strategy_manager.dart';
+import 'package:icarus/strategy_view.dart';
 import 'package:icarus/widgets/global_shortcuts.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -15,7 +18,7 @@ Future<void> main() async {
   Hive.registerAdapters();
 
   await Hive.openBox<StrategyData>(HiveBoxNames.strategiesBox);
-  // await Hive.box(strategiesBox).clear();
+  await Hive.box<StrategyData>(HiveBoxNames.strategiesBox).clear();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
     title: "Icarus: Valorant Strategies & Line ups",
@@ -48,6 +51,10 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           expansionTileTheme: const ExpansionTileThemeData(),
         ),
+        routes: {
+          Routes.strategyManager: (context) => const StrategyManager(),
+          Routes.strategyView: (context) => const StrategyView(),
+        },
         home: const MyHomePage(),
       ),
     );

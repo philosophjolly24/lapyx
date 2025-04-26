@@ -211,6 +211,7 @@ class ImageProvider extends Notifier<ImageState> {
   }
 
   void fromHive(List<PlacedImage> hiveImages) {
+    poppedImages = [];
     state = state.copyWith(images: hiveImages);
   }
   // @override
