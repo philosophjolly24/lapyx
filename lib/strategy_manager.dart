@@ -1,15 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:icarus/const/hive_boxes.dart';
+import 'package:icarus/providers/new_strategy_dialog.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_tile.dart';
 import 'package:icarus/widgets/bg_dot_painter.dart';
 
-final strategiesProvider = StreamProvider<List<StrategyData>>((ref) {
-  return Hive.box<StrategyData>(HiveBoxNames.strategiesBox).watch().map(
-      (event) =>
-          Hive.box<StrategyData>(HiveBoxNames.strategiesBox).values.toList());
+final strategiesProvider = Provider<ValueListenable<Box<StrategyData>>>((ref) {
+  return Hive.box<StrategyData>(HiveBoxNames.strategiesBox).listenable();
 });
 
 class StrategyManager extends ConsumerWidget {
@@ -21,36 +21,19 @@ class StrategyManager extends ConsumerWidget {
       showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: const Text("Name Strategy"),
-            content: const TextField(),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  await ref
-                      .read(strategyProvider.notifier)
-                      .createNewStrategy("other one");
-                  if (!context.mounted) return;
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Create"),
-              )
-            ],
-          );
+          return const CreateStrategyDialog();
         },
       );
     }
 
-    final AsyncValue<List<StrategyData>> strategies =
-        ref.watch(strategiesProvider);
+    final strategiesListenable = ref.watch(strategiesProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Strategies"),
         actions: [
           TextButton.icon(
-            onPressed: () {
-              showCreateDialog();
-            },
+            onPressed: showCreateDialog,
             icon: const Icon(Icons.add, color: Colors.white),
             label: const Text(
               "Create Strategy",
@@ -70,25 +53,36 @@ class StrategyManager extends ConsumerWidget {
                   if (states.contains(WidgetState.pressed)) {
                     return Colors.white.withAlpha(51);
                   }
-                  return null; // Use the default ripple color.
+                  return null;
                 },
               ),
             ),
           )
         ],
       ),
-      body:
-          // StrategyTile(strategyData: strategies[0])
-
-          Stack(
+      body: Stack(
         children: [
-          Positioned.fill(child: LayoutBuilder(builder: (context, constraints) {
-            return BGDotGrid(
-                size: Size(constraints.maxWidth, constraints.maxHeight));
-          })),
           Positioned.fill(
-            child: strategies.when(
-              data: (strategies) {
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return BGDotGrid(
+                  size: Size(constraints.maxWidth, constraints.maxHeight),
+                );
+              },
+            ),
+          ),
+          Positioned.fill(
+            child: ValueListenableBuilder<Box<StrategyData>>(
+              valueListenable: strategiesListenable,
+              builder: (context, box, _) {
+                final strategies = box.values.toList();
+
+                if (strategies.isEmpty) {
+                  return const Center(
+                    child: Text('No strategies available'),
+                  );
+                }
+
                 return GridView.builder(
                   itemCount: strategies.length,
                   padding: const EdgeInsets.all(16),
@@ -101,14 +95,6 @@ class StrategyManager extends ConsumerWidget {
                   },
                 );
               },
-              loading: () => const Center(
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-              error: (error, stackTrace) => Text('Error: $error'),
             ),
           ),
         ],

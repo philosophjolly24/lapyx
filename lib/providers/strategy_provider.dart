@@ -119,11 +119,13 @@ class StrategyProvider extends Notifier<StrategyState> {
     ref.read(placedImageProvider.notifier).fromHive(newStrat.imageData);
     ref.read(actionProvider.notifier).clearAllActions();
 
-    state = state.copyWith(
-      isSaved: true,
-      stratName: newStrat.name,
-      id: id,
-    );
+    log(newStrat.name);
+
+    state = StrategyState(
+        isSaved: true,
+        stratName: newStrat.name,
+        id: newStrat.id,
+        storageDirectory: state.storageDirectory);
     // FilePickerResult? result = await FilePicker.platform.pickFiles(
     //   allowMultiple: false,
     //   type: FileType.custom,
@@ -186,7 +188,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       mapData: mapData,
       versionNumber: 1,
       id: id,
-      name: 'new strat',
+      name: state.stratName ?? "placeholder",
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)

@@ -88,15 +88,15 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
                             ),
                           ),
                           child: ListView.builder(
-                            itemCount: Maps.maps.length,
+                            itemCount: Maps.mapNames.length,
                             itemBuilder: (context, index) {
                               MapValue mapValue =
-                                  Maps.maps.keys.elementAt(index);
+                                  Maps.mapNames.keys.elementAt(index);
 
                               if (!Maps.availableMaps.contains(mapValue))
                                 return const SizedBox.shrink();
 
-                              String mapName = Maps.maps[mapValue]!;
+                              String mapName = Maps.mapNames[mapValue]!;
 
                               return Padding(
                                 padding: const EdgeInsets.all(4),
@@ -119,7 +119,7 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
                   );
                 },
                 child: MapTile(
-                    name: Maps.maps[currentMap]!,
+                    name: Maps.mapNames[currentMap]!,
                     onTap: () {
                       if (!_isOpen) {
                         _openPortal();

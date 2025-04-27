@@ -23,7 +23,7 @@ class Maps {
     MapValue.split,
   ];
 
-  static Map<MapValue, String> maps = {
+  static Map<MapValue, String> mapNames = {
     MapValue.ascent: 'ascent',
     MapValue.breeze: 'breeze',
     MapValue.lotus: 'lotus',

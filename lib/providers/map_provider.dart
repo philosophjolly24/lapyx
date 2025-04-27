@@ -14,14 +14,14 @@ class MapProvider extends Notifier<MapValue> {
   void updateMap(MapValue map) => state = map;
 
   String toJson() {
-    return '"${Maps.maps[state]}"';
+    return '"${Maps.mapNames[state]}"';
   }
 
   void fromJson(String json) {
     final mapName = jsonDecode(json);
 
     final mapValue =
-        Maps.maps.entries.firstWhere((entry) => entry.value == mapName).key;
+        Maps.mapNames.entries.firstWhere((entry) => entry.value == mapName).key;
 
     state = mapValue;
   }

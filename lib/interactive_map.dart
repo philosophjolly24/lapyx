@@ -26,7 +26,7 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
   @override
   Widget build(BuildContext context) {
     String assetName =
-        'assets/maps/${Maps.maps[ref.watch(mapProvider)]}_map.svg';
+        'assets/maps/${Maps.mapNames[ref.watch(mapProvider)]}_map.svg';
 
     final double height = MediaQuery.sizeOf(context).height - kToolbarHeight;
     final Size playAreaSize = Size(height * 1.2, height);
