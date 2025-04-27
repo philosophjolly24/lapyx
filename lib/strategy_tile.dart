@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
+import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/routes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
+
+String capitalizeFirstLetter(String text) {
+  if (text.isEmpty) return text;
+  return text[0].toUpperCase() + text.substring(1);
+}
 
 class StrategyTile extends ConsumerStatefulWidget {
   const StrategyTile({
@@ -48,10 +54,10 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
       child: GestureDetector(
         onTap: () async {
           Navigator.pushNamed(context, Routes.strategyView);
+          // if (!context.mounted) return;
           await ref
               .read(strategyProvider.notifier)
               .loadFile(widget.strategyData.id);
-          if (!context.mounted) return;
         },
         child: Container(
           width: 306,
@@ -72,7 +78,7 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
                   child: SizedBox(
                     height: 116,
                     child: Image.asset(
-                      "assets/maps/thumbnails/ascent_thumbnail.webp",
+                      "assets/maps/thumbnails/${Maps.mapNames[widget.strategyData.mapData]}_thumbnail.webp",
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -114,15 +120,17 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
                             const SizedBox(
                               height: 5,
                             ),
-                            const Text(
-                              "Ascent",
+                            Text(
+                              capitalizeFirstLetter(
+                                  Maps.mapNames[widget.strategyData.mapData]!),
                               textAlign: TextAlign.left,
                             ),
                             const SizedBox(
                               height: 5,
                             ),
                             ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 96),
+                              constraints:
+                                  const BoxConstraints(maxWidth: 96 + 27),
                               child: Row(
                                 spacing: 5,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,7 +144,7 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
                                       height: 27,
                                       width: 27,
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF1A161A),
+                                        color: Settings.sideBarColor,
                                         borderRadius: const BorderRadius.all(
                                             Radius.circular(4)),
                                         border: Border.all(
@@ -151,14 +159,21 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
                                           height: 27,
                                           width: 27,
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF1A161A),
+                                            color: Settings.sideBarColor,
                                             borderRadius:
                                                 const BorderRadius.all(
                                                     Radius.circular(4)),
                                             border: Border.all(
                                                 color: Settings.highlightColor),
                                           ),
-                                          child: const Text("..."),
+                                          child: const Center(
+                                            child: Icon(
+                                              Icons.more_horiz,
+                                              color: Color.fromARGB(
+                                                  190, 210, 214, 219),
+                                              size: 18,
+                                            ),
+                                          ),
                                         )
                                       : const SizedBox.shrink(),
                                 ],

@@ -179,7 +179,7 @@ class ImageProvider extends Notifier<ImageState> {
     String imageID,
     String fileExtenstion,
   ) async {
-    final strategyID = ref.read(strategyProvider).id;
+    final strategyID = ref.watch(strategyProvider).id;
     // Get the system's application support directory.
     final directory = await getApplicationSupportDirectory();
 

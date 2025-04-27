@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/providers/new_strategy_dialog.dart';
 import 'package:icarus/providers/strategy_provider.dart';
@@ -17,6 +18,9 @@ class StrategyManager extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final double height = MediaQuery.sizeOf(context).height - 90;
+    final Size playAreaSize = Size(height * 1.2, height);
+    CoordinateSystem(playAreaSize: playAreaSize);
     void showCreateDialog() {
       showDialog(
         context: context,
@@ -89,6 +93,8 @@ class StrategyManager extends ConsumerWidget {
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 306,
                     mainAxisExtent: 250,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
                   ),
                   itemBuilder: (context, index) {
                     return StrategyTile(strategyData: strategies[index]);

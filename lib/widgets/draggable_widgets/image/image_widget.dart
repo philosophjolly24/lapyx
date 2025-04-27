@@ -41,7 +41,7 @@ class ImageWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     log(scale.toString());
     final filePath = path.join(
-      ref.read(strategyProvider).storageDirectory!,
+      ref.watch(strategyProvider).storageDirectory!,
       'images',
       '$id$fileExtension',
     );

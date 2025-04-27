@@ -111,6 +111,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       log("Couldn't find save");
       return;
     }
+
     ref.read(agentProvider.notifier).fromHive(newStrat.agentData);
     ref.read(abilityProvider.notifier).fromHive(newStrat.abilityData);
     ref.read(drawingProvider.notifier).fromHive(newStrat.drawingData);
@@ -122,10 +123,12 @@ class StrategyProvider extends Notifier<StrategyState> {
     log(newStrat.name);
 
     state = StrategyState(
-        isSaved: true,
-        stratName: newStrat.name,
-        id: newStrat.id,
-        storageDirectory: state.storageDirectory);
+      isSaved: true,
+      stratName: newStrat.name,
+      id: newStrat.id,
+      storageDirectory: state.storageDirectory,
+    );
+    await setStorageDirectory();
     // FilePickerResult? result = await FilePicker.platform.pickFiles(
     //   allowMultiple: false,
     //   type: FileType.custom,
