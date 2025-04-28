@@ -57,7 +57,7 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
           // if (!context.mounted) return;
           await ref
               .read(strategyProvider.notifier)
-              .loadFile(widget.strategyData.id);
+              .loadFromHive(widget.strategyData.id);
         },
         child: Container(
           width: 306,

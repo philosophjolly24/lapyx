@@ -27,4 +27,6 @@ class Settings {
   static const Color allyOutlineColor = Color.fromARGB(106, 105, 240, 175);
 
   static final Uri dicordLink = Uri.parse("https://discord.gg/PN2uKwCqYB");
+
+  static const int versionNumber = 1;
 }

@@ -27,7 +27,9 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
   Widget build(BuildContext context) {
     String assetName =
         'assets/maps/${Maps.mapNames[ref.watch(mapProvider)]}_map.svg';
-
+    final double height = MediaQuery.sizeOf(context).height - 90;
+    final Size playAreaSize = Size(height * 1.2, height);
+    CoordinateSystem(playAreaSize: playAreaSize);
     CoordinateSystem coordinateSystem = CoordinateSystem.instance;
 
     return Row(

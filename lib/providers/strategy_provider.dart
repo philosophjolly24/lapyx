@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/hive_boxes.dart';
+import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
@@ -100,7 +101,7 @@ class StrategyProvider extends Notifier<StrategyState> {
     state = state.copyWith(storageDirectory: customDirectory.path);
   }
 
-  Future<void> loadFile(String id) async {
+  Future<void> loadFromHive(String id) async {
     final newStrat = Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .values
         .where((StrategyData strategy) {
@@ -129,31 +130,36 @@ class StrategyProvider extends Notifier<StrategyState> {
       storageDirectory: state.storageDirectory,
     );
     await setStorageDirectory();
-    // FilePickerResult? result = await FilePicker.platform.pickFiles(
-    //   allowMultiple: false,
-    //   type: FileType.custom,
-    //   allowedExtensions: ["ica"],
-    // );
+  }
 
-    // if (result == null) return;
-    // final data = await result.files.first.xFile.readAsString();
+  Future<void> loadFromFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ["ica"],
+    );
 
-    // Map<String, dynamic> json = jsonDecode(data);
+    if (result == null) return;
+    final data = await result.files.first.xFile.readAsString();
 
-    // ref
-    //     .read(drawingProvider.notifier)
-    //     .fromJson(jsonEncode(json["drawingData"]));
-    // ref.read(agentProvider.notifier).fromJson(jsonEncode(json["agentData"]));
-    // ref
-    //     .read(abilityProvider.notifier)
-    //     .fromJson(jsonEncode(json["abilityData"]));
-    // ref.read(mapProvider.notifier).fromJson(jsonEncode(json["mapData"]));
-    // ref.read(textProvider.notifier).fromJson(jsonEncode(json["textData"]));
+    Map<String, dynamic> json = jsonDecode(data);
 
-    // ref
-    //     .read(placedImageProvider.notifier)
-    //     .fromJson(jsonEncode(json["imageData"] ?? []));
-    // state = state.copyWith(fileName: result.files.first.path, isSaved: true);
+    ref
+        .read(drawingProvider.notifier)
+        .fromJson(jsonEncode(json["drawingData"]));
+    ref.read(agentProvider.notifier).fromJson(jsonEncode(json["agentData"]));
+    ref
+        .read(abilityProvider.notifier)
+        .fromJson(jsonEncode(json["abilityData"]));
+    ref.read(mapProvider.notifier).fromJson(jsonEncode(json["mapData"]));
+    ref.read(textProvider.notifier).fromJson(jsonEncode(json["textData"]));
+
+    ref
+        .read(placedImageProvider.notifier)
+        .fromJson(jsonEncode(json["imageData"] ?? []));
+
+    // if()
+    state = state.copyWith();
   }
 
   Future<void> createNewStrategy(String name) async {
@@ -165,7 +171,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       textData: [],
       imageData: [],
       mapData: MapValue.ascent,
-      versionNumber: 1,
+      versionNumber: Settings.versionNumber,
       id: newID,
       name: name,
     );
