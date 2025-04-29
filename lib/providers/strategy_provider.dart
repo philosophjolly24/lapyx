@@ -180,7 +180,39 @@ class StrategyProvider extends Notifier<StrategyState> {
         .put(newStrategy.id, newStrategy);
   }
 
-  Future<void> saveFile(String id) async {
+  Future<void> exportFile(String id) async {
+    await saveToHive(id);
+
+    String data = '''
+                {
+                "versionNumber": "${Settings.versionNumber}",
+                "drawingData": ${ref.read(drawingProvider.notifier).toJson()},
+                "agentData": ${ref.read(agentProvider.notifier).toJson()},
+                "abilityData": ${ref.read(abilityProvider.notifier).toJson()},
+                "textData": ${ref.read(textProvider.notifier).toJson()},
+                "mapData": ${ref.read(mapProvider.notifier).toJson()},
+                "imageData":${ref.read(placedImageProvider.notifier).toJson(id)}
+                }
+              ''';
+
+    File file;
+    // log("File name: ${state.fileName}");
+
+    String? outputFile = await FilePicker.platform.saveFile(
+      type: FileType.custom,
+      dialogTitle: 'Please select an output file:',
+      fileName: "${state.stratName ?? "new strategy"}.ica",
+      allowedExtensions: [".ica"],
+    );
+
+    if (outputFile == null) return;
+    file = File(outputFile);
+
+    file.writeAsStringSync(data);
+    // state = state.copyWith(fileName: file.path, isSaved: true);
+  }
+
+  Future<void> saveToHive(String id) async {
     final drawingData = ref.read(drawingProvider).elements;
     final agentData = ref.read(agentProvider);
     final abilityData = ref.read(abilityProvider);
@@ -202,41 +234,5 @@ class StrategyProvider extends Notifier<StrategyState> {
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .put(currentStategy.id, currentStategy);
-    // String data = '''
-    //             {
-    //             "drawingData": ${ref.read(drawingProvider.notifier).toJson()},
-    //             "agentData": ${ref.read(agentProvider.notifier).toJson()},
-    //             "abilityData": ${ref.read(abilityProvider.notifier).toJson()},
-    //             "textData": ${ref.read(textProvider.notifier).toJson()},
-    //             "mapData": ${ref.read(mapProvider.notifier).toJson()},
-    //             "imageData":${ref.read(placedImageProvider.notifier).toJson()}
-    //             }
-    //           ''';
-
-    // File file;
-    // log("File name: ${state.fileName}");
-
-    // if (state.fileName != null) {
-    //   file = File(state.fileName!);
-
-    //   if (file.existsSync()) {
-    //     file.writeAsStringSync(data);
-    //     state = state.copyWith(isSaved: false);
-    //     return;
-    //   }
-    // }
-
-    // String? outputFile = await FilePicker.platform.saveFile(
-    //   type: FileType.custom,
-    //   dialogTitle: 'Please select an output file:',
-    //   fileName: 'strategy.ica',
-    //   allowedExtensions: [".ica"],
-    // );
-
-    // if (outputFile == null) return;
-    // file = File(outputFile);
-
-    // file.writeAsStringSync(data);
-    // state = state.copyWith(fileName: file.path, isSaved: true);
   }
 }

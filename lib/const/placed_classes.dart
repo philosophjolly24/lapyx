@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -5,8 +7,25 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/json_converters.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part "placed_classes.g.dart";
+
+/// Converter for [Offset] to and from JSON.
+class BaseOffsetConverter {
+  const BaseOffsetConverter();
+
+  Offset fromJson(Map<String, dynamic> json) {
+    return Offset(
+      (json['dx'] as num).toDouble(),
+      (json['dy'] as num).toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson(Offset offset) {
+    return {'dx': offset.dx, 'dy': offset.dy};
+  }
+}
 
 @JsonSerializable()
 class PlacedWidget extends HiveObject {
@@ -117,6 +136,18 @@ class PlacedImage extends PlacedWidget {
 
   @override
   Map<String, dynamic> toJson() => _$PlacedImageToJson(this);
+}
+
+class Uint8ListConverter {
+  /// Serializes a [Uint8List] into a Base64-encoded string.
+  static String serialize(Uint8List data) {
+    return base64Encode(data);
+  }
+
+  /// Deserializes a Base64-encoded string back into a [Uint8List].
+  static Uint8List deserialize(String base64String) {
+    return Uint8List.fromList(base64Decode(base64String));
+  }
 }
 
 @JsonSerializable()

@@ -60,25 +60,36 @@ class _StrategyViewState extends ConsumerState<StrategyView>
                     const MapSelector(),
                   ],
                 ),
-                TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () async {
-                      await launchUrl(Settings.dicordLink);
-                    },
-                    child: const Row(
-                      children: [
-                        Text("Have any bugs? Join the Discord"),
-                        SizedBox(
-                          width: 10,
+                Row(
+                  children: [
+                    TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.white,
                         ),
-                        Icon(
-                          CustomIcons.discord,
-                          color: Colors.white,
-                        )
-                      ],
-                    ))
+                        onPressed: () async {
+                          await launchUrl(Settings.dicordLink);
+                        },
+                        child: const Row(
+                          children: [
+                            Text("Have any bugs? Join the Discord"),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Icon(
+                              CustomIcons.discord,
+                              color: Colors.white,
+                            )
+                          ],
+                        )),
+                    IconButton(
+                      onPressed: () {
+                        String id = ref.watch(strategyProvider).id;
+                        ref.read(strategyProvider.notifier).exportFile(id);
+                      },
+                      icon: const Icon(Icons.file_open_outlined),
+                    )
+                  ],
+                )
               ],
             ),
           ),
@@ -145,7 +156,7 @@ class _StrategyViewState extends ConsumerState<StrategyView>
               onPressed: () async {
                 await ref
                     .read(strategyProvider.notifier)
-                    .saveFile(ref.read(strategyProvider).id);
+                    .saveToHive(ref.read(strategyProvider).id);
                 if (!mounted) return;
                 Navigator.of(context).pop(); // Close the dialog *after* saving
                 await windowManager.destroy(); // Then close the window/app
