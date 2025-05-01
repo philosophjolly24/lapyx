@@ -17,12 +17,12 @@ class MapProvider extends Notifier<MapValue> {
     return '"${Maps.mapNames[state]}"';
   }
 
-  void fromJson(String json) {
+  MapValue fromJson(String json) {
     final mapName = jsonDecode(json);
 
     final mapValue =
         Maps.mapNames.entries.firstWhere((entry) => entry.value == mapName).key;
 
-    state = mapValue;
+    return mapValue;
   }
 }

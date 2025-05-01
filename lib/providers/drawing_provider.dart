@@ -129,19 +129,16 @@ class DrawingProvider extends Notifier<DrawingState> {
     _triggerRepaint();
   }
 
-  void fromJson(String jsonString) {
+  List<DrawingElement> fromJson(String jsonString) {
     final List<dynamic> jsonList = jsonDecode(jsonString);
     final coordinateSystem = CoordinateSystem.instance;
 
-    state = state.copyWith(
-        elements: jsonList.map((json) {
+    return jsonList.map((json) {
       final drawing = FreeDrawing.fromJson(json as Map<String, dynamic>);
       drawing.rebuildPath(coordinateSystem);
 
       return drawing;
-    }).toList());
-
-    _triggerRepaint();
+    }).toList();
   }
 
   void _triggerRepaint() {

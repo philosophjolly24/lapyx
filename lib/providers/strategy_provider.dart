@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:cross_file/cross_file.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +32,7 @@ class StrategyData extends HiveObject {
   final List<PlacedText> textData;
   final List<PlacedImage> imageData;
   final MapValue mapData;
+  final DateTime lastEdited;
 
   StrategyData({
     required this.id,
@@ -42,6 +44,7 @@ class StrategyData extends HiveObject {
     required this.imageData,
     required this.mapData,
     required this.versionNumber,
+    required this.lastEdited,
   });
 }
 
@@ -132,7 +135,7 @@ class StrategyProvider extends Notifier<StrategyState> {
     await setStorageDirectory();
   }
 
-  Future<void> loadFromFile() async {
+  Future<void> loadFromFilePicker() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       allowMultiple: false,
       type: FileType.custom,
@@ -140,26 +143,58 @@ class StrategyProvider extends Notifier<StrategyState> {
     );
 
     if (result == null) return;
-    final data = await result.files.first.xFile.readAsString();
+
+    for (PlatformFile file in result.files) {
+      await _loadFromXFile(file.xFile);
+    }
+  }
+
+  Future<void> loadFromFileDrop(List<XFile> files) async {
+    for (XFile file in files) {
+      await _loadFromXFile(file);
+    }
+  }
+
+  Future<void> _loadFromXFile(XFile file) async {
+    final data = await file.readAsString();
 
     Map<String, dynamic> json = jsonDecode(data);
 
-    ref
+    final newID = const Uuid().v4();
+
+    final List<DrawingElement> drawingData = ref
         .read(drawingProvider.notifier)
         .fromJson(jsonEncode(json["drawingData"]));
-    ref.read(agentProvider.notifier).fromJson(jsonEncode(json["agentData"]));
-    ref
+    final List<PlacedAgent> agentData = ref
+        .read(agentProvider.notifier)
+        .fromJson(jsonEncode(json["agentData"]));
+
+    final List<PlacedAbility> abilityData = ref
         .read(abilityProvider.notifier)
         .fromJson(jsonEncode(json["abilityData"]));
-    ref.read(mapProvider.notifier).fromJson(jsonEncode(json["mapData"]));
-    ref.read(textProvider.notifier).fromJson(jsonEncode(json["textData"]));
 
-    ref
-        .read(placedImageProvider.notifier)
-        .fromJson(jsonEncode(json["imageData"] ?? []));
+    final mapData =
+        ref.read(mapProvider.notifier).fromJson(jsonEncode(json["mapData"]));
+    final textData =
+        ref.read(textProvider.notifier).fromJson(jsonEncode(json["textData"]));
 
-    // if()
-    state = state.copyWith();
+    final imageData = await ref.read(placedImageProvider.notifier).fromJson(
+        jsonString: jsonEncode(json["imageData"] ?? []), strategyID: newID);
+
+    final newStrategy = StrategyData(
+      id: newID,
+      name: file.name,
+      drawingData: drawingData,
+      agentData: agentData,
+      abilityData: abilityData,
+      textData: textData,
+      imageData: imageData,
+      mapData: mapData,
+      versionNumber: Settings.versionNumber,
+      lastEdited: DateTime.now(),
+    );
+    await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
+        .put(newStrategy.id, newStrategy);
   }
 
   Future<void> createNewStrategy(String name) async {
@@ -174,6 +209,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       versionNumber: Settings.versionNumber,
       id: newID,
       name: name,
+      lastEdited: DateTime.now(),
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
@@ -182,7 +218,8 @@ class StrategyProvider extends Notifier<StrategyState> {
 
   Future<void> exportFile(String id) async {
     await saveToHive(id);
-
+    String fetchedImageData =
+        await ref.read(placedImageProvider.notifier).toJson(id);
     String data = '''
                 {
                 "versionNumber": "${Settings.versionNumber}",
@@ -191,7 +228,7 @@ class StrategyProvider extends Notifier<StrategyState> {
                 "abilityData": ${ref.read(abilityProvider.notifier).toJson()},
                 "textData": ${ref.read(textProvider.notifier).toJson()},
                 "mapData": ${ref.read(mapProvider.notifier).toJson()},
-                "imageData":${ref.read(placedImageProvider.notifier).toJson(id)}
+                "imageData":$fetchedImageData
                 }
               ''';
 
@@ -230,6 +267,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       versionNumber: 1,
       id: id,
       name: state.stratName ?? "placeholder",
+      lastEdited: DateTime.now(),
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)

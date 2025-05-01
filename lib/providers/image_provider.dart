@@ -163,16 +163,17 @@ class ImageProvider extends Notifier<ImageState> {
     return jsonEncode(jsonList);
   }
 
-  Future<void> fromJson(String jsonString) async {
+  Future<List<PlacedImage>> fromJson(
+      {required String jsonString, required String strategyID}) async {
     final List<dynamic> jsonList = jsonDecode(jsonString);
 
     // Use the custom deserializer for each JSON map.
     final images = await Future.wait(
-      jsonList.map((json) =>
-          PlacedImageSerializer.fromJson(json as Map<String, dynamic>)),
+      jsonList.map((json) => PlacedImageSerializer.fromJson(
+          json as Map<String, dynamic>, strategyID)),
     );
 
-    state = state.copyWith(images: images);
+    return images;
   }
 
   void updateScale(int index, double scale) {
@@ -280,13 +281,9 @@ class PlacedImageSerializer {
   ///
   /// A new strategy ID is generated for the file location using [Uuid].
   static Future<PlacedImage> fromJson(
-    Map<String, dynamic> json,
-  ) async {
+      Map<String, dynamic> json, String strategyID) async {
     // Use your code-generated deserializer for basic fields.
     final placedImage = PlacedImage.fromJson(json);
-
-    // Generate a new strategy ID for storing this image.
-    final String strategyID = const Uuid().v4();
 
     // Retrieve and deserialize the image bytes.
     if (!json.containsKey('imageBytes')) {

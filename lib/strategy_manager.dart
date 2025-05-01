@@ -8,6 +8,7 @@ import 'package:icarus/providers/new_strategy_dialog.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_tile.dart';
 import 'package:icarus/widgets/bg_dot_painter.dart';
+import 'package:icarus/widgets/custom_drop_target.dart';
 
 final strategiesProvider = Provider<ValueListenable<Box<StrategyData>>>((ref) {
   return Hive.box<StrategyData>(HiveBoxNames.strategiesBox).listenable();
@@ -82,23 +83,28 @@ class StrategyManager extends ConsumerWidget {
                 final strategies = box.values.toList();
 
                 if (strategies.isEmpty) {
-                  return const Center(
-                    child: Text('No strategies available'),
+                  return const CustomDropTarget(
+                    child: Center(
+                      child: Text('No strategies available'),
+                    ),
                   );
                 }
 
-                return GridView.builder(
-                  itemCount: strategies.length,
-                  padding: const EdgeInsets.all(16),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 306,
-                    mainAxisExtent: 250,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
+                return CustomDropTarget(
+                  child: GridView.builder(
+                    itemCount: strategies.length,
+                    padding: const EdgeInsets.all(16),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 306,
+                      mainAxisExtent: 250,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                    ),
+                    itemBuilder: (context, index) {
+                      return StrategyTile(strategyData: strategies[index]);
+                    },
                   ),
-                  itemBuilder: (context, index) {
-                    return StrategyTile(strategyData: strategies[index]);
-                  },
                 );
               },
             ),

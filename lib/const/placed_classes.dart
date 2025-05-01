@@ -37,6 +37,7 @@ class PlacedWidget extends HiveObject {
 
   final String id;
 
+  @JsonKey(defaultValue: false)
   bool isDeleted;
 
   @JsonKey(includeToJson: false, includeFromJson: false)

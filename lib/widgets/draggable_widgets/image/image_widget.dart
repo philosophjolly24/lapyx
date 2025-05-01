@@ -40,11 +40,12 @@ class ImageWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     log(scale.toString());
-    final filePath = path.join(
+    final file = File(path.join(
       ref.watch(strategyProvider).storageDirectory!,
       'images',
       '$id$fileExtension',
-    );
+    ));
+
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: scale),
       child: AspectRatio(
@@ -77,10 +78,12 @@ class ImageWidget extends ConsumerWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(3),
-                      child: Image.file(
-                        File(filePath),
-                        fit: BoxFit.cover,
-                      ),
+                      child: file.existsSync()
+                          ? Image.file(
+                              file,
+                              fit: BoxFit.cover,
+                            )
+                          : const Placeholder(),
                     ),
                   ),
                 ),

@@ -138,9 +138,9 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
     return jsonEncode(jsonList);
   }
 
-  void fromJson(String jsonString) {
+  List<PlacedAbility> fromJson(String jsonString) {
     final List<dynamic> jsonList = jsonDecode(jsonString);
-    state = jsonList
+    return jsonList
         .map((json) => PlacedAbility.fromJson(json as Map<String, dynamic>))
         .toList();
   }

@@ -26,13 +26,14 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       imageData: (fields[5] as List).cast<PlacedImage>(),
       mapData: fields[6] as MapValue,
       versionNumber: (fields[0] as num).toInt(),
+      lastEdited: fields[9] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, StrategyData obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.versionNumber)
       ..writeByte(1)
@@ -50,7 +51,9 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       ..writeByte(7)
       ..write(obj.id)
       ..writeByte(8)
-      ..write(obj.name);
+      ..write(obj.name)
+      ..writeByte(9)
+      ..write(obj.lastEdited);
   }
 
   @override

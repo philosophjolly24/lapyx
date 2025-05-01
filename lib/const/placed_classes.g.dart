@@ -25,7 +25,7 @@ PlacedText _$PlacedTextFromJson(Map<String, dynamic> json) => PlacedText(
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
     )
-      ..isDeleted = json['isDeleted'] as bool
+      ..isDeleted = json['isDeleted'] as bool? ?? false
       ..text = json['text'] as String
       ..size = (json['size'] as num?)?.toDouble();
 
@@ -46,7 +46,7 @@ PlacedImage _$PlacedImageFromJson(Map<String, dynamic> json) => PlacedImage(
       scale: (json['scale'] as num).toDouble(),
       fileExtension: json['fileExtension'] as String,
     )
-      ..isDeleted = json['isDeleted'] as bool
+      ..isDeleted = json['isDeleted'] as bool? ?? false
       ..link = json['link'] as String;
 
 Map<String, dynamic> _$PlacedImageToJson(PlacedImage instance) =>
@@ -66,7 +66,7 @@ PlacedAgent _$PlacedAgentFromJson(Map<String, dynamic> json) => PlacedAgent(
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
       isAlly: json['isAlly'] as bool? ?? true,
-    )..isDeleted = json['isDeleted'] as bool;
+    )..isDeleted = json['isDeleted'] as bool? ?? false;
 
 Map<String, dynamic> _$PlacedAgentToJson(PlacedAgent instance) =>
     <String, dynamic>{
@@ -116,7 +116,7 @@ PlacedAbility _$PlacedAbilityFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       isAlly: json['isAlly'] as bool? ?? true,
     )
-      ..isDeleted = json['isDeleted'] as bool
+      ..isDeleted = json['isDeleted'] as bool? ?? false
       ..rotation = (json['rotation'] as num).toDouble();
 
 Map<String, dynamic> _$PlacedAbilityToJson(PlacedAbility instance) =>

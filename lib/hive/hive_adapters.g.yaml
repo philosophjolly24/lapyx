@@ -5,7 +5,7 @@ nextTypeId: 14
 types:
   StrategyData:
     typeId: 0
-    nextIndex: 9
+    nextIndex: 10
     fields:
       versionNumber:
         index: 0
@@ -25,6 +25,8 @@ types:
         index: 7
       name:
         index: 8
+      lastEdited:
+        index: 9
   PlacedWidget:
     typeId: 1
     nextIndex: 3
