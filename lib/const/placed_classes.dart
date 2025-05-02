@@ -123,7 +123,7 @@ class PlacedImage extends PlacedWidget {
 
   final double aspectRatio;
 
-  final String fileExtension;
+  final String? fileExtension;
   double scale;
 
   String link = "";

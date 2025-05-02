@@ -44,7 +44,7 @@ PlacedImage _$PlacedImageFromJson(Map<String, dynamic> json) => PlacedImage(
       id: json['id'] as String,
       aspectRatio: (json['aspectRatio'] as num).toDouble(),
       scale: (json['scale'] as num).toDouble(),
-      fileExtension: json['fileExtension'] as String,
+      fileExtension: json['fileExtension'] as String?,
     )
       ..isDeleted = json['isDeleted'] as bool? ?? false
       ..link = json['link'] as String;

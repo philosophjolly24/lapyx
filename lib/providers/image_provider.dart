@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+import 'package:image/image.dart' as img;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/providers/action_provider.dart';
@@ -283,14 +284,21 @@ class PlacedImageSerializer {
   static Future<PlacedImage> fromJson(
       Map<String, dynamic> json, String strategyID) async {
     // Use your code-generated deserializer for basic fields.
-    final placedImage = PlacedImage.fromJson(json);
 
     // Retrieve and deserialize the image bytes.
     if (!json.containsKey('imageBytes')) {
       throw Exception('JSON does not contain imageBytes.');
     }
+
     final serializedBytes = json['imageBytes'];
     final Uint8List imageBytes = deserializeUint8List(serializedBytes);
+
+    if (!json.containsKey('fileExtension')) {
+      final String? fileExtension = _detectImageFormat(imageBytes);
+
+      json['fileExtension'] = fileExtension;
+    }
+    final placedImage = PlacedImage.fromJson(json);
 
     // Compute the final file path to write the image.
     final filePath = await _computeFilePath(placedImage, strategyID);
@@ -352,4 +360,15 @@ Uint8List deserializeUint8List(dynamic jsonData) {
     return Uint8List.fromList(base64Decode(jsonData));
   }
   throw Exception('Invalid data for Uint8List deserialization.');
+}
+
+String? _detectImageFormat(Uint8List bytes) {
+  final decoder = img.findDecoderForData(bytes);
+  if (decoder == null || !decoder.isValidFile(bytes)) return null;
+  if (decoder is img.PngDecoder) return 'png';
+  if (decoder is img.JpegDecoder) return 'jpeg';
+  if (decoder is img.GifDecoder) return 'gif';
+  if (decoder is img.WebPDecoder) return 'webp';
+  // …etc.
+  return null;
 }

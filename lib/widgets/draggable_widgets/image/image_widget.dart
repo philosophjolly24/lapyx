@@ -35,7 +35,7 @@ class ImageWidget extends ConsumerWidget {
   final double aspectRatio;
   final String? link;
   final double scale;
-  final String fileExtension;
+  final String? fileExtension;
   final String id;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,7 +78,7 @@ class ImageWidget extends ConsumerWidget {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(3),
-                      child: file.existsSync()
+                      child: (file.existsSync() && fileExtension != null)
                           ? Image.file(
                               file,
                               fit: BoxFit.cover,

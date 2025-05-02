@@ -262,7 +262,7 @@ class PlacedImageAdapter extends TypeAdapter<PlacedImage> {
       id: fields[4] as String,
       aspectRatio: (fields[1] as num).toDouble(),
       scale: (fields[2] as num).toDouble(),
-      fileExtension: fields[8] as String,
+      fileExtension: fields[8] as String?,
     )
       ..link = fields[3] as String
       ..isDeleted = fields[5] as bool;
