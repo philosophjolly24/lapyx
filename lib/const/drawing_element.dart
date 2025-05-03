@@ -61,7 +61,6 @@ class FreeDrawing extends DrawingElement with HiveObjectMixin {
   })  : listOfPoints = listOfPoints ?? [],
         _path = path ?? Path();
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @OffsetListConverter()
   List<Offset> listOfPoints = [];
 

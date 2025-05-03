@@ -285,9 +285,14 @@ class PlacedImageSerializer {
       Map<String, dynamic> json, String strategyID) async {
     // Use your code-generated deserializer for basic fields.
 
-    // Retrieve and deserialize the image bytes.
-    if (!json.containsKey('imageBytes')) {
+    // Retrieve and deserialize the image bytes
+    if (!json.containsKey('imageBytes') && !json.containsKey("image")) {
       throw Exception('JSON does not contain imageBytes.');
+    }
+    if (!json.containsKey('imageBytes')) {
+      dynamic newImageBytes = json["image"];
+      json["imageBytes"] = newImageBytes;
+      json.remove("image");
     }
 
     final serializedBytes = json['imageBytes'];

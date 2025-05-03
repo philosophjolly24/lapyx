@@ -40,8 +40,10 @@ class CoordinateSystem {
 
   Offset coordinateToScreen(Offset coordinates) {
     // Convert from normalized space back to screen space while maintaining aspect ratio
-    double screenX = (coordinates.dx / normalizedWidth) * _playAreaSize.width;
-    double screenY = (coordinates.dy / normalizedHeight) * _playAreaSize.height;
+    double screenX =
+        (coordinates.dx / normalizedWidth) * (_playAreaSize.width - (34 * 1.2));
+    double screenY =
+        (coordinates.dy / normalizedHeight) * (_playAreaSize.height - 34);
 
     return Offset(screenX, screenY);
   }
