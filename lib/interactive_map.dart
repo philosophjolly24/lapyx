@@ -27,7 +27,8 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
   final controller = TransformationController();
   @override
   Widget build(BuildContext context) {
-    log(kToolbarHeight.toString());
+    log(MediaQuery.sizeOf(context).height.toString());
+
     String assetName =
         'assets/maps/${Maps.mapNames[ref.watch(mapProvider)]}_map.svg';
     final double height = MediaQuery.sizeOf(context).height - 90;

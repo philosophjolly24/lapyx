@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class CoordinateSystem {
@@ -40,10 +42,9 @@ class CoordinateSystem {
 
   Offset coordinateToScreen(Offset coordinates) {
     // Convert from normalized space back to screen space while maintaining aspect ratio
-    double screenX =
-        (coordinates.dx / normalizedWidth) * (_playAreaSize.width - (34 * 1.2));
+    double screenX = (coordinates.dx / normalizedWidth) * (_playAreaSize.width);
     double screenY =
-        (coordinates.dy / normalizedHeight) * (_playAreaSize.height - 34);
+        (coordinates.dy / normalizedHeight) * (_playAreaSize.height);
 
     return Offset(screenX, screenY);
   }
@@ -61,6 +62,32 @@ class CoordinateSystem {
         size.width * _scaleFactor,
         size.height * _scaleFactor,
       );
+
+  Offset convertOldCoordinateToNew(Offset oldCoordinate) {
+    // Calculate the ratio between old and new play area heights
+    double screenHeight = playAreaSize.height + 90;
+    log("currentScreen height: $screenHeight");
+    double oldPlayAreaHeight = screenHeight - 56;
+    double newPlayAreaHeight = screenHeight - 90;
+    double heightRatio = oldPlayAreaHeight / newPlayAreaHeight;
+
+    log("$heightRatio");
+    // Apply the ratio to both dimensions (since width is based on height * 1.2)
+    return Offset(
+        oldCoordinate.dx * heightRatio, oldCoordinate.dy * heightRatio);
+  }
+
+  Offset loggedCoordinateToScreen(Offset coordinates) {
+    // Convert from normalized space back to screen space while maintaining aspect ratio
+    double screenX = (coordinates.dx / normalizedWidth) * (_playAreaSize.width);
+    double screenY =
+        (coordinates.dy / normalizedHeight) * (_playAreaSize.height);
+
+    log("normalized Coordinates: ${coordinates.toString()}");
+    log("screen Coordinates: ${Offset(screenX, screenY).toString()}");
+
+    return Offset(screenX, screenY);
+  }
 
   // Convenience method to wrap a widget with scaled dimensions
   Widget scaleWidget({
