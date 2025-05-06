@@ -31,12 +31,12 @@ class _NameStrategyDialogState extends ConsumerState<CreateStrategyDialog> {
             borderRadius: BorderRadius.circular(8.0),
             borderSide: const BorderSide(), // Default border color
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(
-              color: Theme.of(context).primaryColor, // Focused border color
-            ),
-          ),
+          // focusedBorder: OutlineInputBorder(
+          //   borderRadius: BorderRadius.circular(8.0),
+          //   borderSide: BorderSide(
+          //     color: Theme.of(context).primaryColor, // Focused border color
+          //   ),
+          // ),
           contentPadding: const EdgeInsets.symmetric(
               horizontal: 16.0,
               vertical: 12.0), // Padding inside the text field

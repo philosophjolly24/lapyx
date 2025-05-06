@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         title: 'Icarus',
         theme: ThemeData(
           colorScheme: const ColorScheme.dark(
-            primary: Colors.blue,
+            primary: Color.fromARGB(255, 129, 75, 223),
             secondary: Colors.teal,
             error: Colors.red,
             surface: Color(0xFF1B1B1B),

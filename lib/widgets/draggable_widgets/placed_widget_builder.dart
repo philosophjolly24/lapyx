@@ -83,7 +83,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                   for (PlacedAgent agent in ref.watch(agentProvider))
                     Positioned(
                       left: coordinateSystem
-                          .coordinateToScreen(agent.position)
+                          .loggedCoordinateToScreen(agent.position)
                           .dx,
                       top: coordinateSystem
                           .coordinateToScreen(agent.position)

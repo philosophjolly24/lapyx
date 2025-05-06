@@ -83,14 +83,14 @@ class StrategyManager extends ConsumerWidget {
                 final strategies = box.values.toList();
 
                 if (strategies.isEmpty) {
-                  return const CustomDropTarget(
+                  return const FileImportDropTarget(
                     child: Center(
                       child: Text('No strategies available'),
                     ),
                   );
                 }
 
-                return CustomDropTarget(
+                return FileImportDropTarget(
                   child: GridView.builder(
                     itemCount: strategies.length,
                     padding: const EdgeInsets.all(16),

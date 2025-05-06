@@ -156,6 +156,8 @@ class StrategyProvider extends Notifier<StrategyState> {
   }
 
   Future<void> _loadFromXFile(XFile file) async {
+    if (path.extension(file.path) != ".ica") return;
+
     final data = await file.readAsString();
 
     Map<String, dynamic> json = jsonDecode(data);
@@ -165,10 +167,15 @@ class StrategyProvider extends Notifier<StrategyState> {
     final List<DrawingElement> drawingData = ref
         .read(drawingProvider.notifier)
         .fromJson(jsonEncode(json["drawingData"]));
-    final List<PlacedAgent> agentData = ref
+    List<PlacedAgent> prevAgentData = ref
         .read(agentProvider.notifier)
         .fromJson(jsonEncode(json["agentData"]));
 
+    List<PlacedAgent> agentData = [];
+    for (PlacedAgent agent in prevAgentData) {
+      agent.position = agent.position.translate(-2.6, -16.9);
+      agentData.add(agent);
+    }
     final List<PlacedAbility> abilityData = ref
         .read(abilityProvider.notifier)
         .fromJson(jsonEncode(json["abilityData"]));
