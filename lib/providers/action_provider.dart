@@ -45,7 +45,7 @@ class ActionProvider extends Notifier<List<UserAction>> {
   }
 
   void addAction(UserAction action) {
-    ref.read(strategyProvider.notifier).setFileStatus(false);
+    ref.read(strategyProvider.notifier).setUnsaved();
     if (action.group != ActionGroup.ability) {
       ref.read(abilityBarProvider.notifier).updateData(null);
     }
@@ -79,7 +79,7 @@ class ActionProvider extends Notifier<List<UserAction>> {
     final newState = [...state];
     newState.add(poppedItems.removeLast());
 
-    ref.read(strategyProvider.notifier).setFileStatus(false);
+    ref.read(strategyProvider.notifier).setUnsaved();
 
     state = newState;
     // log("\n Current state \n ${state.toString()}");
@@ -108,7 +108,7 @@ class ActionProvider extends Notifier<List<UserAction>> {
     final newState = [...state];
     poppedItems.add(newState.removeLast());
 
-    ref.read(strategyProvider.notifier).setFileStatus(false);
+    ref.read(strategyProvider.notifier).setUnsaved();
 
     state = newState;
     // log("\n Current state \n ${state.toString()}");

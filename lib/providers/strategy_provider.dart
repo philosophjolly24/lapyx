@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
@@ -10,6 +11,7 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
+import 'package:icarus/providers/auto_save_notifier.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
@@ -81,11 +83,23 @@ class StrategyProvider extends Notifier<StrategyState> {
   @override
   StrategyState build() {
     return StrategyState(
-        isSaved: false, stratName: null, id: "testID", storageDirectory: null);
+      isSaved: false,
+      stratName: null,
+      id: "testID",
+      storageDirectory: null,
+    );
   }
 
-  void setFileStatus(bool status) {
-    state = state.copyWith(isSaved: status);
+  Timer? _saveTimer;
+
+  void setUnsaved() async {
+    state = state.copyWith(isSaved: false);
+    _saveTimer?.cancel();
+    _saveTimer = Timer(Settings.autoSaveOffset, () async {
+      //Find some way to tell the user that it is saving now()
+      ref.read(autoSaveProvider.notifier).ping();
+      await saveToHive(state.id);
+    });
   }
 
   Future<void> setStorageDirectory() async {

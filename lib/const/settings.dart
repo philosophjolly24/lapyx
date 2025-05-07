@@ -28,5 +28,6 @@ class Settings {
 
   static final Uri dicordLink = Uri.parse("https://discord.gg/PN2uKwCqYB");
 
+  static const Duration autoSaveOffset = Duration(seconds: 5);
   static const int versionNumber = 1;
 }

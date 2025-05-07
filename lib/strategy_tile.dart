@@ -227,35 +227,57 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
             padding: const EdgeInsets.all(8.0),
             child: MenuAnchor(
               menuChildren: [
-                SizedBox(
-                  child: MenuItemButton(
-                    onPressed: () async {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return DeleteStrategyAlertDialog(
-                              strategyID: widget.strategyData.id,
-                              name: widget.strategyData.name);
-                        },
-                      );
-                    },
-                    child: const Row(
-                      children: [
-                        Icon(
-                          Icons.delete,
-                          color: Colors.redAccent,
-                        ),
-                        SizedBox(
-                          width: 2,
-                        ),
-                        Text(
-                          "Delete",
-                          style: TextStyle(color: Colors.redAccent),
-                        )
-                      ],
-                    ),
+                MenuItemButton(
+                  onPressed: () async {
+                    await ref
+                        .read(strategyProvider.notifier)
+                        .loadFromHive(widget.strategyData.id);
+                    await ref
+                        .read(strategyProvider.notifier)
+                        .exportFile(widget.strategyData.id);
+                    // await ref.read(strategyProvider.notifier).
+                  },
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.upload,
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "Export",
+                      )
+                    ],
                   ),
-                )
+                ),
+                MenuItemButton(
+                  onPressed: () async {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return DeleteStrategyAlertDialog(
+                            strategyID: widget.strategyData.id,
+                            name: widget.strategyData.name);
+                      },
+                    );
+                  },
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.delete,
+                        color: Colors.redAccent,
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "Delete",
+                        style: TextStyle(color: Colors.redAccent),
+                      )
+                    ],
+                  ),
+                ),
               ],
               builder: (context, controller, child) {
                 return IconButton(

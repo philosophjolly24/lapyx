@@ -81,13 +81,13 @@ class _StrategyViewState extends ConsumerState<StrategyView>
                             )
                           ],
                         )),
-                    IconButton(
-                      onPressed: () {
-                        String id = ref.watch(strategyProvider).id;
-                        ref.read(strategyProvider.notifier).exportFile(id);
-                      },
-                      icon: const Icon(Icons.file_open_outlined),
-                    )
+                    // IconButton(
+                    //   onPressed: () {
+                    //     String id = ref.watch(strategyProvider).id;
+                    //     ref.read(strategyProvider.notifier).exportFile(id);
+                    //   },
+                    //   icon: const Icon(Icons.file_open_outlined),
+                    // )
                   ],
                 )
               ],
