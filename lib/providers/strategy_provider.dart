@@ -256,6 +256,10 @@ class StrategyProvider extends Notifier<StrategyState> {
     // state = state.copyWith(fileName: file.path, isSaved: true);
   }
 
+  Future<void> deleteStrategy(String strategyID) async {
+    await Hive.box<StrategyData>(HiveBoxNames.strategiesBox).delete(strategyID);
+  }
+
   Future<void> saveToHive(String id) async {
     final drawingData = ref.read(drawingProvider).elements;
     final agentData = ref.read(agentProvider);
