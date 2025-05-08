@@ -25,7 +25,7 @@ class _CustomDropTargetState extends ConsumerState<FileImportDropTarget> {
         setState(() {
           isDragging = true;
         });
-        log("I'm in gurt");
+        // log("I'm in gurt");
       },
       onDragExited: (details) {
         setState(() {

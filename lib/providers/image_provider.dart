@@ -44,11 +44,60 @@ class ImageProvider extends Notifier<ImageState> {
 
   @override
   ImageState build() {
+    log('ImageState provider build() called');
     return ImageState(
       images: [],
       currentImage: null,
       imageExtenstion: null,
     );
+  }
+
+  Future<void> deleteUnusedImages(String strategyID) async {
+    List<String> fileIDs = [];
+
+    for (PlacedImage image in state.images) {
+      fileIDs.add(image.id);
+    }
+    for (PlacedImage image in poppedImages) {
+      fileIDs.add(image.id);
+    }
+
+    // Get the system's application support directory.
+    final directory = await getApplicationSupportDirectory();
+
+    // Create a custom directory inside the application support directory.
+    final customDirectory = Directory(path.join(directory.path, strategyID));
+
+    // Create the directory if it doesn't exist.
+    if (!await customDirectory.exists()) return;
+
+    // Construct the full path for the images subdirectory.
+    final filePath = path.join(customDirectory.path, 'images');
+
+    // Create the images directory if it doesn't exist.
+    final imagesDirectory = Directory(filePath);
+    if (!await imagesDirectory.exists()) {
+      await imagesDirectory.create(recursive: true);
+      return; // If directory was just created, no files to check.
+    }
+
+    // List all files in the directory (non-recursively).
+    List<FileSystemEntity> files = imagesDirectory.listSync();
+
+    // Check each file: if its name (without extension) is not in fileIDs then delete.
+    for (FileSystemEntity entity in files) {
+      if (entity is File) {
+        // Get the file name without extension.
+        String fileName = path.basenameWithoutExtension(entity.path);
+        if (!fileIDs.contains(fileName)) {
+          try {
+            await entity.delete();
+          } catch (e) {
+            log(e.toString());
+          }
+        }
+      }
+    }
   }
 
   void addImage(PlacedImage placedImage) {
@@ -59,7 +108,11 @@ class ImageProvider extends Notifier<ImageState> {
     );
 
     ref.read(actionProvider.notifier).addAction(action);
+
     state = state.copyWith(images: [...state.images, placedImage]);
+
+    log(state.images.length.toString());
+    log(poppedImages.length.toString());
   }
 
   void removeImage(String id) {

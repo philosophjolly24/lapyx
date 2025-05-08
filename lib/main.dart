@@ -9,11 +9,13 @@ import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_manager.dart';
 import 'package:icarus/strategy_view.dart';
 import 'package:icarus/widgets/global_shortcuts.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
+  final directory = await getApplicationSupportDirectory();
+  await Hive.initFlutter(directory.path);
 
   Hive.registerAdapters();
 
@@ -84,21 +86,6 @@ class MyHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return FutureBuilder(
-        future: ref.read(strategyProvider.notifier).setStorageDirectory(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return const HomeView();
-            default:
-              return const Scaffold(
-                body: Center(
-                  child: SizedBox(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              );
-          }
-        });
+    return const HomeView();
   }
 }

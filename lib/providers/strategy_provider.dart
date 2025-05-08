@@ -102,8 +102,8 @@ class StrategyProvider extends Notifier<StrategyState> {
     });
   }
 
-  Future<void> setStorageDirectory() async {
-    final strategyID = state.id;
+  Future<Directory> setStorageDirectory(String strategyID) async {
+    // final strategyID = state.id;
     // Get the system's application support directory.
     final directory = await getApplicationSupportDirectory();
 
@@ -115,7 +115,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       await customDirectory.create(recursive: true);
     }
 
-    state = state.copyWith(storageDirectory: customDirectory.path);
+    return customDirectory;
   }
 
   Future<void> loadFromHive(String id) async {
@@ -129,6 +129,10 @@ class StrategyProvider extends Notifier<StrategyState> {
       log("Couldn't find save");
       return;
     }
+    ref.read(actionProvider.notifier).clearAllActions();
+    // await ref
+    //     .read(placedImageProvider.notifier)
+    //     .deleteUnusedImages(newStrat.id);
 
     ref.read(agentProvider.notifier).fromHive(newStrat.agentData);
     ref.read(abilityProvider.notifier).fromHive(newStrat.abilityData);
@@ -136,15 +140,15 @@ class StrategyProvider extends Notifier<StrategyState> {
     ref.read(mapProvider.notifier).updateMap(newStrat.mapData);
     ref.read(textProvider.notifier).fromHive(newStrat.textData);
     ref.read(placedImageProvider.notifier).fromHive(newStrat.imageData);
-    ref.read(actionProvider.notifier).clearAllActions();
+
+    final newDir = await setStorageDirectory(newStrat.id);
 
     state = StrategyState(
       isSaved: true,
       stratName: newStrat.name,
       id: newStrat.id,
-      storageDirectory: state.storageDirectory,
+      storageDirectory: newDir.path,
     );
-    await setStorageDirectory();
   }
 
   Future<void> loadFromFilePicker() async {
@@ -212,6 +216,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       versionNumber: Settings.versionNumber,
       lastEdited: DateTime.now(),
     );
+
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .put(newStrategy.id, newStrategy);
   }
@@ -270,6 +275,14 @@ class StrategyProvider extends Notifier<StrategyState> {
 
   Future<void> deleteStrategy(String strategyID) async {
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox).delete(strategyID);
+
+    final directory = await getApplicationSupportDirectory();
+
+    final customDirectory = Directory(path.join(directory.path, strategyID));
+
+    if (!await customDirectory.exists()) return;
+
+    await customDirectory.delete(recursive: true);
   }
 
   Future<void> saveToHive(String id) async {
