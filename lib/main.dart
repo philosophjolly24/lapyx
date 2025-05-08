@@ -41,26 +41,34 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Icarus',
         theme: ThemeData(
-          colorScheme: const ColorScheme.dark(
-            // primary: Color.fromARGB(255, 129, 75, 223),
-            primary: Colors.deepPurpleAccent,
-            secondary: Colors.teal,
-            error: Colors.red,
-            surface: Color(0xFF1B1B1B),
-          ),
-          dividerColor: Colors.transparent,
-          useMaterial3: true,
-          expansionTileTheme: const ExpansionTileThemeData(),
-          textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-              foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
-              // You can also set other properties like textStyle here if needed
-              // textStyle: MaterialStateProperty.all<TextStyle>(
-              //   const TextStyle(color: Colors.white),
-              // ),
+            colorScheme: const ColorScheme.dark(
+              // primary: Color.fromARGB(255, 129, 75, 223),
+              primary: Colors.deepPurpleAccent,
+              secondary: Colors.teal,
+              error: Colors.red,
+              surface: Color(0xFF1B1B1B),
             ),
-          ),
-        ),
+            dividerColor: Colors.transparent,
+            useMaterial3: true,
+            expansionTileTheme: const ExpansionTileThemeData(),
+            textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+                foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                // You can also set other properties like textStyle here if needed
+                // textStyle: MaterialStateProperty.all<TextStyle>(
+                //   const TextStyle(color: Colors.white),
+                // ),
+              ),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ButtonStyle(
+                foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+                // You can also set other properties like textStyle here if needed
+                // textStyle: MaterialStateProperty.all<TextStyle>(
+                //   const TextStyle(color: Colors.white),
+                // ),
+              ),
+            )),
         routes: {
           Routes.strategyManager: (context) => const StrategyManager(),
           Routes.strategyView: (context) => const StrategyView(),

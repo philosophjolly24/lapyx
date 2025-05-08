@@ -138,8 +138,6 @@ class StrategyProvider extends Notifier<StrategyState> {
     ref.read(placedImageProvider.notifier).fromHive(newStrat.imageData);
     ref.read(actionProvider.notifier).clearAllActions();
 
-    log(newStrat.name);
-
     state = StrategyState(
       isSaved: true,
       stratName: newStrat.name,
@@ -204,7 +202,7 @@ class StrategyProvider extends Notifier<StrategyState> {
 
     final newStrategy = StrategyData(
       id: newID,
-      name: file.name,
+      name: path.basenameWithoutExtension(file.name),
       drawingData: drawingData,
       agentData: agentData,
       abilityData: abilityData,

@@ -348,6 +348,7 @@ class DrawingProvider extends Notifier<DrawingState> {
   }
 
   void clearAll() {
+    poppedElements = [];
     state = DrawingState(elements: []);
     _triggerRepaint();
   }

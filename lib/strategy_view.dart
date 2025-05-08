@@ -52,7 +52,12 @@ class _StrategyViewState extends ConsumerState<StrategyView>
                 Row(
                   children: [
                     IconButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          await ref
+                              .read(strategyProvider.notifier)
+                              .saveToHive(ref.read(strategyProvider).id);
+
+                          if (!context.mounted) return;
                           Navigator.pop(context);
                         },
                         icon: const Icon(Icons.home)),
@@ -118,53 +123,10 @@ class _StrategyViewState extends ConsumerState<StrategyView>
     bool isPreventClose = await windowManager.isPreventClose();
     if (!isPreventClose) return;
 
-    if (ref.read(strategyProvider).isSaved) {
-      if (!mounted) return;
-      Navigator.of(context).pop(); // Close the dialog *after* saving
-      await windowManager.destroy(); // Then close the window/app
-      return;
-    }
+    await ref
+        .read(strategyProvider.notifier)
+        .saveToHive(ref.read(strategyProvider).id);
 
-    if (!mounted) return;
-
-    showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          backgroundColor: Settings.sideBarColor,
-          title: const Text("Save Strategy?"),
-          content: const Text(
-            "You have unsaved changes to your strategy.\n"
-            "Closing without saving will lose these changes.",
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'), // Explicit "Cancel"
-              onPressed: () {
-                Navigator.of(context).pop(); // Just close the dialog
-              },
-            ),
-            TextButton(
-              child: const Text("Don't Save"),
-              onPressed: () async {
-                Navigator.of(context).pop(); // Close the dialog
-                await windowManager.destroy(); // Then, close the window/app
-              },
-            ),
-            TextButton(
-              child: const Text('Save'),
-              onPressed: () async {
-                await ref
-                    .read(strategyProvider.notifier)
-                    .saveToHive(ref.read(strategyProvider).id);
-                if (!mounted) return;
-                Navigator.of(context).pop(); // Close the dialog *after* saving
-                await windowManager.destroy(); // Then close the window/app
-              },
-            ),
-          ],
-        );
-      },
-    );
+    await windowManager.destroy(); // Then close the window/app
   }
 }

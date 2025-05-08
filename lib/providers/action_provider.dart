@@ -15,13 +15,19 @@ enum ActionType {
   addition,
   deletion,
   edit,
+  // clearAll,
 }
 
 class UserAction {
   final ActionGroup group;
   final String id;
   final ActionType type;
-  UserAction({required this.type, required this.id, required this.group});
+
+  UserAction({
+    required this.type,
+    required this.id,
+    required this.group,
+  });
 
   @override
   String toString() {
@@ -89,7 +95,6 @@ class ActionProvider extends Notifier<List<UserAction>> {
     // log("Undo action was triggered");
 
     if (state.isEmpty) return;
-
     final currentAction = state.last;
 
     switch (currentAction.group) {
@@ -118,6 +123,38 @@ class ActionProvider extends Notifier<List<UserAction>> {
 
   void clearAllActions() {
     poppedItems = [];
+    ref.read(agentProvider.notifier).clearAll();
+    ref.read(abilityProvider.notifier).clearAll();
+    ref.read(drawingProvider.notifier).clearAll();
+    ref.read(textProvider.notifier).clearAll();
+    ref.read(placedImageProvider.notifier).clearAll();
+    ref.read(strategyProvider.notifier).setUnsaved();
     state = [];
+  }
+
+  void clearAction(ActionGroup group) {
+    // Filter out all actions with the specified group from the current state.
+    final newState = state.where((action) => action.group != group).toList();
+
+    // Similarly, filter out the actions in poppedItems.
+    poppedItems = poppedItems.where((action) => action.group != group).toList();
+
+    switch (group) {
+      case ActionGroup.agent:
+        ref.read(agentProvider.notifier).clearAll();
+      case ActionGroup.ability:
+        ref.read(abilityProvider.notifier).clearAll();
+      case ActionGroup.drawing:
+        ref.read(drawingProvider.notifier).clearAll();
+      case ActionGroup.text:
+        ref.read(textProvider.notifier).clearAll();
+      case ActionGroup.image:
+        ref.read(placedImageProvider.notifier).clearAll();
+    }
+    // Optionally, you may want to notify or update strategy provider state.
+    ref.read(strategyProvider.notifier).setUnsaved();
+
+    // Updating the state with filtered actions.
+    state = newState;
   }
 }

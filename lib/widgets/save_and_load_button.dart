@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/widgets/strategy_save_icon_button.dart';
 
@@ -13,37 +12,14 @@ class SaveButtonAndLoad extends ConsumerWidget {
       padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
-          // IconButton(
-          //   onPressed: () async {
-          //     await ref
-          //         .read(strategyProvider.notifier)
-          //         .saveToHive(ref.read(strategyProvider).id);
-
-          //     if (!context.mounted) return;
-
-          //     ScaffoldMessenger.of(context).showSnackBar(
-          //       const SnackBar(
-          //         content: Center(
-          //           child: Text(
-          //             "File Saved",
-          //             style: TextStyle(color: Colors.white),
-          //           ),
-          //         ),
-          //         duration: Duration(milliseconds: 350),
-          //         backgroundColor: Settings.sideBarColor,
-          //         behavior: SnackBarBehavior.floating,
-          //         width: 200,
-          //       ),
-          //     );
-          //   },
-          //   icon: const Icon(Icons.save),
-          // ),
           const AutoSaveButton(),
           IconButton(
             onPressed: () async {
-              await ref.read(strategyProvider.notifier).loadFromFilePicker();
+              await ref
+                  .read(strategyProvider.notifier)
+                  .exportFile(ref.read(strategyProvider).id);
             },
-            icon: const Icon(Icons.file_open),
+            icon: const Icon(Icons.file_upload),
           ),
           // IconButton(
           //   onPressed: () async {

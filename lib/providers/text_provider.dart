@@ -136,4 +136,9 @@ class TextProvider extends Notifier<List<PlacedText>> {
         .map((json) => PlacedText.fromJson(json as Map<String, dynamic>))
         .toList();
   }
+
+  void clearAll() {
+    poppedText = [];
+    state = [];
+  }
 }

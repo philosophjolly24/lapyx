@@ -32,7 +32,7 @@ class AgentFilter extends ConsumerWidget {
               style: TextStyle(
                 color: (ref.watch(agentFilterProvider).currentFilter ==
                         FilterState.values[index])
-                    ? Colors.blue
+                    ? Colors.deepPurpleAccent
                     : Colors.grey,
               ),
             ),

@@ -1,10 +1,7 @@
 import 'dart:async' show Completer;
-import 'dart:convert' show ascii;
-import 'dart:developer';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/custom_icons.dart';
@@ -12,11 +9,10 @@ import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
-import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
+import 'package:icarus/widgets/sidebar_widgets/delete_options.dart';
 import 'package:icarus/widgets/sidebar_widgets/drawing_tools.dart';
 import 'package:icarus/widgets/sidebar_widgets/image_selector.dart';
-import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
 class ToolGrid extends ConsumerWidget {
@@ -154,9 +150,22 @@ class ToolGrid extends ConsumerWidget {
               ),
               IconButton(
                 onPressed: () {
-                  ref.read(drawingProvider.notifier).clearAll();
+                  switch (currentInteractionState) {
+                    case InteractionState.deleting:
+                      ref
+                          .read(interactionStateProvider.notifier)
+                          .update(InteractionState.navigation);
+                    default:
+                      ref
+                          .read(interactionStateProvider.notifier)
+                          .update(InteractionState.deleting);
+                  }
                 },
-                icon: const Icon(Icons.delete),
+                isSelected:
+                    currentInteractionState == InteractionState.deleting,
+                icon: const Icon(
+                  Icons.delete,
+                ),
               ),
               IconButton(
                 onPressed: () {
@@ -185,7 +194,8 @@ class ToolGrid extends ConsumerWidget {
               )
             ],
           ),
-          const DrawingTools()
+          const DrawingTools(),
+          const DeleteOptions(),
         ],
       ),
     );

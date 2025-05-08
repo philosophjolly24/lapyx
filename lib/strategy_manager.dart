@@ -4,21 +4,57 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/hive_boxes.dart';
+import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/new_strategy_dialog.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_tile.dart';
 import 'package:icarus/widgets/bg_dot_painter.dart';
 import 'package:icarus/widgets/custom_drop_target.dart';
+import 'package:window_manager/window_manager.dart';
 
 final strategiesProvider = Provider<ValueListenable<Box<StrategyData>>>((ref) {
   return Hive.box<StrategyData>(HiveBoxNames.strategiesBox).listenable();
 });
 
-class StrategyManager extends ConsumerWidget {
+class StrategyManager extends ConsumerStatefulWidget {
   const StrategyManager({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _StrategyManagerState();
+}
+
+class _StrategyManagerState extends ConsumerState<StrategyManager>
+    with WindowListener {
+  @override
+  void initState() {
+    super.initState();
+    windowManager.addListener(this);
+    _init();
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
+  }
+
+  void _init() async {
+    // Add this line to override the default close handler
+    await windowManager.setPreventClose(true);
+    setState(() {});
+  }
+
+  @override
+  void onWindowClose() async {
+    bool isPreventClose = await windowManager.isPreventClose();
+    if (!isPreventClose) return;
+
+    await windowManager.destroy(); // Then close the window/app
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final double height = MediaQuery.sizeOf(context).height - 90;
     final Size playAreaSize = Size(height * 1.2, height);
     CoordinateSystem(playAreaSize: playAreaSize);
@@ -36,33 +72,77 @@ class StrategyManager extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Strategies"),
+        toolbarHeight: 90,
         actions: [
-          TextButton.icon(
-            onPressed: showCreateDialog,
-            icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text(
-              "Create Strategy",
-              style: TextStyle(color: Colors.white),
-            ),
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.resolveWith<Color?>(
-                (Set<WidgetState> states) {
-                  if (states.contains(WidgetState.pressed)) {
-                    return const Color.fromARGB(0, 224, 224, 224);
-                  }
-                  return Colors.transparent;
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: SizedBox(
+              height: 40,
+              child: TextButton.icon(
+                onPressed: () async {
+                  await ref
+                      .read(strategyProvider.notifier)
+                      .loadFromFilePicker();
                 },
-              ),
-              overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                (Set<WidgetState> states) {
-                  if (states.contains(WidgetState.pressed)) {
-                    return Colors.white.withAlpha(51);
-                  }
-                  return null;
-                },
+                icon: const Icon(Icons.file_download, color: Colors.white),
+                label: const Text(
+                  "Import .ica",
+                  // textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ButtonStyle(
+                  alignment: Alignment.center,
+                  backgroundColor:
+                      WidgetStateProperty.all(Settings.highlightColor),
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                    (Set<WidgetState> states) {
+                      if (states.contains(WidgetState.pressed)) {
+                        return Colors.white.withAlpha(51);
+                      }
+                      return null;
+                    },
+                  ),
+                ),
               ),
             ),
-          )
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 24),
+            child: SizedBox(
+              height: 40,
+              child: TextButton.icon(
+                onPressed: showCreateDialog,
+                icon: const Icon(Icons.add, color: Colors.white),
+                label: const Text(
+                  "Create Strategy",
+                  // textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white),
+                ),
+                style: ButtonStyle(
+                  alignment: Alignment.center,
+                  backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
+                  shape: WidgetStateProperty.all(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                    (Set<WidgetState> states) {
+                      if (states.contains(WidgetState.pressed)) {
+                        return Colors.white.withAlpha(51);
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       body: Stack(

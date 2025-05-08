@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,6 +29,7 @@ class _AutoSaveButtonState extends ConsumerState<AutoSaveButton>
   @override
   void initState() {
     super.initState();
+    _lastPing = ref.read(autoSaveProvider);
     _rotationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),

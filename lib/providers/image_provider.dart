@@ -225,18 +225,11 @@ class ImageProvider extends Notifier<ImageState> {
     poppedImages = [];
     state = state.copyWith(images: hiveImages);
   }
-  // @override
-  // String toString() {
-  //   String output = "[";
 
-  //   for (PlacedImage image in state) {
-  //     output += ", ";
-  //   }
-
-  //   output += "]";
-
-  //   return output;
-  // }
+  void clearAll() {
+    poppedImages = [];
+    state = state.copyWith(images: []);
+  }
 }
 
 /// A helper class to handle the asynchronous conversion of [PlacedImage].

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/json_converters.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:uuid/uuid.dart';
 
 part "placed_classes.g.dart";
 

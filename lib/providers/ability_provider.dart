@@ -9,9 +9,16 @@ import 'package:icarus/providers/action_provider.dart';
 final abilityProvider =
     NotifierProvider<AbilityProvider, List<PlacedAbility>>(AbilityProvider.new);
 
+class AbilitySnapshot {
+  final String id;
+  final List<PlacedAbility> snapshot;
+
+  AbilitySnapshot({required this.id, required this.snapshot});
+}
+
 class AbilityProvider extends Notifier<List<PlacedAbility>> {
   List<PlacedAbility> poppedAbility = [];
-
+  List<AbilitySnapshot> snapshots = [];
   @override
   List<PlacedAbility> build() {
     return [];
@@ -130,6 +137,11 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
   void fromHive(List<PlacedAbility> hiveAbilities) {
     poppedAbility = [];
     state = hiveAbilities;
+  }
+
+  void clearAll() {
+    poppedAbility = [];
+    state = [];
   }
 
   String toJson() {

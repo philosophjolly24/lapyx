@@ -144,4 +144,9 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
 
     return output;
   }
+
+  void clearAll() {
+    poppedAgents = [];
+    state = [];
+  }
 }

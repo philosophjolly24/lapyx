@@ -31,12 +31,7 @@ class _NameStrategyDialogState extends ConsumerState<CreateStrategyDialog> {
             borderRadius: BorderRadius.circular(8.0),
             borderSide: const BorderSide(), // Default border color
           ),
-          // focusedBorder: OutlineInputBorder(
-          //   borderRadius: BorderRadius.circular(8.0),
-          //   borderSide: BorderSide(
-          //     color: Theme.of(context).primaryColor, // Focused border color
-          //   ),
-          // ),
+
           contentPadding: const EdgeInsets.symmetric(
               horizontal: 16.0,
               vertical: 12.0), // Padding inside the text field
@@ -49,26 +44,36 @@ class _NameStrategyDialogState extends ConsumerState<CreateStrategyDialog> {
           },
           child: const Text("Cancel"),
         ),
-        ElevatedButton(
-          // Use ElevatedButton for emphasis
-          onPressed: () async {
-            final strategyName = _textController.text;
-            if (strategyName.isNotEmpty) {
-              await ref
-                  .read(strategyProvider.notifier)
-                  .createNewStrategy(strategyName);
-              if (!context.mounted) return;
-              Navigator.of(context).pop(); // Close the dialog
-            } else {
-              // Optionally, show an error message if the name is empty
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Strategy name cannot be empty."),
+        SizedBox(
+          height: 35,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
+              shape: WidgetStateProperty.all(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
                 ),
-              );
-            }
-          },
-          child: const Text("Create"),
+              ),
+            ),
+            onPressed: () async {
+              final strategyName = _textController.text;
+              if (strategyName.isNotEmpty) {
+                await ref
+                    .read(strategyProvider.notifier)
+                    .createNewStrategy(strategyName);
+                if (!context.mounted) return;
+                Navigator.of(context).pop(); // Close the dialog
+              } else {
+                // Optionally, show an error message if the name is empty
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Strategy name cannot be empty."),
+                  ),
+                );
+              }
+            },
+            child: const Text("Create"),
+          ),
         ),
       ],
       shape: RoundedRectangleBorder(

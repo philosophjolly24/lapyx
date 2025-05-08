@@ -22,7 +22,7 @@ class _DrawingToolsState extends ConsumerState<DrawingTools> {
     final hasArrow = ref.watch(penProvider).hasArrow;
     return ClipRect(
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 200),
         height: isExpanded ? 150 : 0, // Change height based on state
         curve: Curves.easeInOut,
         child: !isExpanded

@@ -6,6 +6,7 @@ import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/routes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
+import 'package:icarus/strategy_view.dart';
 import 'package:icarus/widgets/delete_strategy_alert_dialog.dart';
 
 String capitalizeFirstLetter(String text) {
@@ -57,13 +58,55 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
             },
             child: GestureDetector(
               onTap: () async {
-                Navigator.pushNamed(context, Routes.strategyView);
-                // if (!context.mounted) return;
                 await ref
                     .read(strategyProvider.notifier)
                     .loadFromHive(widget.strategyData.id);
+
+                if (!context.mounted) return;
+                // Navigator.pushNamed(context, Routes.strategyView);
+
+                // Navigator.push(
+                //   context,
+                //   PageRouteBuilder(
+                //     pageBuilder: (_, __, ___) => const StrategyView(),
+                //     transitionsBuilder: (_, animation, __, child) {
+                //       const begin = Offset(1.0, 0.0);
+                //       const end = Offset.zero;
+                //       const curve = Curves.ease;
+                //       var tween = Tween(begin: begin, end: end)
+                //           .chain(CurveTween(curve: curve));
+                //       return SlideTransition(
+                //         position: animation.drive(tween),
+                //         child: child,
+                //       );
+                //     },
+                //   ),
+                // );
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: const Duration(milliseconds: 200),
+                    reverseTransitionDuration:
+                        const Duration(milliseconds: 200), // pop duration
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const StrategyView(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: ScaleTransition(
+                          scale: Tween<double>(begin: 0.9, end: 1.0)
+                              .chain(CurveTween(curve: Curves.easeOut))
+                              .animate(animation),
+                          child: child,
+                        ),
+                      );
+                    },
+                  ),
+                );
               },
-              child: Container(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 100),
                 width: 306,
                 height: 240,
                 decoration: BoxDecoration(
