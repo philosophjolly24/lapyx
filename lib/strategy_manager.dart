@@ -5,6 +5,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/const/update_checker.dart';
 import 'package:icarus/providers/new_strategy_dialog.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_tile.dart';
@@ -31,12 +32,17 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
     super.initState();
     windowManager.addListener(this);
     _init();
+    _checkUpdate();
   }
 
   @override
   void dispose() {
     windowManager.removeListener(this);
     super.dispose();
+  }
+
+  void _checkUpdate() async {
+    await UpdateChecker.checkForUpdate(context);
   }
 
   void _init() async {
@@ -67,6 +73,7 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
       );
     }
 
+    // UpdateChecker.checkForUpdate(context);
     final strategiesListenable = ref.watch(strategiesProvider);
 
     return Scaffold(
@@ -161,11 +168,17 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
               valueListenable: strategiesListenable,
               builder: (context, box, _) {
                 final strategies = box.values.toList();
-
+                strategies.sort((a, b) => b.lastEdited.compareTo(a.lastEdited));
                 if (strategies.isEmpty) {
                   return const FileImportDropTarget(
                     child: Center(
-                      child: Text('No strategies available'),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('No strategies available'),
+                          Text("Drop an .ica file")
+                        ],
+                      ),
                     ),
                   );
                 }

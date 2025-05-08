@@ -14,6 +14,25 @@ String capitalizeFirstLetter(String text) {
   return text[0].toUpperCase() + text.substring(1);
 }
 
+String timeAgo(DateTime date) {
+  final now = DateTime.now();
+  final difference = now.difference(date);
+
+  if (difference.inMinutes < 1) {
+    return 'just now';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes} min${difference.inMinutes == 1 ? '' : 's'} ago';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
+  } else if (difference.inDays < 30) {
+    return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
+  } else {
+    // Approximate the number of months (assuming 30 days per month)
+    final months = (difference.inDays / 30).floor();
+    return '$months month${months == 1 ? '' : 's'} ago';
+  }
+}
+
 class StrategyTile extends ConsumerStatefulWidget {
   const StrategyTile({
     super.key,
@@ -235,22 +254,22 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
                                   )
                                 ],
                               ),
-                              const Column(
+                              Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Text(
+                                  const Text(
                                     "Attack",
                                     textAlign: TextAlign.right,
                                     style: TextStyle(
                                       color: Colors.redAccent,
                                     ),
                                   ),
-                                  SizedBox(height: 10),
-                                  // Text(
-                                  //   "3 days ago",
-                                  // ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    timeAgo(widget.strategyData.lastEdited),
+                                  ),
                                 ],
                               )
                             ],

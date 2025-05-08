@@ -39,7 +39,7 @@ class _DeleteOptionsState extends ConsumerState<DeleteOptions> {
                 onPressed: () {
                   ref.read(actionProvider.notifier).clearAllActions();
                 },
-                child: const Text("Delete all"),
+                child: const Text("Clear all"),
               ),
             ),
             const SizedBox(
