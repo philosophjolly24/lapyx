@@ -2,6 +2,7 @@ import 'dart:async' show Completer;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/custom_icons.dart';
@@ -13,6 +14,7 @@ import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/sidebar_widgets/delete_options.dart';
 import 'package:icarus/widgets/sidebar_widgets/drawing_tools.dart';
 import 'package:icarus/widgets/sidebar_widgets/image_selector.dart';
+import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
 class ToolGrid extends ConsumerWidget {
@@ -23,75 +25,10 @@ class ToolGrid extends ConsumerWidget {
     final currentInteractionState = ref.watch(interactionStateProvider);
 
     void showImageDialog() {
-      Future<double> getImageAspectRatio(Uint8List imageData) async {
-        final completer = Completer<ui.Image>();
-        ui.decodeImageFromList(
-          imageData,
-          (ui.Image img) {
-            completer.complete(img);
-          },
-        );
-        final ui.Image image = await completer.future;
-        return image.width / image.height;
-      }
-
       showDialog(
         context: context,
-        builder: (_) {
-          return AlertDialog(
-            backgroundColor: const Color.fromARGB(255, 27, 27, 27),
-            title: const Text("Choose Image"),
-            content: const Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ImageSelector(),
-                // SizedBox(child: TextField()),
-              ],
-            ),
-            actions: [
-              TextButton(
-                child: const Text('Cancel'), // Explicit "Cancel"
-                onPressed: () {
-                  ref.read(placedImageProvider.notifier).clearCurrentImage();
-                  Navigator.of(context).pop(); // Just close the dialog
-                },
-              ),
-              TextButton(
-                child: const Text('Save'),
-                onPressed: () async {
-                  if (ref.read(placedImageProvider).currentImage == null) {
-                    Navigator.of(context).pop(); // Just close the dialog
-                    return;
-                  }
-
-                  final imageID = const Uuid().v4();
-                  final imageBytes =
-                      ref.read(placedImageProvider).currentImage!;
-                  final fileExtension =
-                      ref.read(placedImageProvider).imageExtenstion!;
-
-                  await ref
-                      .read(placedImageProvider.notifier)
-                      .saveSecureImage(imageBytes, imageID, fileExtension);
-
-                  final image = PlacedImage(
-                    fileExtension: fileExtension,
-                    position: const Offset(500, 500),
-                    id: imageID,
-                    aspectRatio: await getImageAspectRatio(imageBytes),
-                    scale: 200,
-                  );
-
-                  ref.read(placedImageProvider.notifier).addImage(image);
-
-                  ref.read(placedImageProvider.notifier).clearCurrentImage();
-
-                  if (!context.mounted) return;
-                  Navigator.of(context).pop(); // Just close the dialog
-                },
-              ),
-            ],
-          );
+        builder: (dialogContext) {
+          return const ImageSelector();
         },
       );
     }
@@ -183,12 +120,42 @@ class ToolGrid extends ConsumerWidget {
                 icon: const Icon(Icons.text_fields),
               ),
               IconButton(
-                onPressed: () {
+                onPressed: () async {
                   ref
                       .read(interactionStateProvider.notifier)
                       .update(InteractionState.navigation);
 
-                  showImageDialog();
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(
+                    allowMultiple: false,
+                    type: FileType.custom,
+                    allowedExtensions: ["png", "jpg", "gif", "webp"],
+                  );
+
+                  if (result == null) return;
+                  final data = result.files.first.xFile;
+                  final String newExtension = path.extension(data.path);
+
+                  final Uint8List newImage = await data.readAsBytes();
+
+                  final imageID = const Uuid().v4();
+                  final imageBytes = newImage;
+                  final fileExtension = newExtension;
+
+                  await ref
+                      .read(placedImageProvider.notifier)
+                      .saveSecureImage(imageBytes, imageID, fileExtension);
+
+                  final image = PlacedImage(
+                    fileExtension: fileExtension,
+                    position: const Offset(500, 500),
+                    id: imageID,
+                    aspectRatio: await getImageAspectRatio(imageBytes),
+                    scale: 200,
+                  );
+
+                  ref.read(placedImageProvider.notifier).addImage(image);
+                  // showImageDialog();
                 },
                 icon: const Icon(Icons.image_outlined),
               )
@@ -199,5 +166,17 @@ class ToolGrid extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Future<double> getImageAspectRatio(Uint8List imageData) async {
+    final completer = Completer<ui.Image>();
+    ui.decodeImageFromList(
+      imageData,
+      (ui.Image img) {
+        completer.complete(img);
+      },
+    );
+    final ui.Image image = await completer.future;
+    return image.width / image.height;
   }
 }

@@ -130,9 +130,9 @@ class StrategyProvider extends Notifier<StrategyState> {
       return;
     }
     ref.read(actionProvider.notifier).clearAllActions();
-    // await ref
-    //     .read(placedImageProvider.notifier)
-    //     .deleteUnusedImages(newStrat.id);
+    await ref
+        .read(placedImageProvider.notifier)
+        .deleteUnusedImages(newStrat.id, newStrat.imageData);
 
     ref.read(agentProvider.notifier).fromHive(newStrat.agentData);
     ref.read(abilityProvider.notifier).fromHive(newStrat.abilityData);

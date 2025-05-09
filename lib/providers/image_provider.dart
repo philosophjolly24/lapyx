@@ -17,24 +17,17 @@ final placedImageProvider =
     NotifierProvider<ImageProvider, ImageState>(ImageProvider.new);
 
 class ImageState {
-  ImageState(
-      {required this.images,
-      required this.currentImage,
-      required this.imageExtenstion});
+  ImageState({
+    required this.images,
+  });
 
   final List<PlacedImage> images;
-  final Uint8List? currentImage;
-  final String? imageExtenstion;
 
   ImageState copyWith({
     List<PlacedImage>? images,
-    Uint8List? currentImage,
-    String? imageExtenstion,
   }) {
     return ImageState(
       images: images ?? this.images,
-      currentImage: currentImage ?? this.currentImage,
-      imageExtenstion: imageExtenstion ?? this.imageExtenstion,
     );
   }
 }
@@ -47,18 +40,14 @@ class ImageProvider extends Notifier<ImageState> {
     log('ImageState provider build() called');
     return ImageState(
       images: [],
-      currentImage: null,
-      imageExtenstion: null,
     );
   }
 
-  Future<void> deleteUnusedImages(String strategyID) async {
+  Future<void> deleteUnusedImages(
+      String strategyID, List<PlacedImage> localImages) async {
     List<String> fileIDs = [];
 
-    for (PlacedImage image in state.images) {
-      fileIDs.add(image.id);
-    }
-    for (PlacedImage image in poppedImages) {
+    for (PlacedImage image in localImages) {
       fileIDs.add(image.id);
     }
 
@@ -197,16 +186,6 @@ class ImageProvider extends Notifier<ImageState> {
     state = state.copyWith(images: newImages);
   }
 
-  void changeCurrentImage(Uint8List newImage, String fileExtension) {
-    state =
-        state.copyWith(currentImage: newImage, imageExtenstion: fileExtension);
-  }
-
-  void clearCurrentImage() {
-    state = ImageState(
-        images: [...state.images], currentImage: null, imageExtenstion: null);
-  }
-
   Future<String> toJson(String strategyID) async {
     // Asynchronously convert each image using the custom serializer.
     final List<Map<String, dynamic>> jsonList = await Future.wait(
@@ -243,7 +222,7 @@ class ImageProvider extends Notifier<ImageState> {
     String imageID,
     String fileExtenstion,
   ) async {
-    final strategyID = ref.watch(strategyProvider).id;
+    final strategyID = ref.read(strategyProvider).id;
     // Get the system's application support directory.
     final directory = await getApplicationSupportDirectory();
 
