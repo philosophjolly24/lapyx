@@ -10,6 +10,7 @@ import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
+import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/providers/team_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
@@ -32,6 +33,12 @@ class PlacedWidgetBuilder extends ConsumerStatefulWidget {
 class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
   @override
   Widget build(BuildContext context) {
+    const centerX = 1240 / 2;
+    const centerY = 1000 / 2;
+    final flipTransform = Matrix4.identity()
+      ..translate(centerX, centerY)
+      ..scale(-1.0, -1.0)
+      ..translate(-centerX, -centerY);
     final coordinateSystem = CoordinateSystem.instance;
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -83,7 +90,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                   for (PlacedAgent agent in ref.watch(agentProvider))
                     Positioned(
                       left: coordinateSystem
-                          .loggedCoordinateToScreen(agent.position)
+                          .coordinateToScreen(agent.position)
                           .dx,
                       top: coordinateSystem
                           .coordinateToScreen(agent.position)

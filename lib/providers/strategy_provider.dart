@@ -35,8 +35,10 @@ class StrategyData extends HiveObject {
   final List<PlacedImage> imageData;
   final MapValue mapData;
   final DateTime lastEdited;
+  final bool isAttack;
 
   StrategyData({
+    this.isAttack = true,
     required this.id,
     required this.name,
     required this.drawingData,
@@ -57,16 +59,18 @@ class StrategyState {
     required this.id,
     required this.storageDirectory,
   });
+
   final bool isSaved;
   final String? stratName;
   final String id;
   final String? storageDirectory;
 
-  StrategyState copyWith(
-      {bool? isSaved,
-      String? stratName,
-      String? id,
-      String? storageDirectory}) {
+  StrategyState copyWith({
+    bool? isSaved,
+    String? stratName,
+    String? id,
+    String? storageDirectory,
+  }) {
     return StrategyState(
       isSaved: isSaved ?? this.isSaved,
       stratName: stratName ?? this.stratName,
@@ -299,7 +303,8 @@ class StrategyProvider extends Notifier<StrategyState> {
       abilityData: abilityData,
       textData: textData,
       imageData: imageData,
-      mapData: mapData,
+      mapData: mapData.currentMap,
+      isAttack: mapData.isAttack,
       versionNumber: 1,
       id: id,
       name: state.stratName ?? "placeholder",

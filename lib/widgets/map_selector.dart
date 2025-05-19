@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/widgets/map_tile.dart';
 
@@ -45,7 +46,7 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
 
   @override
   Widget build(BuildContext context) {
-    final currentMap = ref.watch(mapProvider);
+    final MapValue currentMap = ref.watch(mapProvider).currentMap;
 
     return CompositedTransformTarget(
       link: _link,
@@ -132,7 +133,9 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
                 width: 10,
               ),
               IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ref.read(mapProvider.notifier).switchSide();
+                  },
                   icon: const Column(
                     children: [
                       Icon(

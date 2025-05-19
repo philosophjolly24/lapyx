@@ -30,7 +30,7 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
     log(MediaQuery.sizeOf(context).height.toString());
 
     String assetName =
-        'assets/maps/${Maps.mapNames[ref.watch(mapProvider)]}_map.svg';
+        'assets/maps/${Maps.mapNames[ref.watch(mapProvider).currentMap]}_map.svg';
     final double height = MediaQuery.sizeOf(context).height - 90;
     final Size playAreaSize = Size(height * 1.2, height);
     CoordinateSystem(playAreaSize: playAreaSize);
@@ -65,6 +65,21 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                   ),
                 ),
 
+                // // Map SVG
+                // Positioned.fill(
+                //   child: GestureDetector(
+                //     behavior: HitTestBehavior.translucent,
+                //     onTap: () {
+                //       ref.read(abilityBarProvider.notifier).updateData(null);
+                //     },
+                //     child: SvgPicture.asset(
+
+                //       assetName,
+                //       semanticsLabel: 'Map',
+                //       fit: BoxFit.contain,
+                //     ),
+                //   ),
+                // ),
                 // Map SVG
                 Positioned.fill(
                   child: GestureDetector(
@@ -72,10 +87,16 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                     onTap: () {
                       ref.read(abilityBarProvider.notifier).updateData(null);
                     },
-                    child: SvgPicture.asset(
-                      assetName,
-                      semanticsLabel: 'Map',
-                      fit: BoxFit.contain,
+                    child: Transform(
+                      alignment: Alignment.center,
+                      transform: (ref.watch(mapProvider).isAttack)
+                          ? Matrix4.identity()
+                          : Matrix4.diagonal3Values(-1, -1, 1),
+                      child: SvgPicture.asset(
+                        assetName,
+                        semanticsLabel: 'Map',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),

@@ -51,6 +51,22 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
     state = [...newState, temp];
   }
 
+  void switchSides() {
+    final newState = [...state];
+
+    for (PlacedAbility ability in newState) {
+      final Offset abilitySize = ability.data.abilityData!.getAnchorPoint() +
+          ability.data.abilityData!.getAnchorPoint();
+
+      // ability.position =
+      //     Offset(1240 - abilitySize.dx - 6, 1000 - abilitySize.dy - 6) -
+      //         ability.position;
+      ability.position = const Offset(1240, 1000) - ability.position;
+    }
+
+    state = newState;
+  }
+
   void updateRotation(int index, double rotation) {
     final newState = [...state];
 

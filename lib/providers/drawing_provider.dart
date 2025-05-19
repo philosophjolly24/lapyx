@@ -33,7 +33,7 @@ class DrawingState {
     );
   }
 
-  //The copy with pattern does not work in this current situation because sometimes we actually need to set a null value to drawingState
+  //The copy with pattern does not work in this current situation because sometimes we actually need to set a null value to currentElement
   DrawingState copyWithButEvil({
     List<DrawingElement>? elements,
     int? updateCounter,

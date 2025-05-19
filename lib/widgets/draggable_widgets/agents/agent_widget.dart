@@ -40,6 +40,7 @@ class AgentWidget extends ConsumerWidget {
           ),
         ),
         width: coordinateSystem.scale(30),
+        height: coordinateSystem.scale(30),
         child: ClipRRect(
           borderRadius: const BorderRadius.all(Radius.circular(3.0)),
           child: Image.asset(agent.iconPath),

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/placed_classes.dart';
-import 'package:icarus/const/routes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_view.dart';
@@ -33,6 +32,18 @@ String timeAgo(DateTime date) {
   }
 }
 
+void showLoadingOverlay(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    },
+  );
+}
+
 class StrategyTile extends ConsumerStatefulWidget {
   const StrategyTile({
     super.key,
@@ -45,6 +56,48 @@ class StrategyTile extends ConsumerStatefulWidget {
 
 class _StrategyTileState extends ConsumerState<StrategyTile> {
   Color highlightColor = Settings.highlightColor;
+  bool _isLoading = false;
+
+  Future<void> navigateWithLoading(BuildContext context) async {
+    // Show loading overlay
+    showLoadingOverlay(context);
+
+    try {
+      await ref
+          .read(strategyProvider.notifier)
+          .loadFromHive(widget.strategyData.id);
+
+      if (!context.mounted) return;
+      // Remove loading overlay
+      Navigator.pop(context);
+
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 200),
+          reverseTransitionDuration:
+              const Duration(milliseconds: 200), // pop duration
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const StrategyView(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.9, end: 1.0)
+                    .chain(CurveTween(curve: Curves.easeOut))
+                    .animate(animation),
+                child: child,
+              ),
+            );
+          },
+        ),
+      );
+    } catch (e) {
+      // Handle errors
+      Navigator.pop(context); // Remove loading overlay
+      // Show error message
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,208 +128,190 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
                 highlightColor = Settings.highlightColor;
               });
             },
-            child: GestureDetector(
-              onTap: () async {
-                await ref
-                    .read(strategyProvider.notifier)
-                    .loadFromHive(widget.strategyData.id);
+            child: AbsorbPointer(
+              absorbing: _isLoading,
+              child: GestureDetector(
+                onTap: () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  await navigateWithLoading(context);
+                  if (!context.mounted) return;
+                  // Navigator.pushNamed(context, Routes.strategyView);
 
-                if (!context.mounted) return;
-                // Navigator.pushNamed(context, Routes.strategyView);
-
-                // Navigator.push(
-                //   context,
-                //   PageRouteBuilder(
-                //     pageBuilder: (_, __, ___) => const StrategyView(),
-                //     transitionsBuilder: (_, animation, __, child) {
-                //       const begin = Offset(1.0, 0.0);
-                //       const end = Offset.zero;
-                //       const curve = Curves.ease;
-                //       var tween = Tween(begin: begin, end: end)
-                //           .chain(CurveTween(curve: curve));
-                //       return SlideTransition(
-                //         position: animation.drive(tween),
-                //         child: child,
-                //       );
-                //     },
-                //   ),
-                // );
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    transitionDuration: const Duration(milliseconds: 200),
-                    reverseTransitionDuration:
-                        const Duration(milliseconds: 200), // pop duration
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        const StrategyView(),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: ScaleTransition(
-                          scale: Tween<double>(begin: 0.9, end: 1.0)
-                              .chain(CurveTween(curve: Curves.easeOut))
-                              .animate(animation),
-                          child: child,
-                        ),
-                      );
-                    },
+                  // Navigator.push(
+                  //   context,
+                  //   PageRouteBuilder(
+                  //     pageBuilder: (_, __, ___) => const StrategyView(),
+                  //     transitionsBuilder: (_, animation, __, child) {
+                  //       const begin = Offset(1.0, 0.0);
+                  //       const end = Offset.zero;
+                  //       const curve = Curves.ease;
+                  //       var tween = Tween(begin: begin, end: end)
+                  //           .chain(CurveTween(curve: curve));
+                  //       return SlideTransition(
+                  //         position: animation.drive(tween),
+                  //         child: child,
+                  //       );
+                  //     },
+                  //   ),
+                  // );
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 100),
+                  width: 306,
+                  height: 240,
+                  decoration: BoxDecoration(
+                    color: Settings.sideBarColor,
+                    borderRadius: const BorderRadius.all(Radius.circular(16)),
+                    border: Border.all(color: highlightColor, width: 2),
                   ),
-                );
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 100),
-                width: 306,
-                height: 240,
-                decoration: BoxDecoration(
-                  color: Settings.sideBarColor,
-                  borderRadius: const BorderRadius.all(Radius.circular(16)),
-                  border: Border.all(color: highlightColor, width: 2),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: SizedBox(
-                          height: 116,
-                          child: Image.asset(
-                            "assets/maps/thumbnails/${Maps.mapNames[widget.strategyData.mapData]}_thumbnail.webp",
-                            fit: BoxFit.cover,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: SizedBox(
+                            height: 116,
+                            child: Image.asset(
+                              "assets/maps/thumbnails/${Maps.mapNames[widget.strategyData.mapData]}_thumbnail.webp",
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF1A161A),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(16)),
-                          border: Border.all(
-                              color: Settings.highlightColor, width: 1),
+                        const SizedBox(
+                          height: 10,
                         ),
-                        height: 104,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ConstrainedBox(
-                                    constraints:
-                                        const BoxConstraints(maxWidth: 130),
-                                    child: Text(
-                                      widget.strategyData.name,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        overflow: TextOverflow.ellipsis,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1A161A),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(16)),
+                            border: Border.all(
+                                color: Settings.highlightColor, width: 1),
+                          ),
+                          height: 104,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ConstrainedBox(
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 130),
+                                      child: Text(
+                                        widget.strategyData.name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        textAlign: TextAlign.left,
                                       ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      capitalizeFirstLetter(Maps.mapNames[
+                                          widget.strategyData.mapData]!),
                                       textAlign: TextAlign.left,
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    capitalizeFirstLetter(Maps.mapNames[
-                                        widget.strategyData.mapData]!),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  ConstrainedBox(
-                                    constraints:
-                                        const BoxConstraints(maxWidth: 96 + 27),
-                                    child: Row(
-                                      spacing: 5,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        for (int i = 0;
-                                            (agentsOnMap.length > 3)
-                                                ? i < 3
-                                                : i < agentsOnMap.length;
-                                            i++)
-                                          Container(
-                                            height: 27,
-                                            width: 27,
-                                            decoration: BoxDecoration(
-                                              color: Settings.sideBarColor,
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(4)),
-                                              border: Border.all(
-                                                  color:
-                                                      Settings.highlightColor),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    ConstrainedBox(
+                                      constraints: const BoxConstraints(
+                                          maxWidth: 96 + 27),
+                                      child: Row(
+                                        spacing: 5,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          for (int i = 0;
+                                              (agentsOnMap.length > 3)
+                                                  ? i < 3
+                                                  : i < agentsOnMap.length;
+                                              i++)
+                                            Container(
+                                              height: 27,
+                                              width: 27,
+                                              decoration: BoxDecoration(
+                                                color: Settings.sideBarColor,
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(4)),
+                                                border: Border.all(
+                                                    color: Settings
+                                                        .highlightColor),
+                                              ),
+                                              child: Image.asset(AgentData
+                                                  .agents[
+                                                      agentsOnMap.elementAt(i)]!
+                                                  .iconPath),
                                             ),
-                                            child: Image.asset(AgentData
-                                                .agents[
-                                                    agentsOnMap.elementAt(i)]!
-                                                .iconPath),
-                                          ),
-                                        (agentsOnMap.length > 3)
-                                            ? Container(
-                                                height: 27,
-                                                width: 27,
-                                                decoration: BoxDecoration(
-                                                  color: Settings.sideBarColor,
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                          Radius.circular(4)),
-                                                  border: Border.all(
-                                                      color: Settings
-                                                          .highlightColor),
-                                                ),
-                                                child: const Center(
-                                                  child: Icon(
-                                                    Icons.more_horiz,
-                                                    color: Color.fromARGB(
-                                                        190, 210, 214, 219),
-                                                    size: 18,
+                                          (agentsOnMap.length > 3)
+                                              ? Container(
+                                                  height: 27,
+                                                  width: 27,
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        Settings.sideBarColor,
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                            Radius.circular(4)),
+                                                    border: Border.all(
+                                                        color: Settings
+                                                            .highlightColor),
                                                   ),
-                                                ),
-                                              )
-                                            : const SizedBox.shrink(),
-                                      ],
+                                                  child: const Center(
+                                                    child: Icon(
+                                                      Icons.more_horiz,
+                                                      color: Color.fromARGB(
+                                                          190, 210, 214, 219),
+                                                      size: 18,
+                                                    ),
+                                                  ),
+                                                )
+                                              : const SizedBox.shrink(),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    const Text(
+                                      "Attack",
+                                      textAlign: TextAlign.right,
+                                      style: TextStyle(
+                                        color: Colors.redAccent,
+                                      ),
                                     ),
-                                  )
-                                ],
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  const Text(
-                                    "Attack",
-                                    textAlign: TextAlign.right,
-                                    style: TextStyle(
-                                      color: Colors.redAccent,
+                                    const SizedBox(height: 5),
+                                    Text(
+                                      timeAgo(widget.strategyData.lastEdited),
                                     ),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Text(
-                                    timeAgo(widget.strategyData.lastEdited),
-                                  ),
-                                ],
-                              )
-                            ],
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
