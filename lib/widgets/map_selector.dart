@@ -64,6 +64,7 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
         child: Padding(
           padding: const EdgeInsets.all(4.0),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               OverlayPortal(
                 controller: _controller,
@@ -129,26 +130,38 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
                       }
                     }),
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              IconButton(
-                  onPressed: () {
-                    ref.read(mapProvider.notifier).switchSide();
-                  },
-                  icon: const Column(
-                    children: [
-                      Icon(
-                        Icons.upcoming,
-                        size: 17,
-                        color: Colors.grey,
-                      ),
-                      Text(
-                        "Attack",
-                        style: TextStyle(color: Colors.grey),
-                      )
-                    ],
-                  ))
+              // const SizedBox(
+              //   width: 10,
+              // ),
+              Expanded(
+                child: IconButton(
+                    onPressed: () {
+                      ref.read(mapProvider.notifier).switchSide();
+                    },
+                    icon: Column(
+                      children: [
+                        Icon(
+                          (ref.watch(mapProvider).isAttack)
+                              ? Icons.rocket
+                              : Icons.shield,
+                          size: 20,
+                          color: (ref.watch(mapProvider).isAttack)
+                              ? Colors.redAccent
+                              : Colors.blueAccent,
+                        ),
+                        Text(
+                          (ref.watch(mapProvider).isAttack)
+                              ? "Attack"
+                              : "Defend",
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    )),
+              )
             ],
           ),
         ),

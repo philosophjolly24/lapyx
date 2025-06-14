@@ -36,6 +36,12 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
     CoordinateSystem(playAreaSize: playAreaSize);
     CoordinateSystem coordinateSystem = CoordinateSystem.instance;
 
+    const centerX = 1240 / 2;
+    const centerY = 1000 / 2;
+    final flipTransform = Matrix4.identity()
+      ..translate(centerX, centerY)
+      ..scale(-1.0, -1.0)
+      ..translate(-centerX, -centerY);
     return Row(
       children: [
         Container(

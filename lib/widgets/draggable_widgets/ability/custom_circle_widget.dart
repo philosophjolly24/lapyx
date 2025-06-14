@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
@@ -54,6 +56,12 @@ class CustomCircleWidget extends ConsumerWidget {
 
         // Icon in center
         _buildCenterIcon(coordinateSystem, ref),
+
+        Container(
+          width: 4,
+          height: 4,
+          color: Colors.red,
+        ),
       ],
     );
   }

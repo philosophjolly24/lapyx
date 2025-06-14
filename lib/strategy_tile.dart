@@ -18,7 +18,7 @@ String timeAgo(DateTime date) {
   final difference = now.difference(date);
 
   if (difference.inMinutes < 1) {
-    return 'just now';
+    return 'Just now';
   } else if (difference.inMinutes < 60) {
     return '${difference.inMinutes} min${difference.inMinutes == 1 ? '' : 's'} ago';
   } else if (difference.inHours < 24) {
@@ -71,6 +71,9 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
       // Remove loading overlay
       Navigator.pop(context);
 
+      setState(() {
+        _isLoading = false;
+      });
       Navigator.push(
         context,
         PageRouteBuilder(
@@ -93,6 +96,9 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
         ),
       );
     } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
       // Handle errors
       Navigator.pop(context); // Remove loading overlay
       // Show error message
@@ -293,11 +299,15 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    const Text(
-                                      "Attack",
+                                    Text(
+                                      (widget.strategyData.isAttack)
+                                          ? "Attack"
+                                          : "Defense",
                                       textAlign: TextAlign.right,
                                       style: TextStyle(
-                                        color: Colors.redAccent,
+                                        color: (widget.strategyData.isAttack)
+                                            ? Colors.redAccent
+                                            : Colors.lightBlueAccent,
                                       ),
                                     ),
                                     const SizedBox(height: 5),
