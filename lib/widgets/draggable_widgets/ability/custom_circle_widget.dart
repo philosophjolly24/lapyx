@@ -35,9 +35,8 @@ class CustomCircleWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final coordinateSystem = CoordinateSystem.instance;
-    final scaleSize = coordinateSystem.scale(size) - coordinateSystem.scale(5);
-    final secondaryScaleSize =
-        coordinateSystem.scale(innerSize ?? 2) - coordinateSystem.scale(2);
+    final scaleSize = coordinateSystem.scale(size);
+    final secondaryScaleSize = coordinateSystem.scale(innerSize ?? 0);
 
     // If no center dot is needed, return a simple circle
     if (!hasCenterDot) {
