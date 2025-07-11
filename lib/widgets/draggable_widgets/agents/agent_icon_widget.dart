@@ -13,12 +13,10 @@ class AgentIconWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
 
-    return MouseWatch(
-      child: SizedBox(
-        width: coordinateSystem.scale(size),
-        height: coordinateSystem.scale(size),
-        child: Image.asset(imagePath),
-      ),
+    return SizedBox(
+      width: coordinateSystem.scale(size),
+      height: coordinateSystem.scale(size),
+      child: Image.asset(imagePath),
     );
   }
 }

@@ -5,7 +5,7 @@ nextTypeId: 14
 types:
   StrategyData:
     typeId: 0
-    nextIndex: 10
+    nextIndex: 11
     fields:
       versionNumber:
         index: 0
@@ -27,6 +27,8 @@ types:
         index: 8
       lastEdited:
         index: 9
+      isAttack:
+        index: 10
   PlacedWidget:
     typeId: 1
     nextIndex: 3
@@ -101,7 +103,7 @@ types:
         index: 8
   MapValue:
     typeId: 6
-    nextIndex: 11
+    nextIndex: 12
     fields:
       ascent:
         index: 0
@@ -125,6 +127,8 @@ types:
         index: 9
       bind:
         index: 10
+      corrode:
+        index: 11
   AgentType:
     typeId: 7
     nextIndex: 27

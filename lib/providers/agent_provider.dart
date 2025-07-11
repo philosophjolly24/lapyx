@@ -146,13 +146,13 @@ class AgentProvider extends Notifier<List<PlacedAgent>> {
   }
 
   void switchSides() {
-    final newState = [...state];
+    // final newState = [...state];
 
-    for (PlacedAgent agent in newState) {
-      agent.position = const Offset(1240 - 36, 1000 - 36) - agent.position;
-    }
+    // for (PlacedAgent agent in newState) {
+    //   agent.position = const Offset(1240 - 36, 1000 - 36) - agent.position;
+    // }
 
-    state = newState;
+    // state = newState;
   }
 
   void clearAll() {

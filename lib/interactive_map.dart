@@ -28,20 +28,14 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
   @override
   Widget build(BuildContext context) {
     log(MediaQuery.sizeOf(context).height.toString());
-
+    bool isAttack = ref.watch(mapProvider).isAttack;
     String assetName =
-        'assets/maps/${Maps.mapNames[ref.watch(mapProvider).currentMap]}_map.svg';
+        'assets/maps/${Maps.mapNames[ref.watch(mapProvider).currentMap]}_map${isAttack ? "" : "_defense"}.svg';
     final double height = MediaQuery.sizeOf(context).height - 90;
     final Size playAreaSize = Size(height * 1.2, height);
     CoordinateSystem(playAreaSize: playAreaSize);
     CoordinateSystem coordinateSystem = CoordinateSystem.instance;
 
-    const centerX = 1240 / 2;
-    const centerY = 1000 / 2;
-    final flipTransform = Matrix4.identity()
-      ..translate(centerX, centerY)
-      ..scale(-1.0, -1.0)
-      ..translate(-centerX, -centerY);
     return Row(
       children: [
         Container(
@@ -93,16 +87,10 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                     onTap: () {
                       ref.read(abilityBarProvider.notifier).updateData(null);
                     },
-                    child: Transform(
-                      alignment: Alignment.center,
-                      transform: (ref.watch(mapProvider).isAttack)
-                          ? Matrix4.identity()
-                          : Matrix4.diagonal3Values(-1, -1, 1),
-                      child: SvgPicture.asset(
-                        assetName,
-                        semanticsLabel: 'Map',
-                        fit: BoxFit.contain,
-                      ),
+                    child: SvgPicture.asset(
+                      assetName,
+                      semanticsLabel: 'Map',
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),

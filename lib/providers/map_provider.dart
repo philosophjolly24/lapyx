@@ -31,8 +31,8 @@ class MapProvider extends Notifier<MapState> {
 
   void switchSide() {
     state = state.copyWith(isAttack: !state.isAttack);
-    ref.read(agentProvider.notifier).switchSides();
-    ref.read(abilityProvider.notifier).switchSides();
+    // ref.read(agentProvider.notifier).switchSides();
+    // ref.read(abilityProvider.notifier).switchSides();
   }
 
   String toJson() {

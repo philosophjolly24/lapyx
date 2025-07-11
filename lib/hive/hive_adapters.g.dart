@@ -17,6 +17,7 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return StrategyData(
+      isAttack: fields[10] == null ? true : fields[10] as bool,
       id: fields[7] as String,
       name: fields[8] as String,
       drawingData: (fields[1] as List).cast<DrawingElement>(),
@@ -33,7 +34,7 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
   @override
   void write(BinaryWriter writer, StrategyData obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.versionNumber)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       ..writeByte(8)
       ..write(obj.name)
       ..writeByte(9)
-      ..write(obj.lastEdited);
+      ..write(obj.lastEdited)
+      ..writeByte(10)
+      ..write(obj.isAttack);
   }
 
   @override
@@ -328,6 +331,8 @@ class MapValueAdapter extends TypeAdapter<MapValue> {
         return MapValue.pearl;
       case 10:
         return MapValue.bind;
+      case 11:
+        return MapValue.corrode;
       default:
         return MapValue.ascent;
     }
@@ -358,6 +363,8 @@ class MapValueAdapter extends TypeAdapter<MapValue> {
         writer.writeByte(9);
       case MapValue.bind:
         writer.writeByte(10);
+      case MapValue.corrode:
+        writer.writeByte(11);
     }
   }
 

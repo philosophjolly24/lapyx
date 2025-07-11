@@ -148,7 +148,7 @@ class DrawingPainter extends CustomPainter {
 
     // Helper function to draw an arrow
     void drawArrow(Canvas canvas, Paint paint, Offset from, Offset to) {
-      const double arrowHeadSize = 13; // Size of the arrowhead
+      const double arrowHeadSize = 8; // Size of the arrowhead
       const double arrowAngle = math.pi / 4; // 30 degrees arrow head angle
 
       // Calculate the direction angle from `from` to `to`

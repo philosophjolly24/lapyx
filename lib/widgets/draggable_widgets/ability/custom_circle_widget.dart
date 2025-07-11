@@ -126,32 +126,26 @@ class CustomCircleWidget extends ConsumerWidget {
     return Positioned.fill(
       child: Align(
         alignment: Alignment.center,
-        child: MouseWatch(
-          onDeleteKeyPressed: () {
-            if (id == null) return;
-            ref.watch(abilityProvider.notifier).removeAbility(id!);
-          },
-          child: Container(
-            width: coordinateSystem.scale(25),
-            height: coordinateSystem.scale(25),
-            padding: EdgeInsets.all(coordinateSystem.scale(3)),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(3),
-              ),
-              color: const Color(0xFF1B1B1B),
-              border: Border.all(
-                color: isAlly
-                    ? const Color.fromARGB(106, 105, 240, 175)
-                    : const Color.fromARGB(139, 255, 82, 82),
-              ),
+        child: Container(
+          width: coordinateSystem.scale(25),
+          height: coordinateSystem.scale(25),
+          padding: EdgeInsets.all(coordinateSystem.scale(3)),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(3),
             ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(3)),
-              child: Image.asset(
-                iconPath,
-                fit: BoxFit.contain,
-              ),
+            color: const Color(0xFF1B1B1B),
+            border: Border.all(
+              color: isAlly
+                  ? const Color.fromARGB(106, 105, 240, 175)
+                  : const Color.fromARGB(139, 255, 82, 82),
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(3)),
+            child: Image.asset(
+              iconPath,
+              fit: BoxFit.contain,
             ),
           ),
         ),

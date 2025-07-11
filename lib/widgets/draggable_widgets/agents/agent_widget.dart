@@ -21,30 +21,24 @@ class AgentWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final coordinateSystem = CoordinateSystem.instance;
-    return MouseWatch(
-      onDeleteKeyPressed: () {
-        if (id == null) return;
-        ref.read(agentProvider.notifier).removeAgent(id!);
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          // color: const Color(0xFF1B1B1B),
-          color: isAlly ? Settings.allyBGColor : Settings.enemyBGColor,
+    return Container(
+      decoration: BoxDecoration(
+        // color: const Color(0xFF1B1B1B),
+        color: isAlly ? Settings.allyBGColor : Settings.enemyBGColor,
 
-          border: Border.all(
-            color:
-                isAlly ? Settings.allyOutlineColor : Settings.enemyOutlineColor,
-          ),
-          borderRadius: const BorderRadius.all(
-            Radius.circular(3),
-          ),
+        border: Border.all(
+          color:
+              isAlly ? Settings.allyOutlineColor : Settings.enemyOutlineColor,
         ),
-        width: coordinateSystem.scale(30),
-        height: coordinateSystem.scale(30),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(3.0)),
-          child: Image.asset(agent.iconPath),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(3),
         ),
+      ),
+      width: coordinateSystem.scale(30),
+      height: coordinateSystem.scale(30),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(3.0)),
+        child: Image.asset(agent.iconPath),
       ),
     );
   }

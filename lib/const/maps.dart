@@ -10,17 +10,23 @@ enum MapValue {
   abyss,
   pearl,
   bind,
+  corrode,
 }
 
 class Maps {
   static List<MapValue> availableMaps = [
     MapValue.ascent,
-    MapValue.fracture,
+    MapValue.bind,
     MapValue.haven,
     MapValue.icebox,
     MapValue.lotus,
-    MapValue.pearl,
+    MapValue.corrode,
     MapValue.split,
+  ];
+
+  static List<MapValue> outofplayMaps = [
+    MapValue.pearl,
+    MapValue.fracture,
   ];
 
   static Map<MapValue, String> mapNames = {
@@ -35,5 +41,6 @@ class Maps {
     MapValue.abyss: 'abyss',
     MapValue.pearl: 'pearl',
     MapValue.bind: 'bind',
+    MapValue.corrode: 'corrode',
   };
 }

@@ -60,29 +60,22 @@ class CustomSquareWidget extends ConsumerWidget {
           Positioned(
             bottom: 0,
             left: (scaledWidth - scaledAbilitySize) / 2,
-            child: MouseWatch(
-              onDeleteKeyPressed: () {
-                if (id == null) return;
-
-                ref.read(abilityProvider.notifier).removeAbility(id!);
-              },
-              child: Container(
-                width: scaledAbilitySize,
-                height: scaledAbilitySize,
-                padding: EdgeInsets.all(coordinateSystem.scale(3)),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: isAlly
-                        ? const Color.fromARGB(106, 105, 240, 175)
-                        : const Color.fromARGB(139, 255, 82, 82),
-                  ),
-                  borderRadius: const BorderRadius.all(Radius.circular(3)),
-                  color: const Color(0xFF1B1B1B),
+            child: Container(
+              width: scaledAbilitySize,
+              height: scaledAbilitySize,
+              padding: EdgeInsets.all(coordinateSystem.scale(3)),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: isAlly
+                      ? const Color.fromARGB(106, 105, 240, 175)
+                      : const Color.fromARGB(139, 255, 82, 82),
                 ),
-                child: Image.asset(
-                  iconPath,
-                  fit: BoxFit.contain,
-                ),
+                borderRadius: const BorderRadius.all(Radius.circular(3)),
+                color: const Color(0xFF1B1B1B),
+              ),
+              child: Image.asset(
+                iconPath,
+                fit: BoxFit.contain,
               ),
             ),
           ),
