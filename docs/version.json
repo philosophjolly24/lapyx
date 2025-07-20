@@ -1,5 +1,5 @@
 {
-    "current_version": "1.2.0",
-    "current_version_number": "1",
-    "release_notes": "Added Strategy data etc"
+    "current_version": "1.3.0",
+    "current_version_number": "2",
+    "release_notes": "Added new maps: Bind and Corrode. Added side switching and updated ability values to more accurately reflect in game size"
 }
