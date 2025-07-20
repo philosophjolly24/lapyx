@@ -56,11 +56,11 @@ class CustomCircleWidget extends ConsumerWidget {
         // Icon in center
         _buildCenterIcon(coordinateSystem, ref),
 
-        Container(
-          width: 4,
-          height: 4,
-          color: Colors.red,
-        ),
+        // Container(
+        //   width: 4,
+        //   height: 4,
+        //   color: Colors.red,
+        // ),
       ],
     );
   }

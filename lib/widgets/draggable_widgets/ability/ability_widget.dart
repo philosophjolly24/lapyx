@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
-import 'package:icarus/providers/ability_provider.dart';
-import 'package:icarus/widgets/mouse_watch.dart';
 
 class AbilityWidget extends ConsumerWidget {
   const AbilityWidget({

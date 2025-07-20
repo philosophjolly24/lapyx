@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:icarus/const/color_option.dart';
 
 class Settings {
-  static const double agentSize = 30;
+  static const double agentSize = 40;
   static const double abilitySize = 25;
   static const Color abilityBGColor = Color(0xFF1B1B1B);
 
@@ -29,5 +29,5 @@ class Settings {
   static final Uri dicordLink = Uri.parse("https://discord.gg/PN2uKwCqYB");
 
   static const Duration autoSaveOffset = Duration(seconds: 15);
-  static const int versionNumber = 1;
+  static const int versionNumber = 2;
 }
