@@ -176,7 +176,7 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text('No strategies available'),
-                          Text("Drop an .ica file")
+                          Text("Create a new strategy or drop an .ica file")
                         ],
                       ),
                     ),
