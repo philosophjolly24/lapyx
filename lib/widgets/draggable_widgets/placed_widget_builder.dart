@@ -101,11 +101,14 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                           dragAnchorStrategy: ref
                               .read(screenZoomProvider.notifier)
                               .zoomDragAnchorStrategy,
-                          feedback: ZoomTransform(
-                            child: AgentWidget(
-                              isAlly: agent.isAlly,
-                              id: "",
-                              agent: AgentData.agents[agent.type]!,
+                          feedback: Opacity(
+                            opacity: Settings.feedbackOpacity,
+                            child: ZoomTransform(
+                              child: AgentWidget(
+                                isAlly: agent.isAlly,
+                                id: "",
+                                agent: AgentData.agents[agent.type]!,
+                              ),
                             ),
                           ),
                           childWhenDragging: const SizedBox.shrink(),

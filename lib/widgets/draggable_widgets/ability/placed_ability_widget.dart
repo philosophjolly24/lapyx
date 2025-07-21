@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/abilities.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/placed_classes.dart';
+import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/rotatable_widget.dart';
@@ -67,9 +68,12 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
           dragAnchorStrategy:
               ref.read(screenZoomProvider.notifier).zoomDragAnchorStrategy,
           data: widget.data,
-          feedback: ZoomTransform(
-              child:
-                  widget.ability.data.abilityData!.createWidget(null, isAlly)),
+          feedback: Opacity(
+            opacity: Settings.feedbackOpacity,
+            child: ZoomTransform(
+                child: widget.ability.data.abilityData!
+                    .createWidget(null, isAlly)),
+          ),
           childWhenDragging: const SizedBox.shrink(),
           onDragEnd: widget.onDragEnd,
           child:
@@ -86,9 +90,12 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     .read(screenZoomProvider.notifier)
                     .zoomDragAnchorStrategy,
                 data: widget.data,
-                feedback: ZoomTransform(
-                    child: widget.ability.data.abilityData!
-                        .createWidget(null, isAlly)),
+                feedback: Opacity(
+                  opacity: Settings.feedbackOpacity,
+                  child: ZoomTransform(
+                      child: widget.ability.data.abilityData!
+                          .createWidget(null, isAlly)),
+                ),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
                 child: widget.ability.data.abilityData!
@@ -144,22 +151,25 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   dragAnchorStrategy: ref
                       .read(screenZoomProvider.notifier)
                       .zoomDragAnchorStrategy,
-                  feedback: Transform.rotate(
-                    angle: localRotation!,
-                    alignment: Alignment.topLeft,
-                    origin: widget.ability.data.abilityData!
-                        .getAnchorPoint()
-                        .scale(
-                            coordinateSystem.scaleFactor *
-                                ref.watch(screenZoomProvider),
-                            coordinateSystem.scaleFactor *
-                                ref.watch(screenZoomProvider)),
-                    child: ZoomTransform(
-                      child: ref
-                          .watch(abilityProvider)[index]
-                          .data
-                          .abilityData!
-                          .createWidget(widget.id, isAlly, localRotation!),
+                  feedback: Opacity(
+                    opacity: Settings.feedbackOpacity,
+                    child: Transform.rotate(
+                      angle: localRotation!,
+                      alignment: Alignment.topLeft,
+                      origin: widget.ability.data.abilityData!
+                          .getAnchorPoint()
+                          .scale(
+                              coordinateSystem.scaleFactor *
+                                  ref.watch(screenZoomProvider),
+                              coordinateSystem.scaleFactor *
+                                  ref.watch(screenZoomProvider)),
+                      child: ZoomTransform(
+                        child: ref
+                            .watch(abilityProvider)[index]
+                            .data
+                            .abilityData!
+                            .createWidget(widget.id, isAlly, localRotation!),
+                      ),
                     ),
                   ),
                   childWhenDragging: const SizedBox.shrink(),

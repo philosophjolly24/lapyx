@@ -29,7 +29,7 @@ class AgentFeedback extends ConsumerWidget {
             Radius.circular(3),
           ),
         ),
-        width: coordinateSystem.scale(30),
+        width: coordinateSystem.scale(Settings.agentSize),
         child: Image.asset(agent.iconPath),
       ),
     );
