@@ -20,7 +20,7 @@ class AbiilityBar extends ConsumerWidget {
     if (ref.watch(abilityBarProvider) == null) //
       return const SizedBox.shrink();
 
-    final mapScale = Maps.mapScale[ref.watch(mapProvider).currentMap]!;
+    final mapScale = Maps.mapScale[ref.watch(mapProvider).currentMap] ?? 1;
 
     AgentData activeAgent = ref.watch(abilityBarProvider)!;
     return Container(
@@ -49,9 +49,9 @@ class AbiilityBar extends ConsumerWidget {
 
                   double scaleFactor = CoordinateSystem.instance.scaleFactor *
                       ref.read(screenZoomProvider);
-                  log("Center point dragging value${info.abilityData!.getAnchorPoint().scale(scaleFactor, scaleFactor).toString()}");
+                  log("Center point dragging value${info.abilityData!.getAnchorPoint(mapScale).scale(scaleFactor, scaleFactor).toString()}");
                   return info.abilityData!
-                      .getAnchorPoint()
+                      .getAnchorPoint(mapScale)
                       .scale(scaleFactor, scaleFactor);
                 },
                 feedback: Opacity(

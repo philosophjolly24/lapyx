@@ -37,10 +37,9 @@ class CustomSquareWidget extends ConsumerWidget {
 
     final mapScale = Maps.mapScale[ref.watch(mapProvider).currentMap] ?? 1;
 
-    final scaledWidth = coordinateSystem.scale(width * mapScale);
-    final scaledHeight = coordinateSystem.scale(height * mapScale);
-    final scaledDistance =
-        coordinateSystem.scale((distanceBetweenAOE ?? 0) * mapScale);
+    final scaledWidth = coordinateSystem.scale(width);
+    final scaledHeight = coordinateSystem.scale(height);
+    final scaledDistance = coordinateSystem.scale((distanceBetweenAOE ?? 0));
     final scaledAbilitySize = coordinateSystem.scale(Settings.abilitySize);
     final totalHeight = scaledHeight + scaledDistance + scaledAbilitySize;
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/widgets.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/settings.dart';
@@ -7,8 +9,9 @@ import 'package:icarus/widgets/draggable_widgets/ability/custom_square_widget.da
 import 'package:icarus/widgets/draggable_widgets/agents/agent_icon_widget.dart';
 
 abstract class Ability {
-  Offset getAnchorPoint();
-  Widget createWidget(String? id, bool isAlly, [double? rotation]);
+  Offset getAnchorPoint([double? mapScale]);
+  Widget createWidget(String? id, bool isAlly, double mapScale,
+      [double? rotation]);
 }
 
 class BaseAbility extends Ability {
@@ -17,7 +20,8 @@ class BaseAbility extends Ability {
   BaseAbility({required this.iconPath});
 
   @override
-  Widget createWidget(String? id, bool isAlly, [double? rotation]) {
+  Widget createWidget(String? id, bool isAlly, double mapScale,
+      [double? rotation]) {
     return AbilityWidget(
       isAlly: isAlly,
       iconPath: iconPath,
@@ -26,7 +30,7 @@ class BaseAbility extends Ability {
   }
 
   @override
-  Offset getAnchorPoint() {
+  Offset getAnchorPoint([double? mapScale]) {
     return const Offset(Settings.abilitySize / 2, Settings.abilitySize / 2);
   }
 }
@@ -37,13 +41,14 @@ class ImageAbility extends Ability {
 
   ImageAbility({required this.imagePath, required this.size});
   @override
-  Widget createWidget(String? id, bool isAlly, [double? rotation]) {
+  Widget createWidget(String? id, bool isAlly, double mapScale,
+      [double? rotation]) {
     return AgentIconWidget(imagePath: imagePath, size: size);
   }
 
   //TODO: Add mapscale
   @override
-  Offset getAnchorPoint() {
+  Offset getAnchorPoint([double? mapScale]) {
     return Offset(size / 2, size / 2);
   }
 }
@@ -71,21 +76,22 @@ class CircleAbility extends Ability {
   final double? perimeterSize;
 
   @override
-  Offset getAnchorPoint() {
-    return Offset(size / 2, size / 2);
+  Offset getAnchorPoint([double? mapScale]) {
+    return Offset((size * mapScale!) / 2, (size * mapScale) / 2);
   }
 
   @override
-  Widget createWidget(String? id, bool isAlly, [double? rotation]) {
+  Widget createWidget(String? id, bool isAlly, double mapScale,
+      [double? rotation]) {
     return CustomCircleWidget(
       iconPath: iconPath,
-      size: size,
+      size: size * mapScale,
       outlineColor: outlineColor,
       hasCenterDot: hasCenterDot ?? true,
       hasPerimeter: hasPerimeter ?? false,
       opacity: opacity,
       fillColor: fillColor,
-      innerSize: perimeterSize,
+      innerSize: perimeterSize != null ? perimeterSize! * mapScale : null,
       id: id,
       isAlly: isAlly,
     );
@@ -109,23 +115,28 @@ class SquareAbility extends Ability {
   });
 
   @override
-  Offset getAnchorPoint() {
+  Offset getAnchorPoint([double? mapScale]) {
     return Offset(
-      width / 2,
-      height + (distanceBetweenAOE ?? 0) + (Settings.abilitySize / 2),
+      (width * mapScale!) / 2,
+      (height * mapScale) +
+          ((distanceBetweenAOE ?? 0) * mapScale) +
+          (Settings.abilitySize / 2),
     );
   }
 
   @override
-  Widget createWidget(String? id, bool isAlly, [double? rotation]) {
+  Widget createWidget(String? id, bool isAlly, double mapScale,
+      [double? rotation]) {
+    log("Map scale: $mapScale");
     return CustomSquareWidget(
       color: color,
-      width: width,
-      height: height,
+      width: width * mapScale,
+      height: height * mapScale,
       iconPath: iconPath,
-      distanceBetweenAOE: distanceBetweenAOE,
+      distanceBetweenAOE:
+          distanceBetweenAOE != null ? distanceBetweenAOE! * mapScale : null,
       rotation: rotation,
-      origin: getAnchorPoint(),
+      origin: getAnchorPoint(mapScale),
       id: id,
       isAlly: isAlly,
     );

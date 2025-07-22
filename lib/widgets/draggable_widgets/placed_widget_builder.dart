@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
@@ -35,6 +36,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
+    final mapScale = Maps.mapScale[ref.watch(mapProvider).currentMap];
     return LayoutBuilder(
       builder: (context, constraints) {
         final interactionState = ref.watch(interactionStateProvider);
@@ -70,8 +72,8 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
 
                           Offset virtualOffset =
                               coordinateSystem.screenToCoordinate(localOffset);
-                          Offset safeArea =
-                              ability.data.abilityData!.getAnchorPoint();
+                          Offset safeArea = ability.data.abilityData!
+                              .getAnchorPoint(mapScale);
 
                           if (coordinateSystem.isOutOfBounds(virtualOffset
                               .translate(safeArea.dx, safeArea.dy))) {

@@ -59,7 +59,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
           PlacedWidget.getIndexByID(widget.id, ref.watch(abilityProvider));
       final bool isAlly = ref.watch(abilityProvider)[index].isAlly;
 
-      final mapScale = Maps.mapScale[ref.watch(mapProvider).currentMap]!;
+      final mapScale = Maps.mapScale[ref.watch(mapProvider).currentMap] ?? 1;
       //Linking the local rotation with global rotation for things like undo redo
       if (ref.watch(abilityProvider)[index].rotation != localRotation! &&
           rotationOrigin == Offset.zero) {
@@ -106,7 +106,8 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
               )
             : RotatableWidget(
                 rotation: localRotation!,
-                origin: widget.ability.data.abilityData!.getAnchorPoint(),
+                origin:
+                    widget.ability.data.abilityData!.getAnchorPoint(mapScale),
                 onPanStart: (details) {
                   log("Rotation Start");
                   ref
@@ -114,7 +115,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                       .updateRotationHistory(index);
                   final box = context.findRenderObject() as RenderBox;
                   final bottomCenter = widget.ability.data.abilityData!
-                      .getAnchorPoint()
+                      .getAnchorPoint(mapScale)
                       .scale(coordinateSystem.scaleFactor,
                           coordinateSystem.scaleFactor);
                   // final bottomCenter =
@@ -160,7 +161,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                       angle: localRotation!,
                       alignment: Alignment.topLeft,
                       origin: widget.ability.data.abilityData!
-                          .getAnchorPoint()
+                          .getAnchorPoint(mapScale)
                           .scale(
                               coordinateSystem.scaleFactor *
                                   ref.watch(screenZoomProvider),
@@ -171,7 +172,8 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                             .watch(abilityProvider)[index]
                             .data
                             .abilityData!
-                            .createWidget(widget.id, isAlly, localRotation!),
+                            .createWidget(
+                                widget.id, isAlly, mapScale, localRotation!),
                       ),
                     ),
                   ),
@@ -182,7 +184,8 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                       .watch(abilityProvider)[index]
                       .data
                       .abilityData!
-                      .createWidget(widget.id, isAlly, localRotation!),
+                      .createWidget(
+                          widget.id, isAlly, mapScale, localRotation!),
                 ),
               ),
       );
