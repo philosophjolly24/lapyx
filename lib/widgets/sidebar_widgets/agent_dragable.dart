@@ -40,7 +40,10 @@ class AgentDragable extends ConsumerWidget {
                     .read(interactionStateProvider.notifier)
                     .update(InteractionState.navigation);
               },
-              feedback: ZoomTransform(child: AgentFeedback(agent: agent)),
+              feedback: Opacity(
+                opacity: Settings.feedbackOpacity,
+                child: ZoomTransform(child: AgentFeedback(agent: agent)),
+              ),
               dragAnchorStrategy: (draggable, context, position) =>
                   const Offset(
                 (Settings.agentSize / 2),

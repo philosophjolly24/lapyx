@@ -22,6 +22,7 @@ class Maps {
     MapValue.lotus,
     MapValue.corrode,
     MapValue.split,
+    MapValue.sunset,
   ];
 
   static List<MapValue> outofplayMaps = [
@@ -47,15 +48,15 @@ class Maps {
   static Map<MapValue, double> mapScale = {
     MapValue.ascent: 1,
     MapValue.breeze: 1,
-    MapValue.lotus: 2,
-    MapValue.icebox: 1,
-    MapValue.sunset: 1,
-    MapValue.split: 1,
-    MapValue.haven: 1,
+    MapValue.lotus: 1.25,
+    MapValue.icebox: 1.05,
+    MapValue.split: 1.18,
+    MapValue.haven: 1.09,
     MapValue.fracture: 1,
-    MapValue.abyss: 1,
     MapValue.pearl: 1,
-    MapValue.bind: 1,
-    MapValue.corrode: 1,
+    MapValue.abyss: 1,
+    MapValue.sunset: 1.048,
+    MapValue.bind: .835,
+    MapValue.corrode: .985,
   };
 }
