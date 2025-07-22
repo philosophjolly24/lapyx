@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
+import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/widgets/mouse_watch.dart';
 
 class CustomSquareWidget extends ConsumerWidget {
@@ -32,9 +34,13 @@ class CustomSquareWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final coordinateSystem = CoordinateSystem.instance;
-    final scaledWidth = coordinateSystem.scale(width);
-    final scaledHeight = coordinateSystem.scale(height);
-    final scaledDistance = coordinateSystem.scale(distanceBetweenAOE ?? 0);
+
+    final mapScale = Maps.mapScale[ref.watch(mapProvider).currentMap] ?? 1;
+
+    final scaledWidth = coordinateSystem.scale(width * mapScale);
+    final scaledHeight = coordinateSystem.scale(height * mapScale);
+    final scaledDistance =
+        coordinateSystem.scale((distanceBetweenAOE ?? 0) * mapScale);
     final scaledAbilitySize = coordinateSystem.scale(Settings.abilitySize);
     final totalHeight = scaledHeight + scaledDistance + scaledAbilitySize;
 

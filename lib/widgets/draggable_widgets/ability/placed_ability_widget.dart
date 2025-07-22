@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/abilities.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
+import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/rotatable_widget.dart';
 import 'dart:math' as math;
@@ -57,6 +59,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
           PlacedWidget.getIndexByID(widget.id, ref.watch(abilityProvider));
       final bool isAlly = ref.watch(abilityProvider)[index].isAlly;
 
+      final mapScale = Maps.mapScale[ref.watch(mapProvider).currentMap]!;
       //Linking the local rotation with global rotation for things like undo redo
       if (ref.watch(abilityProvider)[index].rotation != localRotation! &&
           rotationOrigin == Offset.zero) {
@@ -72,12 +75,12 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
             opacity: Settings.feedbackOpacity,
             child: ZoomTransform(
                 child: widget.ability.data.abilityData!
-                    .createWidget(null, isAlly)),
+                    .createWidget(null, isAlly, mapScale)),
           ),
           childWhenDragging: const SizedBox.shrink(),
           onDragEnd: widget.onDragEnd,
-          child:
-              widget.ability.data.abilityData!.createWidget(widget.id, isAlly),
+          child: widget.ability.data.abilityData!
+              .createWidget(widget.id, isAlly, mapScale),
         );
       }
 
@@ -94,12 +97,12 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   opacity: Settings.feedbackOpacity,
                   child: ZoomTransform(
                       child: widget.ability.data.abilityData!
-                          .createWidget(null, isAlly)),
+                          .createWidget(null, isAlly, mapScale)),
                 ),
                 childWhenDragging: const SizedBox.shrink(),
                 onDragEnd: widget.onDragEnd,
                 child: widget.ability.data.abilityData!
-                    .createWidget(widget.id, isAlly),
+                    .createWidget(widget.id, isAlly, mapScale),
               )
             : RotatableWidget(
                 rotation: localRotation!,

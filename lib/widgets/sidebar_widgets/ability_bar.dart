@@ -4,9 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/const/maps.dart';
+import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_bar_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
+import 'package:icarus/providers/map_provider.dart';
+import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/providers/team_provider.dart';
+import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 
 class AbiilityBar extends ConsumerWidget {
   const AbiilityBar({super.key});
@@ -14,6 +19,8 @@ class AbiilityBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     if (ref.watch(abilityBarProvider) == null) //
       return const SizedBox.shrink();
+
+    final mapScale = Maps.mapScale[ref.watch(mapProvider).currentMap]!;
 
     AgentData activeAgent = ref.watch(abilityBarProvider)!;
     return Container(
@@ -40,16 +47,23 @@ class AbiilityBar extends ConsumerWidget {
                 dragAnchorStrategy: (draggable, context, position) {
                   final info = draggable.data as AbilityInfo;
 
-                  double scaleFactor = CoordinateSystem.instance.scaleFactor;
+                  double scaleFactor = CoordinateSystem.instance.scaleFactor *
+                      ref.read(screenZoomProvider);
                   log("Center point dragging value${info.abilityData!.getAnchorPoint().scale(scaleFactor, scaleFactor).toString()}");
                   return info.abilityData!
                       .getAnchorPoint()
                       .scale(scaleFactor, scaleFactor);
                 },
-                feedback:
-                    activeAgent.abilities[index].abilityData!.createWidget(
-                  null,
-                  ref.watch(teamProvider),
+                feedback: Opacity(
+                  opacity: Settings.feedbackOpacity,
+                  child: ZoomTransform(
+                    child:
+                        activeAgent.abilities[index].abilityData!.createWidget(
+                      null,
+                      ref.watch(teamProvider),
+                      mapScale,
+                    ),
+                  ),
                 ),
 
                 // dragAnchorStrategy: centerDragStrategy,

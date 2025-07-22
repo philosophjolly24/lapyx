@@ -2,8 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/maps.dart';
-import 'package:icarus/providers/ability_provider.dart';
-import 'package:icarus/providers/agent_provider.dart';
 
 final mapProvider = NotifierProvider<MapProvider, MapState>(MapProvider.new);
 
@@ -31,8 +29,6 @@ class MapProvider extends Notifier<MapState> {
 
   void switchSide() {
     state = state.copyWith(isAttack: !state.isAttack);
-    // ref.read(agentProvider.notifier).switchSides();
-    // ref.read(abilityProvider.notifier).switchSides();
   }
 
   String toJson() {

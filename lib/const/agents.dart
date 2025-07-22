@@ -146,8 +146,8 @@ class AgentData implements DraggableData {
   final String name;
   final String iconPath;
 
-  // static const double inGameMeters = 4.952941176470588;
-  static const double inGameMeters = 6;
+  static const double inGameMeters = 5.5;
+  // static const double inGameMeters = 6;
 
   static const double inGameMetersDiameter = inGameMeters * 2;
   AgentData({
@@ -158,12 +158,13 @@ class AgentData implements DraggableData {
         abilities = List.generate(
           4,
           (index) => AbilityInfo(
-              name: 'Ability ${index + 1}', // You can override this later
-              iconPath: 'assets/agents/$name/${index + 1}.webp',
-              type: type,
-              index: index,
-              abilityData: BaseAbility(
-                  iconPath: 'assets/agents/$name/${index + 1}.webp')),
+            name: 'Ability ${index + 1}', // You can override this later
+            iconPath: 'assets/agents/$name/${index + 1}.webp',
+            type: type,
+            index: index,
+            abilityData:
+                BaseAbility(iconPath: 'assets/agents/$name/${index + 1}.webp'),
+          ),
         );
 
   static Map<AgentType, AgentData> agents = {
@@ -605,7 +606,7 @@ class AgentData implements DraggableData {
 
       agent.abilities.first.abilityData = CircleAbility(
         iconPath: agent.abilities.first.iconPath,
-        size: 8,
+        size: 6.5,
         outlineColor: Colors.blue,
         hasCenterDot: true,
       );
