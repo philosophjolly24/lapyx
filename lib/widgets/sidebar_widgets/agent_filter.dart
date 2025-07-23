@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/agents.dart';
 import 'package:icarus/providers/agent_filter_provider.dart';
 
 class AgentFilter extends ConsumerWidget {
@@ -9,6 +10,13 @@ class AgentFilter extends ConsumerWidget {
     "All",
     "On Map",
     "Role",
+  ];
+
+  final List<AgentRole> agentRoles = [
+    AgentRole.duelist,
+    AgentRole.controller,
+    AgentRole.initiator,
+    AgentRole.sentinel,
   ];
 
   @override

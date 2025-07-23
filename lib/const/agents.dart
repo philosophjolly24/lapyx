@@ -34,6 +34,13 @@ enum AgentType {
 
 enum AgentRole { controller, duelist, initiator, sentinel }
 
+const Map<AgentRole, String> agentRoleNames = {
+  AgentRole.controller: 'controller',
+  AgentRole.duelist: 'duelist',
+  AgentRole.initiator: 'initiator',
+  AgentRole.sentinel: 'sentinel',
+};
+
 abstract class DraggableData {}
 
 // Virtual distance to valorant distance is valmeters * 4.952941176470588 = vitual distance
