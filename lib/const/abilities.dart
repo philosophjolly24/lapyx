@@ -43,13 +43,13 @@ class ImageAbility extends Ability {
   @override
   Widget createWidget(String? id, bool isAlly, double mapScale,
       [double? rotation]) {
-    return AgentIconWidget(imagePath: imagePath, size: size);
+    return AgentIconWidget(imagePath: imagePath, size: size * mapScale);
   }
 
   //TODO: Add mapscale
   @override
   Offset getAnchorPoint([double? mapScale]) {
-    return Offset(size / 2, size / 2);
+    return Offset(size * mapScale! / 2, size * mapScale / 2);
   }
 }
 
