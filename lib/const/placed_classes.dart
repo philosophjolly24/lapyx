@@ -178,6 +178,8 @@ class PlacedAbility extends PlacedWidget {
 
   double rotation = 0;
 
+  double length = 0;
+
   void updateRotation(double newRotation) {
     rotation = newRotation;
   }
@@ -245,6 +247,12 @@ class RotationAction extends WidgetAction {
   final double rotation;
 
   RotationAction({required this.rotation});
+}
+
+class LengthAction extends WidgetAction {
+  final double length;
+
+  LengthAction({required this.length});
 }
 
 class PositionAction extends WidgetAction {

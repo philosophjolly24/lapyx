@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/ability/center_square_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/custom_circle_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/custom_square_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/agents/agent_icon_widget.dart';
@@ -109,6 +110,8 @@ class SquareAbility extends Ability {
   final bool hasTopborder;
   final bool hasSideBorders;
   final bool isTransparent;
+  final double minHeight;
+
   SquareAbility({
     required this.width,
     required this.height,
@@ -119,7 +122,8 @@ class SquareAbility extends Ability {
     this.hasTopborder = false,
     this.hasSideBorders = false,
     this.isTransparent = false,
-  });
+    double? minHeight,
+  }) : minHeight = minHeight ?? height;
 
   @override
   Offset getAnchorPoint([double? mapScale]) {
@@ -149,6 +153,45 @@ class SquareAbility extends Ability {
       hasSideBorders: hasSideBorders,
       isWall: isWall,
       isTransparent: isTransparent,
+    );
+  }
+}
+
+class CenterSquareAbility extends Ability {
+  final double width;
+  final double height;
+  final String iconPath;
+  final Color color;
+
+  CenterSquareAbility({
+    required this.width,
+    required this.height,
+    required this.iconPath,
+    required this.color,
+    double? minHeight,
+  });
+
+  @override
+  Offset getAnchorPoint([double? mapScale]) {
+    return Offset(
+      (width * mapScale!) / 2,
+      (height * mapScale),
+    );
+  }
+
+  @override
+  Widget createWidget(String? id, bool isAlly, double mapScale,
+      [double? rotation]) {
+    log("Map scale: $mapScale");
+    return CenterSquareWidget(
+      color: color,
+      width: width * mapScale,
+      height: height * mapScale,
+      iconPath: iconPath,
+      rotation: rotation,
+      origin: getAnchorPoint(mapScale),
+      id: id,
+      isAlly: isAlly,
     );
   }
 }
