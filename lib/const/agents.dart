@@ -200,11 +200,17 @@ class AgentData implements DraggableData {
         role: AgentRole.duelist,
         name: "Phoenix",
       );
-
+      agent.abilities.first.abilityData = SquareAbility(
+        width: 8 * inGameMeters,
+        height: 21 * inGameMeters,
+        isWall: true,
+        iconPath: agent.abilities.first.iconPath,
+        color: Colors.redAccent,
+      );
       agent.abilities[2].abilityData = CircleAbility(
         iconPath: agent.abilities[2].iconPath,
         size: 4.5,
-        outlineColor: Colors.orangeAccent,
+        outlineColor: Colors.redAccent,
         hasCenterDot: true,
       );
 
@@ -284,6 +290,14 @@ class AgentData implements DraggableData {
         size: 4.5,
         outlineColor: Colors.greenAccent,
         hasCenterDot: true,
+      );
+
+      agent.abilities[2].abilityData = SquareAbility(
+        width: 8 * inGameMeters,
+        height: 60 * inGameMeters,
+        isWall: true,
+        iconPath: agent.abilities[2].iconPath,
+        color: Colors.greenAccent,
       );
 
       return agent;
@@ -531,6 +545,13 @@ class AgentData implements DraggableData {
         name: "Neon",
       );
 
+      agent.abilities.first.abilityData = SquareAbility(
+        width: 3.5 * inGameMeters,
+        height: 45 * inGameMeters,
+        iconPath: agent.abilities.first.iconPath,
+        color: Colors.blueAccent,
+        hasSideBorders: true,
+      );
       agent.abilities[1].abilityData = CircleAbility(
         iconPath: agent.abilities[1].iconPath,
         size: 5,

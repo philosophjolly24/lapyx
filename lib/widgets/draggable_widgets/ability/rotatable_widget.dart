@@ -11,6 +11,7 @@ class RotatableWidget extends StatelessWidget {
   final Function(DragStartDetails details) onPanStart;
 
   final Function(DragEndDetails details) onPanEnd;
+  final bool isDragging;
 
   const RotatableWidget({
     super.key,
@@ -20,6 +21,7 @@ class RotatableWidget extends StatelessWidget {
     required this.onPanStart,
     required this.onPanEnd,
     required this.origin,
+    required this.isDragging,
   });
 
   @override
@@ -27,37 +29,39 @@ class RotatableWidget extends StatelessWidget {
     final coordinateSystem = CoordinateSystem.instance;
     final rotationOrigin = origin.scale(
         coordinateSystem.scaleFactor, coordinateSystem.scaleFactor);
+
+    log(isDragging.toString());
     return Transform.rotate(
       angle: rotation,
       alignment: Alignment.topLeft,
       origin: rotationOrigin,
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           child,
-
-          //Circle
-          Positioned.fill(
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onPanStart: onPanStart,
-                onPanUpdate: onPanUpdate,
-                onPanEnd: onPanEnd,
-                onTap: () {
-                  log("I'm being hit");
-                },
-                child: Container(
-                  width: coordinateSystem.scale(15),
-                  height: coordinateSystem.scale(15),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
+          if (!isDragging)
+            Positioned(
+              left: coordinateSystem.scale(origin.dx - 7.5),
+              child: SizedBox(
+                width: coordinateSystem.scale(15),
+                height: coordinateSystem.scale(15),
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onPanStart: onPanStart,
+                  onPanUpdate: onPanUpdate,
+                  onPanEnd: onPanEnd,
+                  onTap: () {
+                    log("I'm being hit");
+                  },
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

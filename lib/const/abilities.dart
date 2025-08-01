@@ -104,14 +104,21 @@ class SquareAbility extends Ability {
   final String iconPath;
   final Color color;
 
-  final double? distanceBetweenAOE;
-
+  final double distanceBetweenAOE;
+  final bool isWall;
+  final bool hasTopborder;
+  final bool hasSideBorders;
+  final bool isTransparent;
   SquareAbility({
     required this.width,
     required this.height,
     required this.iconPath,
     required this.color,
-    this.distanceBetweenAOE,
+    this.distanceBetweenAOE = 0,
+    this.isWall = false,
+    this.hasTopborder = false,
+    this.hasSideBorders = false,
+    this.isTransparent = false,
   });
 
   @override
@@ -119,7 +126,7 @@ class SquareAbility extends Ability {
     return Offset(
       (width * mapScale!) / 2,
       (height * mapScale) +
-          ((distanceBetweenAOE ?? 0) * mapScale) +
+          (distanceBetweenAOE * mapScale) +
           (Settings.abilitySize / 2),
     );
   }
@@ -133,12 +140,15 @@ class SquareAbility extends Ability {
       width: width * mapScale,
       height: height * mapScale,
       iconPath: iconPath,
-      distanceBetweenAOE:
-          distanceBetweenAOE != null ? distanceBetweenAOE! * mapScale : null,
+      distanceBetweenAOE: distanceBetweenAOE * mapScale,
       rotation: rotation,
       origin: getAnchorPoint(mapScale),
       id: id,
       isAlly: isAlly,
+      hasTopborder: hasTopborder,
+      hasSideBorders: hasSideBorders,
+      isWall: isWall,
+      isTransparent: isTransparent,
     );
   }
 }

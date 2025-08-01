@@ -39,6 +39,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
   GlobalKey globalKey = GlobalKey();
 
   double? localRotation;
+  bool isDragging = false;
 
   @override
   void initState() {
@@ -49,7 +50,6 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
-
     if (localRotation == null) {
       return const SizedBox.shrink();
     }
@@ -106,6 +106,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
               )
             : RotatableWidget(
                 rotation: localRotation!,
+                isDragging: isDragging,
                 origin:
                     widget.ability.data.abilityData!.getAnchorPoint(mapScale),
                 onPanStart: (details) {
@@ -178,7 +179,17 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     ),
                   ),
                   childWhenDragging: const SizedBox.shrink(),
-                  onDragEnd: widget.onDragEnd,
+                  onDragStarted: () {
+                    setState(() {
+                      isDragging = true;
+                    });
+                  },
+                  onDragEnd: (DraggableDetails details) {
+                    setState(() {
+                      isDragging = false;
+                    });
+                    widget.onDragEnd(details);
+                  },
                   // dragAnchorStrategy: pointDragAnchorStrategy,
                   child: ref
                       .watch(abilityProvider)[index]
