@@ -194,11 +194,22 @@ class AgentData implements DraggableData {
       role: AgentRole.duelist,
       name: "Raze",
     ),
-    AgentType.pheonix: AgentData(
-      type: AgentType.pheonix,
-      role: AgentRole.duelist,
-      name: "Phoenix",
-    ),
+    AgentType.pheonix: (() {
+      final agent = AgentData(
+        type: AgentType.pheonix,
+        role: AgentRole.duelist,
+        name: "Phoenix",
+      );
+
+      agent.abilities[2].abilityData = CircleAbility(
+        iconPath: agent.abilities[2].iconPath,
+        size: 4.5,
+        outlineColor: Colors.orangeAccent,
+        hasCenterDot: true,
+      );
+
+      return agent;
+    })(),
     AgentType.astra: (() {
       final agent = AgentData(
         type: AgentType.astra,
@@ -387,6 +398,16 @@ class AgentData implements DraggableData {
             const Color.fromARGB(255, 106, 14, 182), // Previously innerColor
       );
 
+      // Turret
+      agent.abilities[2].abilityData = CircleAbility(
+        iconPath: agent.abilities[2].iconPath,
+        size: 40,
+        outlineColor: Colors.white.withAlpha(100),
+        hasCenterDot: true,
+        opacity: 0,
+        fillColor: Colors.transparent, // Previously innerColor
+      );
+
       return agent;
     })(),
     AgentType.brimstone: (() {
@@ -449,7 +470,7 @@ class AgentData implements DraggableData {
     AgentType.chamber: (() {
       final agent = AgentData(
         type: AgentType.chamber,
-        role: AgentRole.initiator,
+        role: AgentRole.sentinel,
         name: "Chamber",
       );
 
@@ -458,8 +479,8 @@ class AgentData implements DraggableData {
         size: 50,
         outlineColor: Colors.white,
         hasCenterDot: true,
-        hasPerimeter: true,
-        perimeterSize: 10 * inGameMetersDiameter,
+        // hasPerimeter: true,
+        // perimeterSize: 10 * inGameMetersDiameter,
         fillColor: Colors.amber,
       );
 
@@ -552,11 +573,22 @@ class AgentData implements DraggableData {
       );
       return agent;
     })(),
-    AgentType.sage: AgentData(
-      type: AgentType.sage,
-      role: AgentRole.sentinel,
-      name: "Sage",
-    ),
+    AgentType.sage: (() {
+      final agent = AgentData(
+        type: AgentType.sage,
+        role: AgentRole.sentinel,
+        name: "Sage",
+      );
+      //TODO: Figure out the radius of the orb
+      agent.abilities[1].abilityData = CircleAbility(
+        iconPath: agent.abilities[1].iconPath,
+        size: 6.5,
+        outlineColor: Colors.blueAccent,
+        hasCenterDot: true,
+      );
+
+      return agent;
+    })(),
     AgentType.clove: (() {
       final agent = AgentData(
         type: AgentType.clove,
@@ -607,7 +639,7 @@ class AgentData implements DraggableData {
     AgentType.deadlock: (() {
       final agent = AgentData(
         type: AgentType.deadlock,
-        role: AgentRole.duelist,
+        role: AgentRole.sentinel,
         name: "Deadlock",
       );
 
