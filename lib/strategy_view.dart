@@ -34,7 +34,7 @@ class _StrategyViewState extends ConsumerState<StrategyView>
 
   void _init() async {
     // Add this line to override the default close handler
-    await windowManager.setPreventClose(true);
+    // await windowManager.setPreventClose(true);
     setState(() {});
   }
 
@@ -120,13 +120,17 @@ class _StrategyViewState extends ConsumerState<StrategyView>
 
   @override
   void onWindowClose() async {
-    bool isPreventClose = await windowManager.isPreventClose();
-    if (!isPreventClose) return;
+    // bool isPreventClose = await windowManager.isPreventClose();
+    // if (!isPreventClose) return;
+
+    if (ref.read(strategyProvider).isSaved) {
+      await windowManager.close(); // Close the window/app
+      return;
+    }
 
     await ref
         .read(strategyProvider.notifier)
         .saveToHive(ref.read(strategyProvider).id);
-
-    await windowManager.destroy(); // Then close the window/app
+    await windowManager.close(); // Close the window/app
   }
 }

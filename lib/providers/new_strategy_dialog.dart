@@ -58,11 +58,11 @@ class _NameStrategyDialogState extends ConsumerState<CreateStrategyDialog> {
             onPressed: () async {
               final strategyName = _textController.text;
               if (strategyName.isNotEmpty) {
-                await ref
+                final strategyID = await ref
                     .read(strategyProvider.notifier)
                     .createNewStrategy(strategyName);
                 if (!context.mounted) return;
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop(strategyID); // Close the dialog
               } else {
                 // Optionally, show an error message if the name is empty
                 ScaffoldMessenger.of(context).showSnackBar(

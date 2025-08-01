@@ -225,7 +225,7 @@ class StrategyProvider extends Notifier<StrategyState> {
         .put(newStrategy.id, newStrategy);
   }
 
-  Future<void> createNewStrategy(String name) async {
+  Future<String> createNewStrategy(String name) async {
     final newID = const Uuid().v4();
     final newStrategy = StrategyData(
       drawingData: [],
@@ -242,6 +242,8 @@ class StrategyProvider extends Notifier<StrategyState> {
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .put(newStrategy.id, newStrategy);
+
+    return newStrategy.id;
   }
 
   Future<void> exportFile(String id) async {

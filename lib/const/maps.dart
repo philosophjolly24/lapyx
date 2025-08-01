@@ -23,12 +23,11 @@ class Maps {
     MapValue.corrode,
     MapValue.split,
     MapValue.sunset,
-  ];
-
-  static List<MapValue> outofplayMaps = [
     MapValue.pearl,
     MapValue.fracture,
   ];
+
+  static List<MapValue> outofplayMaps = [];
 
   static Map<MapValue, String> mapNames = {
     MapValue.ascent: 'ascent',

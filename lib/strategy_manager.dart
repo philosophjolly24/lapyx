@@ -9,6 +9,7 @@ import 'package:icarus/const/update_checker.dart';
 import 'package:icarus/providers/new_strategy_dialog.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_tile.dart';
+import 'package:icarus/strategy_view.dart';
 import 'package:icarus/widgets/bg_dot_painter.dart';
 import 'package:icarus/widgets/custom_drop_target.dart';
 import 'package:window_manager/window_manager.dart';
@@ -46,31 +47,30 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
   }
 
   void _init() async {
-    // Add this line to override the default close handler
-    await windowManager.setPreventClose(true);
     setState(() {});
   }
 
-  @override
-  void onWindowClose() async {
-    bool isPreventClose = await windowManager.isPreventClose();
-    if (!isPreventClose) return;
-
-    await windowManager.destroy(); // Then close the window/app
-  }
-
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.sizeOf(context).height - 90;
     final Size playAreaSize = Size(height * 1.2, height);
     CoordinateSystem(playAreaSize: playAreaSize);
-    void showCreateDialog() {
-      showDialog(
+    void showCreateDialog() async {
+      final String? strategyId = await showDialog<String>(
         context: context,
         builder: (context) {
           return const CreateStrategyDialog();
         },
       );
+
+      if (strategyId != null) {
+        setState(() {
+          _isLoading = true;
+        });
+        if (!context.mounted) return;
+        await navigateWithLoading(context, strategyId);
+      }
     }
 
     // UpdateChecker.checkForUpdate(context);
@@ -202,8 +202,64 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
               },
             ),
           ),
+          if (_isLoading)
+            Positioned.fill(
+                child: IgnorePointer(
+              child: Container(
+                color: const Color.fromARGB(62, 0, 0, 0),
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ))
         ],
       ),
     );
+  }
+
+  Future<void> navigateWithLoading(
+      BuildContext context, String strategyId) async {
+    // Show loading overlay
+    showLoadingOverlay(context);
+
+    try {
+      await ref.read(strategyProvider.notifier).loadFromHive(strategyId);
+
+      if (!context.mounted) return;
+      // Remove loading overlay
+      Navigator.pop(context);
+
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 200),
+          reverseTransitionDuration:
+              const Duration(milliseconds: 200), // pop duration
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const StrategyView(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: ScaleTransition(
+                scale: Tween<double>(begin: 0.9, end: 1.0)
+                    .chain(CurveTween(curve: Curves.easeOut))
+                    .animate(animation),
+                child: child,
+              ),
+            );
+          },
+        ),
+      );
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      // Handle errors
+      Navigator.pop(context); // Remove loading overlay
+      // Show error message
+    }
   }
 }
