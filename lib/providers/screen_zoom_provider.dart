@@ -20,4 +20,8 @@ class ScreenZoomProvider extends Notifier<double> {
     final RenderBox renderObject = context.findRenderObject()! as RenderBox;
     return renderObject.globalToLocal(position).scale(scale, scale);
   }
+
+  Offset zoomOffset(Offset offset) {
+    return Offset(offset.dx * state, offset.dy * state);
+  }
 }

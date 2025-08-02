@@ -617,6 +617,13 @@ class AgentData implements DraggableData {
         role: AgentRole.sentinel,
         name: "Sage",
       );
+
+      agent.abilities.first.abilityData = RotatableImageAbility(
+        imagePath: "assets/agents/Sage/wall.webp",
+        height: 10.4 * inGameMeters,
+        width: 1.5 * inGameMeters,
+      );
+
       //TODO: Figure out the radius of the orb
       agent.abilities[1].abilityData = CircleAbility(
         iconPath: agent.abilities[1].iconPath,

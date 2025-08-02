@@ -47,6 +47,22 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
     localRotation ??= widget.rotation;
   }
 
+  Offset rotateOffset(Offset point, Offset origin, double angle) {
+    // Translate point to origin
+    final dx = point.dx - origin.dx;
+    final dy = point.dy - origin.dy;
+
+    // Rotate around origin using rotation matrix
+    final rotatedX = dx * math.cos(angle) - dy * math.sin(angle);
+    final rotatedY = dx * math.sin(angle) + dy * math.cos(angle);
+
+    // Translate back
+    return Offset(
+      rotatedX + origin.dx,
+      rotatedY + origin.dy,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
@@ -85,7 +101,12 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
       }
 
       if (widget.ability.data.abilityData is SquareAbility ||
-          widget.ability.data.abilityData is CenterSquareAbility) {
+          widget.ability.data.abilityData is CenterSquareAbility ||
+          widget.ability.data.abilityData is RotatableImageAbility) {
+        final centerSquareButtonTop = coordinateSystem.scale(
+                widget.ability.data.abilityData!.getAnchorPoint(mapScale).dy -
+                    Settings.abilitySize) -
+            30;
         final isCenterSquare =
             widget.ability.data.abilityData is CenterSquareAbility;
         return Positioned(
@@ -142,8 +163,22 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
             },
             child: Draggable<PlacedWidget>(
               data: widget.data,
-              dragAnchorStrategy:
-                  ref.read(screenZoomProvider.notifier).zoomDragAnchorStrategy,
+              dragAnchorStrategy: (draggable, context, position) {
+                final RenderBox renderObject =
+                    context.findRenderObject()! as RenderBox;
+                final anchorPoint = widget.ability.data.abilityData!
+                    .getAnchorPoint(mapScale)
+                    .scale(coordinateSystem.scaleFactor,
+                        coordinateSystem.scaleFactor);
+                Offset rotatedPos = rotateOffset(
+                    renderObject.globalToLocal(position),
+                    anchorPoint,
+                    localRotation!);
+
+                return ref
+                    .read(screenZoomProvider.notifier)
+                    .zoomOffset(rotatedPos);
+              },
               feedback: Opacity(
                 opacity: Settings.feedbackOpacity,
                 child: Transform.rotate(

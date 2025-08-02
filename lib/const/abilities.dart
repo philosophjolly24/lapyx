@@ -7,6 +7,7 @@ import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/center_square_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/custom_circle_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/custom_square_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/ability/rotatable_image_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/agents/agent_icon_widget.dart';
 
 abstract class Ability {
@@ -192,6 +193,33 @@ class CenterSquareAbility extends Ability {
       origin: getAnchorPoint(mapScale),
       id: id,
       isAlly: isAlly,
+    );
+  }
+}
+
+class RotatableImageAbility extends Ability {
+  final String imagePath;
+  final double height;
+  final double width;
+
+  RotatableImageAbility({
+    required this.imagePath,
+    required this.height,
+    required this.width,
+  });
+
+  @override
+  Offset getAnchorPoint([double? mapScale]) {
+    return Offset(width * mapScale! / 2, (height * mapScale / 2) + 30);
+  }
+
+  @override
+  Widget createWidget(String? id, bool isAlly, double mapScale,
+      [double? rotation]) {
+    return RotatableImageWidget(
+      imagePath: imagePath,
+      height: height * mapScale,
+      width: width * mapScale,
     );
   }
 }
