@@ -84,121 +84,128 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
         );
       }
 
+      if (widget.ability.data.abilityData is SquareAbility ||
+          widget.ability.data.abilityData is CenterSquareAbility) {
+        final isCenterSquare =
+            widget.ability.data.abilityData is CenterSquareAbility;
+        return Positioned(
+          left: coordinateSystem.coordinateToScreen(widget.ability.position).dx,
+          top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
+          child: RotatableWidget(
+            buttonTop: isCenterSquare
+                ? widget.ability.data.abilityData!.getAnchorPoint(mapScale).dy -
+                    Settings.abilitySize -
+                    30
+                : null,
+            rotation: localRotation!,
+            isDragging: isDragging,
+            origin: widget.ability.data.abilityData!.getAnchorPoint(mapScale),
+            onPanStart: (details) {
+              log("Rotation Start");
+              ref.read(abilityProvider.notifier).updateRotationHistory(index);
+              final box = context.findRenderObject() as RenderBox;
+              final bottomCenter = widget.ability.data.abilityData!
+                  .getAnchorPoint(mapScale)
+                  .scale(coordinateSystem.scaleFactor,
+                      coordinateSystem.scaleFactor);
+              // final bottomCenter =
+              //     Offset(box.size.width / 2, box.size.height);
+
+              rotationOrigin = box.localToGlobal(bottomCenter);
+            },
+            onPanUpdate: (details) {
+              if (rotationOrigin == Offset.zero) return;
+
+              final currentPosition = details.globalPosition;
+
+              // Calculate angles
+              final Offset currentPositionNormalized =
+                  (currentPosition - rotationOrigin);
+
+              double currentAngle = math.atan2(
+                  currentPositionNormalized.dy, currentPositionNormalized.dx);
+
+              // // Update rotation
+              final newRotation = (currentAngle) + (math.pi / 2);
+
+              setState(() {
+                localRotation = newRotation;
+              });
+            },
+            onPanEnd: (details) {
+              ref
+                  .read(abilityProvider.notifier)
+                  .updateRotation(index, localRotation!);
+              setState(() {
+                rotationOrigin = Offset.zero;
+              });
+            },
+            child: Draggable<PlacedWidget>(
+              data: widget.data,
+              dragAnchorStrategy:
+                  ref.read(screenZoomProvider.notifier).zoomDragAnchorStrategy,
+              feedback: Opacity(
+                opacity: Settings.feedbackOpacity,
+                child: Transform.rotate(
+                  angle: localRotation!,
+                  alignment: Alignment.topLeft,
+                  origin: widget.ability.data.abilityData!
+                      .getAnchorPoint(mapScale)
+                      .scale(
+                          coordinateSystem.scaleFactor *
+                              ref.watch(screenZoomProvider),
+                          coordinateSystem.scaleFactor *
+                              ref.watch(screenZoomProvider)),
+                  child: ZoomTransform(
+                    child: ref
+                        .watch(abilityProvider)[index]
+                        .data
+                        .abilityData!
+                        .createWidget(
+                            widget.id, isAlly, mapScale, localRotation!),
+                  ),
+                ),
+              ),
+              childWhenDragging: const SizedBox.shrink(),
+              onDragStarted: () {
+                setState(() {
+                  isDragging = true;
+                });
+              },
+              onDragEnd: (DraggableDetails details) {
+                setState(() {
+                  isDragging = false;
+                });
+                widget.onDragEnd(details);
+              },
+              // dragAnchorStrategy: pointDragAnchorStrategy,
+              child: ref
+                  .watch(abilityProvider)[index]
+                  .data
+                  .abilityData!
+                  .createWidget(widget.id, isAlly, mapScale, localRotation!),
+            ),
+          ),
+        );
+      }
       return Positioned(
         left: coordinateSystem.coordinateToScreen(widget.ability.position).dx,
         top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
-        child: (widget.ability.data.abilityData is! SquareAbility)
-            ? Draggable<PlacedWidget>(
-                dragAnchorStrategy: ref
-                    .read(screenZoomProvider.notifier)
-                    .zoomDragAnchorStrategy,
-                data: widget.data,
-                feedback: Opacity(
-                  opacity: Settings.feedbackOpacity,
-                  child: ZoomTransform(
-                      child: widget.ability.data.abilityData!
-                          .createWidget(null, isAlly, mapScale)),
-                ),
-                childWhenDragging: const SizedBox.shrink(),
-                onDragEnd: widget.onDragEnd,
+        child: Draggable<PlacedWidget>(
+          dragAnchorStrategy:
+              ref.read(screenZoomProvider.notifier).zoomDragAnchorStrategy,
+          data: widget.data,
+          feedback: Opacity(
+            opacity: Settings.feedbackOpacity,
+            child: ZoomTransform(
                 child: widget.ability.data.abilityData!
-                    .createWidget(widget.id, isAlly, mapScale),
-              )
-            : RotatableWidget(
-                rotation: localRotation!,
-                isDragging: isDragging,
-                origin:
-                    widget.ability.data.abilityData!.getAnchorPoint(mapScale),
-                onPanStart: (details) {
-                  log("Rotation Start");
-                  ref
-                      .read(abilityProvider.notifier)
-                      .updateRotationHistory(index);
-                  final box = context.findRenderObject() as RenderBox;
-                  final bottomCenter = widget.ability.data.abilityData!
-                      .getAnchorPoint(mapScale)
-                      .scale(coordinateSystem.scaleFactor,
-                          coordinateSystem.scaleFactor);
-                  // final bottomCenter =
-                  //     Offset(box.size.width / 2, box.size.height);
-
-                  rotationOrigin = box.localToGlobal(bottomCenter);
-                },
-                onPanUpdate: (details) {
-                  if (rotationOrigin == Offset.zero) return;
-
-                  final currentPosition = details.globalPosition;
-
-                  // Calculate angles
-                  final Offset currentPositionNormalized =
-                      (currentPosition - rotationOrigin);
-
-                  double currentAngle = math.atan2(currentPositionNormalized.dy,
-                      currentPositionNormalized.dx);
-
-                  // // Update rotation
-                  final newRotation = (currentAngle) + (math.pi / 2);
-
-                  setState(() {
-                    localRotation = newRotation;
-                  });
-                },
-                onPanEnd: (details) {
-                  ref
-                      .read(abilityProvider.notifier)
-                      .updateRotation(index, localRotation!);
-                  setState(() {
-                    rotationOrigin = Offset.zero;
-                  });
-                },
-                child: Draggable<PlacedWidget>(
-                  data: widget.data,
-                  dragAnchorStrategy: ref
-                      .read(screenZoomProvider.notifier)
-                      .zoomDragAnchorStrategy,
-                  feedback: Opacity(
-                    opacity: Settings.feedbackOpacity,
-                    child: Transform.rotate(
-                      angle: localRotation!,
-                      alignment: Alignment.topLeft,
-                      origin: widget.ability.data.abilityData!
-                          .getAnchorPoint(mapScale)
-                          .scale(
-                              coordinateSystem.scaleFactor *
-                                  ref.watch(screenZoomProvider),
-                              coordinateSystem.scaleFactor *
-                                  ref.watch(screenZoomProvider)),
-                      child: ZoomTransform(
-                        child: ref
-                            .watch(abilityProvider)[index]
-                            .data
-                            .abilityData!
-                            .createWidget(
-                                widget.id, isAlly, mapScale, localRotation!),
-                      ),
-                    ),
-                  ),
-                  childWhenDragging: const SizedBox.shrink(),
-                  onDragStarted: () {
-                    setState(() {
-                      isDragging = true;
-                    });
-                  },
-                  onDragEnd: (DraggableDetails details) {
-                    setState(() {
-                      isDragging = false;
-                    });
-                    widget.onDragEnd(details);
-                  },
-                  // dragAnchorStrategy: pointDragAnchorStrategy,
-                  child: ref
-                      .watch(abilityProvider)[index]
-                      .data
-                      .abilityData!
-                      .createWidget(
-                          widget.id, isAlly, mapScale, localRotation!),
-                ),
-              ),
+                    .createWidget(null, isAlly, mapScale)),
+          ),
+          childWhenDragging: const SizedBox.shrink(),
+          onDragEnd: widget.onDragEnd,
+          child: widget.ability.data.abilityData!
+              .createWidget(widget.id, isAlly, mapScale),
+        ),
       );
     });
   }

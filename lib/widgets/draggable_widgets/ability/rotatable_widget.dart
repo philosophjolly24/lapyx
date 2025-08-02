@@ -12,7 +12,8 @@ class RotatableWidget extends StatelessWidget {
 
   final Function(DragEndDetails details) onPanEnd;
   final bool isDragging;
-
+  final double? buttonLeft;
+  final double? buttonTop;
   const RotatableWidget({
     super.key,
     required this.child,
@@ -22,6 +23,8 @@ class RotatableWidget extends StatelessWidget {
     required this.onPanEnd,
     required this.origin,
     required this.isDragging,
+    this.buttonLeft,
+    this.buttonTop,
   });
 
   @override
@@ -41,7 +44,8 @@ class RotatableWidget extends StatelessWidget {
           child,
           if (!isDragging)
             Positioned(
-              left: coordinateSystem.scale(origin.dx - 7.5),
+              left: coordinateSystem.scale((buttonLeft ?? origin.dx) - 7.5),
+              top: coordinateSystem.scale((buttonTop ?? 0)),
               child: SizedBox(
                 width: coordinateSystem.scale(15),
                 height: coordinateSystem.scale(15),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
 
 class CustomSquareWidget extends ConsumerWidget {
   const CustomSquareWidget({
@@ -118,23 +119,10 @@ class CustomSquareWidget extends ConsumerWidget {
           Positioned(
             bottom: 0,
             left: (scaledWidth - scaledAbilitySize) / 2,
-            child: Container(
-              width: scaledAbilitySize,
-              height: scaledAbilitySize,
-              padding: EdgeInsets.all(coordinateSystem.scale(3)),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: isAlly
-                      ? const Color.fromARGB(106, 105, 240, 175)
-                      : const Color.fromARGB(139, 255, 82, 82),
-                ),
-                borderRadius: const BorderRadius.all(Radius.circular(3)),
-                color: const Color(0xFF1B1B1B),
-              ),
-              child: Image.asset(
-                iconPath,
-                fit: BoxFit.contain,
-              ),
+            child: AbilityWidget(
+              iconPath: iconPath,
+              id: null,
+              isAlly: isAlly,
             ),
           ),
           // Debug point to visualize rotation origin

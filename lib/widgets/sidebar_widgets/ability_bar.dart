@@ -25,7 +25,7 @@ class AbiilityBar extends ConsumerWidget {
     AgentData activeAgent = ref.watch(abilityBarProvider)!;
     return Container(
       width: 90,
-      height: 350,
+      height: (activeAgent.abilities.length * 71),
       decoration: const BoxDecoration(
         color: Color(0xFF100D10),
         borderRadius: BorderRadius.horizontal(left: Radius.circular(24)),

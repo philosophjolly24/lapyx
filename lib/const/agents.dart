@@ -244,6 +244,23 @@ class AgentData implements DraggableData {
         outlineColor: Colors.purple,
       );
 
+      agent.abilities[3].abilityData = CenterSquareAbility(
+        width: 5,
+        height: 1000,
+        iconPath: agent.abilities[3].iconPath,
+        color: Colors.purple,
+      );
+
+      final astraStar = AbilityInfo(
+        type: AgentType.astra,
+        index: 4,
+        name: "Astra Star",
+        iconPath: 'assets/agents/Astra/star.webp',
+        abilityData: BaseAbility(iconPath: 'assets/agents/Astra/star.webp'),
+      );
+
+      agent.abilities.add(astraStar);
+
       return agent;
     })(),
     AgentType.breach: (() {

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
 
 class CenterSquareWidget extends StatelessWidget {
   const CenterSquareWidget(
@@ -35,14 +36,27 @@ class CenterSquareWidget extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
+            child: Align(
+              alignment: Alignment.center,
               child: Container(
-            width: scaledWidth,
-            height: scaledHeight,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(3),
+                width: scaledWidth,
+                height: scaledHeight,
+                decoration: BoxDecoration(
+                  color: color.withAlpha(150),
+                ),
+              ),
             ),
-          )),
+          ),
+          Positioned(
+            child: Align(
+              alignment: Alignment.center,
+              child: AbilityWidget(
+                iconPath: iconPath,
+                id: null,
+                isAlly: isAlly,
+              ),
+            ),
+          ),
         ],
       ),
     );

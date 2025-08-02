@@ -2,8 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/abilities.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/providers/ability_provider.dart';
+import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/mouse_watch.dart';
 
 class CustomCircleWidget extends ConsumerWidget {
@@ -126,28 +128,10 @@ class CustomCircleWidget extends ConsumerWidget {
     return Positioned.fill(
       child: Align(
         alignment: Alignment.center,
-        child: Container(
-          width: coordinateSystem.scale(25),
-          height: coordinateSystem.scale(25),
-          padding: EdgeInsets.all(coordinateSystem.scale(3)),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(
-              Radius.circular(3),
-            ),
-            color: const Color(0xFF1B1B1B),
-            border: Border.all(
-              color: isAlly
-                  ? const Color.fromARGB(106, 105, 240, 175)
-                  : const Color.fromARGB(139, 255, 82, 82),
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(3)),
-            child: Image.asset(
-              iconPath,
-              fit: BoxFit.contain,
-            ),
-          ),
+        child: AbilityWidget(
+          iconPath: iconPath,
+          id: null,
+          isAlly: isAlly,
         ),
       ),
     );
