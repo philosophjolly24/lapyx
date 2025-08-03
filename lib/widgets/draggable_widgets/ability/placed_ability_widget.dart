@@ -103,12 +103,9 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
       if (widget.ability.data.abilityData is SquareAbility ||
           widget.ability.data.abilityData is CenterSquareAbility ||
           widget.ability.data.abilityData is RotatableImageAbility) {
-        final centerSquareButtonTop = coordinateSystem.scale(
-                widget.ability.data.abilityData!.getAnchorPoint(mapScale).dy -
-                    Settings.abilitySize) -
-            30;
         final isCenterSquare =
             widget.ability.data.abilityData is CenterSquareAbility;
+
         return Positioned(
           left: coordinateSystem.coordinateToScreen(widget.ability.position).dx,
           top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,

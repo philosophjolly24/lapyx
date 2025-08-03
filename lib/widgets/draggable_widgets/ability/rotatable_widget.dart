@@ -44,7 +44,7 @@ class RotatableWidget extends StatelessWidget {
           child,
           if (!isDragging)
             Positioned(
-              left: coordinateSystem.scale((buttonLeft ?? origin.dx) - 7.5),
+              left: coordinateSystem.scale((buttonLeft ?? origin.dx - 7.5)),
               top: coordinateSystem.scale((buttonTop ?? 0)),
               child: SizedBox(
                 width: coordinateSystem.scale(15),

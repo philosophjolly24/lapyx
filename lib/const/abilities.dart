@@ -175,8 +175,8 @@ class CenterSquareAbility extends Ability {
   @override
   Offset getAnchorPoint([double? mapScale]) {
     return Offset(
-      (Settings.abilitySize * mapScale!) / 2,
-      (height * mapScale) / 2,
+      (Settings.abilitySize) / 2,
+      (height * mapScale!) / 2,
     );
   }
 
