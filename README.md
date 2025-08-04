@@ -7,5 +7,5 @@ Icarus is an interactive strategy creation tool for Valorant players. The applic
 
 Download: https://apps.microsoft.com/detail/9PBWHHZRQFW6?hl=en-us&gl=US&ocid=pdpshare
 DEV LOG HERE: https://youtu.be/dDn2rafvjMQ?si=mm1Sz-XrjvNQiRWE
-<img src=https://l7y6qjyp5m.ufs.sh/f/usun6XPoM0UCUZdldy4th6DKGW5HSvxpy8cINPrY4sV0bq9l>
+<img src=https://l7y6qjyp5m.ufs.sh/f/usun6XPoM0UC5l0lqgyKoUQXBjdA4sgHc3Dqt8pWIzr2e0iN>
 
