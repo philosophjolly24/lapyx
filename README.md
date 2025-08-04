@@ -1,6 +1,6 @@
 
 
-# icarus
+# Icarus: Valorant Strategies & Line ups
 
 ## What is Icarus?
 Icarus is an interactive strategy creation tool for Valorant players. The application focuses on providing a robust map drawing system that allows teams to create, save, and iterate on their strategies LOCALY.
