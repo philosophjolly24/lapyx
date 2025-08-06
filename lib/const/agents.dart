@@ -282,6 +282,7 @@ class AgentData implements DraggableData {
         iconPath: agent.abilities[2].iconPath,
         color: Colors.orangeAccent,
         minLength: 8 * inGameMeters,
+        distanceBetweenAOE: 8 * inGameMeters,
       );
 
       agent.abilities.last.abilityData = SquareAbility(

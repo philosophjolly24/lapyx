@@ -38,6 +38,8 @@ class PlacedAbilityWidget extends StatefulWidget {
 
 class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
   Offset rotationOrigin = Offset.zero;
+
+  Offset lengthOrigin = Offset.zero;
   GlobalKey globalKey = GlobalKey();
 
   double? localRotation;
@@ -86,6 +88,11 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
         localRotation = ref.read(abilityProvider)[index].rotation;
       }
 
+      if (ref.watch(abilityProvider)[index].length != localLength! &&
+          lengthOrigin == Offset.zero) {
+        localLength = ref.read(abilityProvider)[index].length;
+      }
+
       if (index < 0) {
         return Draggable<PlacedWidget>(
           dragAnchorStrategy:
@@ -120,13 +127,19 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
           final resizeWidget =
               (widget.ability.data.abilityData! as ResizableSquareAbility);
 
-          final double anchorLength = coordinateSystem.scale(
-              resizeWidget.height -
-                  (coordinateSystem.normalize(localLength ?? 0))
-                      .clamp(resizeWidget.minLength, resizeWidget.height));
+          // final double anchorLength = coordinateSystem.scale(
+          //   resizeWidget.height -
+          //       (coordinateSystem.normalize(localLength ?? 0))
+          //           .clamp(resizeWidget.minLength, resizeWidget.height),
+          // );
+          final double clampedLength = resizeWidget.height -
+              ((localLength ?? 0))
+                  .clamp(resizeWidget.minLength, resizeWidget.height);
+
+          final double anchorLength = (clampedLength * mapScale);
 
           log("anchor length: ${anchorLength.toString()} local length: ${localLength.toString()}");
-          buttonTop = anchorLength * mapScale;
+          buttonTop = anchorLength;
         } else {
           buttonTop = null;
         }
@@ -148,10 +161,17 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   .getAnchorPoint(mapScale)
                   .scale(coordinateSystem.scaleFactor,
                       coordinateSystem.scaleFactor);
-              // final bottomCenter =
-              //     Offset(box.size.width / 2, box.size.height);
 
               rotationOrigin = box.localToGlobal(bottomCenter);
+              if (widget.ability.data.abilityData is ResizableSquareAbility) {
+                final resizeAbility = (widget.ability.data.abilityData!
+                    as ResizableSquareAbility);
+                lengthOrigin = box.localToGlobal(
+                  resizeAbility.getLengthAnchor(mapScale).scale(
+                      coordinateSystem.scaleFactor,
+                      coordinateSystem.scaleFactor),
+                );
+              }
             },
             onPanUpdate: (details) {
               if (rotationOrigin == Offset.zero) return;
@@ -162,9 +182,6 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
               final Offset currentPositionNormalized =
                   (currentPosition - rotationOrigin);
 
-              double currentLength = coordinateSystem
-                  .normalize(currentPositionNormalized.distance);
-              log(currentLength.toString());
               double currentAngle = math.atan2(
                   currentPositionNormalized.dy, currentPositionNormalized.dx);
 
@@ -172,9 +189,19 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
               final newRotation = (currentAngle) + (math.pi / 2);
 
               setState(() {
-                localLength = currentLength;
                 localRotation = newRotation;
               });
+              if (widget.ability.data.abilityData is ResizableSquareAbility) {
+                final Offset currentPosLength = (currentPosition -
+                    rotateOffset(lengthOrigin, rotationOrigin, localRotation!));
+                double currentLength =
+                    coordinateSystem.normalize(currentPosLength.distance) /
+                        mapScale;
+
+                setState(() {
+                  localLength = currentLength;
+                });
+              }
             },
             onPanEnd: (details) {
               ref

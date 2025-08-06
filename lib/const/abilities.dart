@@ -258,6 +258,13 @@ class ResizableSquareAbility extends SquareAbility {
     );
   }
 
+  Offset getLengthAnchor(double mapScale) {
+    return Offset(
+      (width * mapScale) / 2,
+      (height * mapScale) + 7.5,
+    );
+  }
+
   @override
   Offset getAnchorPoint([double? mapScale]) {
     return Offset(
