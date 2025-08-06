@@ -63,6 +63,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                         data: ability,
                         ability: ability,
                         id: ability.id,
+                        length: ability.length,
                         onDragEnd: (details) {
                           RenderBox renderBox =
                               context.findRenderObject() as RenderBox;

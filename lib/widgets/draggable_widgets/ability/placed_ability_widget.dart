@@ -21,6 +21,7 @@ class PlacedAbilityWidget extends StatefulWidget {
   final String id;
   final PlacedWidget data;
   final double rotation;
+  final double length;
   const PlacedAbilityWidget({
     super.key,
     required this.ability,
@@ -28,6 +29,7 @@ class PlacedAbilityWidget extends StatefulWidget {
     required this.id,
     required this.data,
     required this.rotation,
+    required this.length,
   });
 
   @override
@@ -39,12 +41,14 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
   GlobalKey globalKey = GlobalKey();
 
   double? localRotation;
+  double? localLength;
   bool isDragging = false;
 
   @override
   void initState() {
     super.initState();
     localRotation ??= widget.rotation;
+    localLength ??= widget.length;
   }
 
   Offset rotateOffset(Offset point, Offset origin, double angle) {
@@ -102,25 +106,43 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
 
       if (widget.ability.data.abilityData is SquareAbility ||
           widget.ability.data.abilityData is CenterSquareAbility ||
-          widget.ability.data.abilityData is RotatableImageAbility) {
+          widget.ability.data.abilityData is RotatableImageAbility ||
+          widget.ability.data.abilityData is ResizableSquareAbility) {
         final isCenterSquare =
             widget.ability.data.abilityData is CenterSquareAbility;
+        final double? buttonTop;
+        if (isCenterSquare) {
+          buttonTop =
+              widget.ability.data.abilityData!.getAnchorPoint(mapScale).dy -
+                  Settings.abilitySize -
+                  30;
+        } else if (widget.ability.data.abilityData is ResizableSquareAbility) {
+          final resizeWidget =
+              (widget.ability.data.abilityData! as ResizableSquareAbility);
 
+          final double anchorLength = coordinateSystem.scale(
+              resizeWidget.height -
+                  (coordinateSystem.normalize(localLength ?? 0))
+                      .clamp(resizeWidget.minLength, resizeWidget.height));
+
+          log("anchor length: ${anchorLength.toString()} local length: ${localLength.toString()}");
+          buttonTop = anchorLength * mapScale;
+        } else {
+          buttonTop = null;
+        }
         return Positioned(
           left: coordinateSystem.coordinateToScreen(widget.ability.position).dx,
           top: coordinateSystem.coordinateToScreen(widget.ability.position).dy,
           child: RotatableWidget(
-            buttonTop: isCenterSquare
-                ? widget.ability.data.abilityData!.getAnchorPoint(mapScale).dy -
-                    Settings.abilitySize -
-                    30
-                : null,
+            buttonTop: buttonTop,
             rotation: localRotation!,
             isDragging: isDragging,
             origin: widget.ability.data.abilityData!.getAnchorPoint(mapScale),
             onPanStart: (details) {
               log("Rotation Start");
               ref.read(abilityProvider.notifier).updateRotationHistory(index);
+              ref.read(abilityProvider.notifier).updateLengthHistory(index);
+
               final box = context.findRenderObject() as RenderBox;
               final bottomCenter = widget.ability.data.abilityData!
                   .getAnchorPoint(mapScale)
@@ -140,6 +162,9 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
               final Offset currentPositionNormalized =
                   (currentPosition - rotationOrigin);
 
+              double currentLength = coordinateSystem
+                  .normalize(currentPositionNormalized.distance);
+              log(currentLength.toString());
               double currentAngle = math.atan2(
                   currentPositionNormalized.dy, currentPositionNormalized.dx);
 
@@ -147,6 +172,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
               final newRotation = (currentAngle) + (math.pi / 2);
 
               setState(() {
+                localLength = currentLength;
                 localRotation = newRotation;
               });
             },
@@ -154,6 +180,9 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
               ref
                   .read(abilityProvider.notifier)
                   .updateRotation(index, localRotation!);
+              ref
+                  .read(abilityProvider.notifier)
+                  .updateLength(index, localLength!);
               setState(() {
                 rotationOrigin = Offset.zero;
               });
@@ -215,7 +244,8 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   .watch(abilityProvider)[index]
                   .data
                   .abilityData!
-                  .createWidget(widget.id, isAlly, mapScale, localRotation!),
+                  .createWidget(
+                      widget.id, isAlly, mapScale, localRotation!, localLength),
             ),
           ),
         );

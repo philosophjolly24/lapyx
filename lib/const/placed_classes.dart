@@ -189,6 +189,31 @@ class PlacedAbility extends PlacedWidget {
     _actionHistory.add(action);
   }
 
+  void updateLengthHistory() {
+    final action = LengthAction(length: length);
+    _actionHistory.add(action);
+  }
+
+  void updateLength(double newLength) {
+    final action = LengthAction(length: length);
+    _actionHistory.add(action);
+    length = newLength;
+  }
+
+  void _undoLength() {
+    final action = LengthAction(length: length);
+    _poppedAction.add(action);
+    length = (_actionHistory.last as LengthAction).length;
+    _actionHistory.removeLast();
+  }
+
+  void _redoLength() {
+    final action = LengthAction(length: length);
+    _actionHistory.add(action);
+    length = (_poppedAction.last as LengthAction).length;
+    _poppedAction.removeLast();
+  }
+
   @override
   void undoAction() {
     if (_actionHistory.isEmpty) return;
@@ -197,6 +222,8 @@ class PlacedAbility extends PlacedWidget {
       _undoPosition();
     } else if (_actionHistory.last is RotationAction) {
       _undoRotation();
+    } else if (_actionHistory.last is LengthAction) {
+      _undoLength();
     }
   }
 
@@ -208,6 +235,8 @@ class PlacedAbility extends PlacedWidget {
       _redoPosition();
     } else if (_poppedAction.last is RotationAction) {
       _redoRotation();
+    } else if (_poppedAction.last is LengthAction) {
+      _redoLength();
     }
   }
 

@@ -7,13 +7,14 @@ import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/center_square_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/custom_circle_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/custom_square_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/ability/resizable_square_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/rotatable_image_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/agents/agent_icon_widget.dart';
 
 abstract class Ability {
   Offset getAnchorPoint([double? mapScale]);
   Widget createWidget(String? id, bool isAlly, double mapScale,
-      [double? rotation]);
+      [double? rotation, double? length]);
 }
 
 class BaseAbility extends Ability {
@@ -23,7 +24,7 @@ class BaseAbility extends Ability {
 
   @override
   Widget createWidget(String? id, bool isAlly, double mapScale,
-      [double? rotation]) {
+      [double? rotation, double? length]) {
     return AbilityWidget(
       isAlly: isAlly,
       iconPath: iconPath,
@@ -44,14 +45,13 @@ class ImageAbility extends Ability {
   ImageAbility({required this.imagePath, required this.size});
   @override
   Widget createWidget(String? id, bool isAlly, double mapScale,
-      [double? rotation]) {
+      [double? rotation, double? length]) {
     return AgentIconWidget(imagePath: imagePath, size: size * mapScale);
   }
 
-  //TODO: Add mapscale
   @override
   Offset getAnchorPoint([double? mapScale]) {
-    return Offset(size * mapScale! / 2, size * mapScale / 2);
+    return Offset(size / 2, size / 2);
   }
 }
 
@@ -84,7 +84,7 @@ class CircleAbility extends Ability {
 
   @override
   Widget createWidget(String? id, bool isAlly, double mapScale,
-      [double? rotation]) {
+      [double? rotation, double? length]) {
     return CustomCircleWidget(
       iconPath: iconPath,
       size: size * mapScale,
@@ -138,7 +138,7 @@ class SquareAbility extends Ability {
 
   @override
   Widget createWidget(String? id, bool isAlly, double mapScale,
-      [double? rotation]) {
+      [double? rotation, double? length]) {
     log("Map scale: $mapScale");
     return CustomSquareWidget(
       color: color,
@@ -182,8 +182,7 @@ class CenterSquareAbility extends Ability {
 
   @override
   Widget createWidget(String? id, bool isAlly, double mapScale,
-      [double? rotation]) {
-    log("Map scale: $mapScale");
+      [double? rotation, double? length]) {
     return CenterSquareWidget(
       color: color,
       width: width * mapScale,
@@ -215,11 +214,58 @@ class RotatableImageAbility extends Ability {
 
   @override
   Widget createWidget(String? id, bool isAlly, double mapScale,
-      [double? rotation]) {
+      [double? rotation, double? length]) {
     return RotatableImageWidget(
       imagePath: imagePath,
       height: height * mapScale,
       width: width * mapScale,
+    );
+  }
+}
+
+//As much as I would love to extend square
+class ResizableSquareAbility extends SquareAbility {
+  final double minLength;
+
+  ResizableSquareAbility({
+    required super.width,
+    required super.height,
+    required super.iconPath,
+    required super.color,
+    super.distanceBetweenAOE,
+    super.isWall,
+    super.hasTopborder,
+    super.hasSideBorders,
+    super.isTransparent,
+    super.minHeight,
+    required this.minLength,
+  });
+
+  @override
+  Widget createWidget(String? id, bool isAlly, double mapScale,
+      [double? rotation, double? length]) {
+    return ResizableSquareWidget(
+      color: color,
+      width: width * mapScale,
+      length: (length ?? (height) / 2) * mapScale,
+      maxLength: height * mapScale,
+      minLength: minLength * mapScale,
+      iconPath: iconPath,
+      distanceBetweenAOE: distanceBetweenAOE * mapScale,
+      origin: getAnchorPoint(mapScale),
+      id: id,
+      isAlly: isAlly,
+    );
+  }
+
+  @override
+  Offset getAnchorPoint([double? mapScale]) {
+    return Offset(
+      (width * mapScale!) / 2,
+      (height * mapScale) +
+          (distanceBetweenAOE * mapScale) +
+          (Settings.abilitySize / 2) +
+          7.5,
     );
   }
 }

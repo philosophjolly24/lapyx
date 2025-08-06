@@ -57,6 +57,7 @@ class CoordinateSystem {
   // Scale any dimension based on height
   double scale(double size) => (size * _scaleFactor);
 
+  double normalize(double value) => (value / _scaleFactor);
   // Scale a size maintaining aspect ratio
   Size scaleSize(Size size) => Size(
         size.width * _scaleFactor,
