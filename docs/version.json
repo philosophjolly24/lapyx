@@ -1,5 +1,5 @@
 {
-    "current_version": "1.4.0",
-    "current_version_number": "3",
-    "release_notes": "Added new maps: Sunset. Made QOL changes and significantly improved accuracy of ability radius"
+    "current_version": "1.5.1",
+    "current_version_number": "6",
+    "release_notes": "Fixed app crash when closing,Removed radius on Chamber, added radius for phoenix molly, fixed deadlock being categorized as a duelist and added radius to KJ bot, Added Viper wall, Phoenix wall and Neon wall"
 }
