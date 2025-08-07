@@ -71,10 +71,10 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
     // state = newState;
   }
 
-  void updateRotation(int index, double rotation) {
+  void updateRotation(int index, double rotation, double length) {
     final newState = [...state];
-
-    newState[index].updateRotation(rotation);
+    updateRotationHistory(index);
+    newState[index].updateRotation(rotation, length);
     final action = UserAction(
         type: ActionType.edit,
         id: newState[index].id,
@@ -83,17 +83,18 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
     state = newState;
   }
 
-  void updateLength(int index, double length) {
-    final newState = [...state];
+  // void updateLength(int index, double length) {
+  //   final newState = [...state];
+  //   updateLengthHistory(index);
+  //   newState[index].updateLength(length);
 
-    newState[index].updateLength(length);
-    final action = UserAction(
-        type: ActionType.edit,
-        id: newState[index].id,
-        group: ActionGroup.ability);
-    ref.read(actionProvider.notifier).addAction(action);
-    state = newState;
-  }
+  //   final action = UserAction(
+  //       type: ActionType.edit,
+  //       id: newState[index].id,
+  //       group: ActionGroup.ability);
+  //   ref.read(actionProvider.notifier).addAction(action);
+  //   state = newState;
+  // }
 
   void updateRotationHistory(int index) {
     final newState = [...state];
@@ -103,17 +104,15 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
     state = newState;
   }
 
-  void updateLengthHistory(int index) {
-    final newState = [...state];
+  // void updateLengthHistory(int index) {
+  //   final newState = [...state];
 
-    newState[index].updateLengthHistory();
+  //   newState[index].updateLengthHistory();
 
-    state = newState;
-  }
+  //   state = newState;
+  // }
 
   void undoAction(UserAction action) {
-    log("I tried to remove a deleted item");
-
     switch (action.type) {
       case ActionType.addition:
         log("We are attmepting to remove");
@@ -123,7 +122,7 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
           log("Popped agents is empty");
           return;
         }
-        log("I tried to remove a deleted item");
+
         final newState = [...state];
 
         newState.add(poppedAbility.removeLast());
@@ -133,8 +132,10 @@ class AbilityProvider extends Notifier<List<PlacedAbility>> {
 
         final index = PlacedWidget.getIndexByID(action.id, newState);
 
+        log("Previous rotation: ${newState[index].rotation} Previous length: ${newState[index].length}");
         newState[index].undoAction();
 
+        log("Current rotation: ${newState[index].rotation} Current length: ${newState[index].length}");
         state = newState;
     }
   }

@@ -139,7 +139,6 @@ class SquareAbility extends Ability {
   @override
   Widget createWidget(String? id, bool isAlly, double mapScale,
       [double? rotation, double? length]) {
-    log("Map scale: $mapScale");
     return CustomSquareWidget(
       color: color,
       width: width * mapScale,
@@ -247,7 +246,7 @@ class ResizableSquareAbility extends SquareAbility {
     return ResizableSquareWidget(
       color: color,
       width: width * mapScale,
-      length: (length ?? (height) / 2) * mapScale,
+      length: (length ?? 0) * mapScale,
       maxLength: height * mapScale,
       minLength: minLength * mapScale,
       iconPath: iconPath,

@@ -180,37 +180,33 @@ class PlacedAbility extends PlacedWidget {
 
   double length = 0;
 
-  void updateRotation(double newRotation) {
+  void updateRotation(double newRotation, double newLength) {
     rotation = newRotation;
-  }
-
-  void updateRotationHistory() {
-    final action = RotationAction(rotation: rotation);
-    _actionHistory.add(action);
-  }
-
-  void updateLengthHistory() {
-    final action = LengthAction(length: length);
-    _actionHistory.add(action);
-  }
-
-  void updateLength(double newLength) {
-    final action = LengthAction(length: length);
-    _actionHistory.add(action);
     length = newLength;
   }
 
-  void _undoLength() {
-    final action = LengthAction(length: length);
+  void updateRotationHistory() {
+    final action = RotationAction(rotation: rotation, length: length);
+    _actionHistory.add(action);
+  }
+
+  void _undoRotation() {
+    final action = RotationAction(rotation: rotation, length: length);
+
     _poppedAction.add(action);
-    length = (_actionHistory.last as LengthAction).length;
+    rotation = (_actionHistory.last as RotationAction).rotation;
+    length = (_actionHistory.last as RotationAction).length;
     _actionHistory.removeLast();
   }
 
-  void _redoLength() {
-    final action = LengthAction(length: length);
+  void _redoRotation() {
+    if (_poppedAction.isEmpty) return;
+
+    final action = RotationAction(rotation: rotation, length: length);
+
     _actionHistory.add(action);
-    length = (_poppedAction.last as LengthAction).length;
+    rotation = (_poppedAction.last as RotationAction).rotation;
+    length = (_poppedAction.last as RotationAction).length;
     _poppedAction.removeLast();
   }
 
@@ -222,8 +218,6 @@ class PlacedAbility extends PlacedWidget {
       _undoPosition();
     } else if (_actionHistory.last is RotationAction) {
       _undoRotation();
-    } else if (_actionHistory.last is LengthAction) {
-      _undoLength();
     }
   }
 
@@ -235,27 +229,7 @@ class PlacedAbility extends PlacedWidget {
       _redoPosition();
     } else if (_poppedAction.last is RotationAction) {
       _redoRotation();
-    } else if (_poppedAction.last is LengthAction) {
-      _redoLength();
     }
-  }
-
-  void _undoRotation() {
-    final action = RotationAction(rotation: rotation);
-
-    _poppedAction.add(action);
-    rotation = (_actionHistory.last as RotationAction).rotation;
-    _actionHistory.removeLast();
-  }
-
-  void _redoRotation() {
-    if (_poppedAction.isEmpty) return;
-
-    final action = RotationAction(rotation: rotation);
-
-    _actionHistory.add(action);
-    rotation = (_poppedAction.last as RotationAction).rotation;
-    _poppedAction.removeLast();
   }
 
   PlacedAbility(
@@ -274,14 +248,8 @@ abstract class WidgetAction {}
 
 class RotationAction extends WidgetAction {
   final double rotation;
-
-  RotationAction({required this.rotation});
-}
-
-class LengthAction extends WidgetAction {
   final double length;
-
-  LengthAction({required this.length});
+  RotationAction({required this.rotation, required this.length});
 }
 
 class PositionAction extends WidgetAction {

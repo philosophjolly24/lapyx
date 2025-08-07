@@ -138,7 +138,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
 
           final double anchorLength = (clampedLength * mapScale);
 
-          log("anchor length: ${anchorLength.toString()} local length: ${localLength.toString()}");
+          // log("anchor length: ${anchorLength.toString()} local length: ${localLength.toString()}");
           buttonTop = anchorLength;
         } else {
           buttonTop = null;
@@ -153,8 +153,8 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
             origin: widget.ability.data.abilityData!.getAnchorPoint(mapScale),
             onPanStart: (details) {
               log("Rotation Start");
-              ref.read(abilityProvider.notifier).updateRotationHistory(index);
-              ref.read(abilityProvider.notifier).updateLengthHistory(index);
+              // ref.read(abilityProvider.notifier).updateRotationHistory(index);
+              // ref.read(abilityProvider.notifier).updateLengthHistory(index);
 
               final box = context.findRenderObject() as RenderBox;
               final bottomCenter = widget.ability.data.abilityData!
@@ -206,12 +206,11 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
             onPanEnd: (details) {
               ref
                   .read(abilityProvider.notifier)
-                  .updateRotation(index, localRotation!);
-              ref
-                  .read(abilityProvider.notifier)
-                  .updateLength(index, localLength!);
+                  .updateRotation(index, localRotation!, localLength ?? 0);
+
               setState(() {
                 rotationOrigin = Offset.zero;
+                lengthOrigin = Offset.zero;
               });
             },
             child: Draggable<PlacedWidget>(
@@ -249,8 +248,8 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                         .watch(abilityProvider)[index]
                         .data
                         .abilityData!
-                        .createWidget(
-                            widget.id, isAlly, mapScale, localRotation!),
+                        .createWidget(widget.id, isAlly, mapScale,
+                            localRotation!, localLength!),
                   ),
                 ),
               ),

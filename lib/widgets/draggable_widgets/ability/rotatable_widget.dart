@@ -33,7 +33,6 @@ class RotatableWidget extends StatelessWidget {
     final rotationOrigin = origin.scale(
         coordinateSystem.scaleFactor, coordinateSystem.scaleFactor);
 
-    log(isDragging.toString());
     return Transform.rotate(
       angle: rotation,
       alignment: Alignment.topLeft,
