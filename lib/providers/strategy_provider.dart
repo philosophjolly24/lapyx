@@ -26,7 +26,7 @@ import 'package:uuid/uuid.dart';
 
 class StrategyData extends HiveObject {
   final String id;
-  final String name;
+  String name;
   final int versionNumber;
   final List<DrawingElement> drawingData;
   final List<PlacedAgent> agentData;
@@ -97,10 +97,13 @@ class StrategyProvider extends Notifier<StrategyState> {
   Timer? _saveTimer;
 
   void setUnsaved() async {
+    log("Setting unsaved is being called");
+
     state = state.copyWith(isSaved: false);
     _saveTimer?.cancel();
     _saveTimer = Timer(Settings.autoSaveOffset, () async {
       //Find some way to tell the user that it is saving now()
+      if (state.stratName == null) return;
       ref.read(autoSaveProvider.notifier).ping();
       await saveToHive(state.id);
     });
@@ -120,6 +123,15 @@ class StrategyProvider extends Notifier<StrategyState> {
     }
 
     return customDirectory;
+  }
+
+  Future<void> clearCurrentStrategy() async {
+    state = StrategyState(
+      isSaved: true,
+      stratName: null,
+      id: "testID",
+      storageDirectory: null,
+    );
   }
 
   Future<void> loadFromHive(String id) async {
@@ -279,6 +291,18 @@ class StrategyProvider extends Notifier<StrategyState> {
     // state = state.copyWith(fileName: file.path, isSaved: true);
   }
 
+  Future<void> renameStrategy(String strategyID, String newName) async {
+    final strategyBox = Hive.box<StrategyData>(HiveBoxNames.strategiesBox);
+    final strategy = strategyBox.get(strategyID);
+
+    if (strategy != null) {
+      strategy.name = newName;
+      await strategy.save();
+    } else {
+      log("Strategy with ID $strategyID not found.");
+    }
+  }
+
   Future<void> deleteStrategy(String strategyID) async {
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox).delete(strategyID);
 
@@ -315,5 +339,9 @@ class StrategyProvider extends Notifier<StrategyState> {
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .put(currentStategy.id, currentStategy);
+    state = state.copyWith(
+      isSaved: true,
+    );
+    log("Save to hive was called");
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/custom_icons.dart';
@@ -59,6 +61,9 @@ class _StrategyViewState extends ConsumerState<StrategyView>
 
                           if (!context.mounted) return;
                           Navigator.pop(context);
+                          ref
+                              .read(strategyProvider.notifier)
+                              .clearCurrentStrategy();
                         },
                         icon: const Icon(Icons.home)),
                     const SizedBox(width: 5),
@@ -131,6 +136,7 @@ class _StrategyViewState extends ConsumerState<StrategyView>
     await ref
         .read(strategyProvider.notifier)
         .saveToHive(ref.read(strategyProvider).id);
+    log("Window close");
     await windowManager.close(); // Close the window/app
   }
 }

@@ -6,7 +6,8 @@ import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_view.dart';
-import 'package:icarus/widgets/delete_strategy_alert_dialog.dart';
+import 'package:icarus/widgets/dialogs/delete_strategy_alert_dialog.dart';
+import 'package:icarus/widgets/dialogs/rename_strategy_dialog.dart';
 
 String capitalizeFirstLetter(String text) {
   if (text.isEmpty) return text;
@@ -334,6 +335,34 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
             padding: const EdgeInsets.all(8.0),
             child: MenuAnchor(
               menuChildren: [
+                MenuItemButton(
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return RenameStrategyDialog(
+                          strategyId: widget.strategyData.id,
+                          currentName: widget.strategyData.name,
+                        );
+                      },
+                    );
+
+                    // await ref.read(strategyProvider.notifier).
+                  },
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.text_fields,
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "Rename",
+                      )
+                    ],
+                  ),
+                ),
                 MenuItemButton(
                   onPressed: () async {
                     await ref
