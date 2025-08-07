@@ -111,7 +111,6 @@ class SquareAbility extends Ability {
   final bool hasTopborder;
   final bool hasSideBorders;
   final bool isTransparent;
-  final double minHeight;
 
   SquareAbility({
     required this.width,
@@ -124,15 +123,16 @@ class SquareAbility extends Ability {
     this.hasSideBorders = false,
     this.isTransparent = false,
     double? minHeight,
-  }) : minHeight = minHeight ?? height;
+  });
 
   @override
   Offset getAnchorPoint([double? mapScale]) {
     return Offset(
-      (width * mapScale!) / 2,
-      (height * mapScale) +
+      (isWall ? Settings.abilitySize * 2 : width * mapScale!) / 2,
+      (height * mapScale!) +
           (distanceBetweenAOE * mapScale) +
-          (Settings.abilitySize / 2),
+          (Settings.abilitySize / 2) +
+          7.5,
     );
   }
 
@@ -244,6 +244,7 @@ class ResizableSquareAbility extends SquareAbility {
   Widget createWidget(String? id, bool isAlly, double mapScale,
       [double? rotation, double? length]) {
     return ResizableSquareWidget(
+      isWall: isWall,
       color: color,
       width: width * mapScale,
       length: (length ?? 0) * mapScale,
@@ -254,12 +255,15 @@ class ResizableSquareAbility extends SquareAbility {
       origin: getAnchorPoint(mapScale),
       id: id,
       isAlly: isAlly,
+      hasTopborder: hasTopborder,
+      hasSideBorders: hasSideBorders,
+      isTransparent: isTransparent,
     );
   }
 
   Offset getLengthAnchor(double mapScale) {
     return Offset(
-      (width * mapScale) / 2,
+      (isWall ? Settings.abilitySize * 2 : width * mapScale) / 2,
       (height * mapScale) + 7.5,
     );
   }
@@ -267,8 +271,8 @@ class ResizableSquareAbility extends SquareAbility {
   @override
   Offset getAnchorPoint([double? mapScale]) {
     return Offset(
-      (width * mapScale!) / 2,
-      (height * mapScale) +
+      (isWall ? Settings.abilitySize * 2 : width * mapScale!) / 2,
+      (height * mapScale!) +
           (distanceBetweenAOE * mapScale) +
           (Settings.abilitySize / 2) +
           7.5,

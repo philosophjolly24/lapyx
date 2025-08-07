@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/widgets/custom_border_container.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
 
 class CustomSquareWidget extends ConsumerWidget {
@@ -39,11 +40,20 @@ class CustomSquareWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final coordinateSystem = CoordinateSystem.instance;
 
-    final scaledWidth = coordinateSystem.scale(width);
+    final double scaledWidth;
+
+    if (isWall) {
+      scaledWidth = coordinateSystem.scale(Settings.abilitySize * 2);
+    } else {
+      scaledWidth = coordinateSystem.scale(width);
+    }
+    final resizeButtonOffset = coordinateSystem.scale(7.5);
+
     final scaledHeight = coordinateSystem.scale(height);
     final scaledDistance = coordinateSystem.scale((distanceBetweenAOE));
     final scaledAbilitySize = coordinateSystem.scale(Settings.abilitySize);
-    final totalHeight = scaledHeight + scaledDistance + scaledAbilitySize;
+    final totalHeight =
+        scaledHeight + scaledDistance + scaledAbilitySize + resizeButtonOffset;
 
     return SizedBox(
       width: scaledWidth,
@@ -60,56 +70,65 @@ class CustomSquareWidget extends ConsumerWidget {
                   child: IgnorePointer(
                     child: Container(
                       width: scaledWidth,
-                      height: scaledHeight,
+                      height: totalHeight,
                       color: Colors.transparent,
                     ),
                   ),
                 )
               : Positioned(
-                  top: 0,
+                  top: resizeButtonOffset,
                   left: 0,
                   child: IgnorePointer(
-                    child: Container(
-                      width: scaledWidth,
-                      height: scaledHeight,
-                      decoration: BoxDecoration(
-                          color: (hasSideBorders)
-                              ? Colors.transparent
-                              : color.withAlpha(100),
-                          border: Border(
-                            top: BorderSide(
-                              color: color.withAlpha(100),
-                              width: 3,
-                              style: hasTopborder
-                                  ? BorderStyle.solid
-                                  : BorderStyle.none,
-                            ),
-                            left: BorderSide(
-                              color: color.withAlpha(100),
-                              width: 3,
-                              style: hasSideBorders
-                                  ? BorderStyle.solid
-                                  : BorderStyle.none,
-                            ),
-                            right: BorderSide(
-                              color: color.withAlpha(100),
-                              width: 3,
-                              style: hasSideBorders
-                                  ? BorderStyle.solid
-                                  : BorderStyle.none,
-                            ),
-                          )),
-                    ),
-                  ),
+                      child: CustomBorderContainer(
+                    color: color,
+                    width: scaledWidth,
+                    height: scaledHeight,
+                    hasTop: hasTopborder,
+                    hasSide: hasSideBorders,
+                    isTransparent: isTransparent,
+                  )
+
+                      // Container(
+                      //   width: scaledWidth,
+                      //   height: scaledHeight,
+                      //   decoration: BoxDecoration(
+                      //       color: (hasSideBorders)
+                      //           ? Colors.transparent
+                      //           : color.withAlpha(100),
+                      //       border: Border(
+                      //         top: BorderSide(
+                      //           color: color.withAlpha(200),
+                      //           width: 3,
+                      //           style: hasTopborder
+                      //               ? BorderStyle.solid
+                      //               : BorderStyle.none,
+                      //         ),
+                      //         left: BorderSide(
+                      //           color: color.withAlpha(100),
+                      //           width: 3,
+                      //           style: hasSideBorders
+                      //               ? BorderStyle.solid
+                      //               : BorderStyle.none,
+                      //         ),
+                      //         right: BorderSide(
+                      //           color: color.withAlpha(100),
+                      //           width: 3,
+                      //           style: hasSideBorders
+                      //               ? BorderStyle.solid
+                      //               : BorderStyle.none,
+                      //         ),
+                      //       )),
+                      // ),
+                      ),
                 ),
 
           if (isWall)
             Positioned(
-              top: 0,
-              left: (scaledWidth - 5) / 2,
+              top: resizeButtonOffset,
+              left: (scaledWidth / 2) - width / 2,
               child: IgnorePointer(
                 child: Container(
-                  width: 5,
+                  width: width,
                   height: scaledHeight,
                   color: color.withAlpha(100),
                 ),
@@ -118,7 +137,7 @@ class CustomSquareWidget extends ConsumerWidget {
           // Ability icon
           Positioned(
             bottom: 0,
-            left: (scaledWidth - scaledAbilitySize) / 2,
+            left: (scaledWidth / 2) - (scaledAbilitySize / 2),
             child: AbilityWidget(
               iconPath: iconPath,
               id: null,

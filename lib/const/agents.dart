@@ -201,7 +201,7 @@ class AgentData implements DraggableData {
         name: "Phoenix",
       );
       agent.abilities.first.abilityData = SquareAbility(
-        width: 8 * inGameMeters,
+        width: 5,
         height: 21 * inGameMeters,
         isWall: true,
         iconPath: agent.abilities.first.iconPath,
@@ -319,7 +319,7 @@ class AgentData implements DraggableData {
       );
 
       agent.abilities[2].abilityData = SquareAbility(
-        width: 8 * inGameMeters,
+        width: 5,
         height: 60 * inGameMeters,
         isWall: true,
         iconPath: agent.abilities[2].iconPath,
@@ -497,7 +497,14 @@ class AgentData implements DraggableData {
         role: AgentRole.sentinel,
         name: "Cypher",
       );
-
+      agent.abilities.first.abilityData = ResizableSquareAbility(
+        width: 3,
+        height: 15 * inGameMeters,
+        iconPath: agent.abilities.first.iconPath,
+        color: Colors.white,
+        minLength: inGameMeters * 1,
+        isWall: true,
+      );
       agent.abilities[1].abilityData = CircleAbility(
         iconPath: agent.abilities[1].iconPath,
         size: 3.72,
@@ -577,6 +584,7 @@ class AgentData implements DraggableData {
         iconPath: agent.abilities.first.iconPath,
         color: Colors.blueAccent,
         hasSideBorders: true,
+        isTransparent: true,
       );
       agent.abilities[1].abilityData = CircleAbility(
         iconPath: agent.abilities[1].iconPath,
@@ -671,6 +679,7 @@ class AgentData implements DraggableData {
         height: 27.5 * inGameMeters,
         iconPath: agent.abilities.first.iconPath,
         color: Colors.indigo,
+        hasTopborder: true,
         distanceBetweenAOE: 5 * inGameMeters,
       );
 
@@ -736,10 +745,12 @@ class AgentData implements DraggableData {
         name: "Harbor",
       );
 
-      agent.abilities.first.abilityData = SquareAbility(
+      agent.abilities.first.abilityData = ResizableSquareAbility(
         width: 9.75 * inGameMeters,
         height: 35 * inGameMeters,
+        minLength: 5 * inGameMeters,
         iconPath: agent.abilities.first.iconPath,
+        hasTopborder: true,
         color: Colors.lightBlue,
       );
 

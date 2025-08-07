@@ -196,7 +196,8 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                     rotateOffset(lengthOrigin, rotationOrigin, localRotation!));
                 double currentLength =
                     coordinateSystem.normalize(currentPosLength.distance) /
-                        mapScale;
+                        mapScale /
+                        ref.watch(screenZoomProvider);
 
                 setState(() {
                   localLength = currentLength;

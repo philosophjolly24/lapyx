@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/widgets/custom_border_container.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
 
 class ResizableSquareWidget extends StatelessWidget {
@@ -15,7 +16,11 @@ class ResizableSquareWidget extends StatelessWidget {
       required this.length,
       this.id,
       required this.isAlly,
-      required this.origin});
+      required this.origin,
+      required this.isWall,
+      required this.isTransparent,
+      required this.hasTopborder,
+      required this.hasSideBorders});
   final Color color;
   final double width;
   final double maxLength;
@@ -26,12 +31,22 @@ class ResizableSquareWidget extends StatelessWidget {
   final String? id;
   final bool isAlly;
   final Offset origin;
-
+  final bool isWall;
+  final bool isTransparent;
+  final bool hasTopborder;
+  final bool hasSideBorders;
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
 
-    final scaledWidth = coordinateSystem.scale(width);
+    final double scaledWidth;
+
+    if (isWall) {
+      scaledWidth = coordinateSystem.scale(Settings.abilitySize * 2);
+    } else {
+      scaledWidth = coordinateSystem.scale(width);
+    }
+
     final scaledBoxHeight = coordinateSystem.scale(maxLength);
 
     final scaledDistance = coordinateSystem.scale((distanceBetweenAOE));
@@ -66,11 +81,15 @@ class ResizableSquareWidget extends StatelessWidget {
           ),
           Positioned(
             bottom: scaledDistance + scaledAbilitySize,
+            left: isWall ? ((scaledWidth - width) / 2) : 0,
             child: IgnorePointer(
-              child: Container(
+              child: CustomBorderContainer(
                 height: scaledLength,
-                width: scaledWidth,
-                decoration: BoxDecoration(color: color.withAlpha(100)),
+                width: isWall ? width : scaledWidth,
+                color: color,
+                hasTop: hasTopborder,
+                hasSide: hasSideBorders,
+                isTransparent: isTransparent,
               ),
             ),
           ),
