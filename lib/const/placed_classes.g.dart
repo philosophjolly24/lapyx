@@ -115,6 +115,7 @@ PlacedAbility _$PlacedAbilityFromJson(Map<String, dynamic> json) =>
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
       isAlly: json['isAlly'] as bool? ?? true,
+      length: (json['length'] as num?)?.toDouble() ?? 0,
     )
       ..isDeleted = json['isDeleted'] as bool? ?? false
       ..rotation = (json['rotation'] as num).toDouble();
@@ -127,4 +128,5 @@ Map<String, dynamic> _$PlacedAbilityToJson(PlacedAbility instance) =>
       'data': const AbilityInfoConverter().toJson(instance.data),
       'isAlly': instance.isAlly,
       'rotation': instance.rotation,
+      'length': instance.length,
     };

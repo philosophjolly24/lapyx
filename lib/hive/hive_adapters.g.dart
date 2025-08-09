@@ -8,7 +8,7 @@ part of 'hive_adapters.dart';
 
 class StrategyDataAdapter extends TypeAdapter<StrategyData> {
   @override
-  final int typeId = 0;
+  final typeId = 0;
 
   @override
   StrategyData read(BinaryReader reader) {
@@ -28,13 +28,14 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       mapData: fields[6] as MapValue,
       versionNumber: (fields[0] as num).toInt(),
       lastEdited: fields[9] as DateTime,
+      strategySettings: fields[11] as StrategySettings?,
     );
   }
 
   @override
   void write(BinaryWriter writer, StrategyData obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.versionNumber)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       ..writeByte(9)
       ..write(obj.lastEdited)
       ..writeByte(10)
-      ..write(obj.isAttack);
+      ..write(obj.isAttack)
+      ..writeByte(11)
+      ..write(obj.strategySettings);
   }
 
   @override
@@ -72,7 +75,7 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
 
 class PlacedWidgetAdapter extends TypeAdapter<PlacedWidget> {
   @override
-  final int typeId = 1;
+  final typeId = 1;
 
   @override
   PlacedWidget read(BinaryReader reader) {
@@ -112,7 +115,7 @@ class PlacedWidgetAdapter extends TypeAdapter<PlacedWidget> {
 
 class PlacedAgentAdapter extends TypeAdapter<PlacedAgent> {
   @override
-  final int typeId = 2;
+  final typeId = 2;
 
   @override
   PlacedAgent read(BinaryReader reader) {
@@ -157,7 +160,7 @@ class PlacedAgentAdapter extends TypeAdapter<PlacedAgent> {
 
 class PlacedAbilityAdapter extends TypeAdapter<PlacedAbility> {
   @override
-  final int typeId = 3;
+  final typeId = 3;
 
   @override
   PlacedAbility read(BinaryReader reader) {
@@ -170,6 +173,7 @@ class PlacedAbilityAdapter extends TypeAdapter<PlacedAbility> {
       position: fields[5] as Offset,
       id: fields[3] as String,
       isAlly: fields[1] == null ? true : fields[1] as bool,
+      length: fields[6] == null ? 0 : (fields[6] as num).toDouble(),
     )
       ..rotation = (fields[2] as num).toDouble()
       ..isDeleted = fields[4] as bool;
@@ -178,7 +182,7 @@ class PlacedAbilityAdapter extends TypeAdapter<PlacedAbility> {
   @override
   void write(BinaryWriter writer, PlacedAbility obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.data)
       ..writeByte(1)
@@ -190,7 +194,9 @@ class PlacedAbilityAdapter extends TypeAdapter<PlacedAbility> {
       ..writeByte(4)
       ..write(obj.isDeleted)
       ..writeByte(5)
-      ..write(obj.position);
+      ..write(obj.position)
+      ..writeByte(6)
+      ..write(obj.length);
   }
 
   @override
@@ -206,7 +212,7 @@ class PlacedAbilityAdapter extends TypeAdapter<PlacedAbility> {
 
 class PlacedTextAdapter extends TypeAdapter<PlacedText> {
   @override
-  final int typeId = 4;
+  final typeId = 4;
 
   @override
   PlacedText read(BinaryReader reader) {
@@ -252,7 +258,7 @@ class PlacedTextAdapter extends TypeAdapter<PlacedText> {
 
 class PlacedImageAdapter extends TypeAdapter<PlacedImage> {
   @override
-  final int typeId = 5;
+  final typeId = 5;
 
   @override
   PlacedImage read(BinaryReader reader) {
@@ -304,7 +310,7 @@ class PlacedImageAdapter extends TypeAdapter<PlacedImage> {
 
 class MapValueAdapter extends TypeAdapter<MapValue> {
   @override
-  final int typeId = 6;
+  final typeId = 6;
 
   @override
   MapValue read(BinaryReader reader) {
@@ -381,7 +387,7 @@ class MapValueAdapter extends TypeAdapter<MapValue> {
 
 class AgentTypeAdapter extends TypeAdapter<AgentType> {
   @override
-  final int typeId = 7;
+  final typeId = 7;
 
   @override
   AgentType read(BinaryReader reader) {
@@ -518,7 +524,7 @@ class AgentTypeAdapter extends TypeAdapter<AgentType> {
 
 class OffsetAdapter extends TypeAdapter<Offset> {
   @override
-  final int typeId = 8;
+  final typeId = 8;
 
   @override
   Offset read(BinaryReader reader) {
@@ -555,7 +561,7 @@ class OffsetAdapter extends TypeAdapter<Offset> {
 
 class FreeDrawingAdapter extends TypeAdapter<FreeDrawing> {
   @override
-  final int typeId = 11;
+  final typeId = 11;
 
   @override
   FreeDrawing read(BinaryReader reader) {
@@ -604,7 +610,7 @@ class FreeDrawingAdapter extends TypeAdapter<FreeDrawing> {
 
 class LineAdapter extends TypeAdapter<Line> {
   @override
-  final int typeId = 12;
+  final typeId = 12;
 
   @override
   Line read(BinaryReader reader) {
@@ -655,7 +661,7 @@ class LineAdapter extends TypeAdapter<Line> {
 
 class BoundingBoxAdapter extends TypeAdapter<BoundingBox> {
   @override
-  final int typeId = 13;
+  final typeId = 13;
 
   @override
   BoundingBox read(BinaryReader reader) {
@@ -686,6 +692,47 @@ class BoundingBoxAdapter extends TypeAdapter<BoundingBox> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is BoundingBoxAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class StrategySettingsAdapter extends TypeAdapter<StrategySettings> {
+  @override
+  final typeId = 14;
+
+  @override
+  StrategySettings read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return StrategySettings(
+      agentSize: fields[0] == null
+          ? Settings.agentSize
+          : (fields[0] as num).toDouble(),
+      abilitySize: fields[1] == null
+          ? Settings.abilitySize
+          : (fields[1] as num).toDouble(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, StrategySettings obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.agentSize)
+      ..writeByte(1)
+      ..write(obj.abilitySize);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is StrategySettingsAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

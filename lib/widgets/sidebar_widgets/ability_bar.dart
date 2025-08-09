@@ -10,6 +10,7 @@ import 'package:icarus/providers/ability_bar_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
+import 'package:icarus/providers/strategy_settings_provider.dart';
 import 'package:icarus/providers/team_provider.dart';
 import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 
@@ -19,7 +20,7 @@ class AbiilityBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     if (ref.watch(abilityBarProvider) == null) //
       return const SizedBox.shrink();
-
+    log("Building ability bar");
     final mapScale = Maps.mapScale[ref.watch(mapProvider).currentMap] ?? 1;
 
     AgentData activeAgent = ref.watch(abilityBarProvider)!;
@@ -49,9 +50,13 @@ class AbiilityBar extends ConsumerWidget {
 
                   double scaleFactor = CoordinateSystem.instance.scaleFactor *
                       ref.read(screenZoomProvider);
-                  log("Center point dragging value${info.abilityData!.getAnchorPoint(mapScale).scale(scaleFactor, scaleFactor).toString()}");
+
+                  double abilitySize =
+                      ref.read(strategySettingsProvider).abilitySize;
+
+                  log("info.abilityData: $abilitySize");
                   return info.abilityData!
-                      .getAnchorPoint(mapScale)
+                      .getAnchorPoint(mapScale, abilitySize)
                       .scale(scaleFactor, scaleFactor);
                 },
                 feedback: Opacity(

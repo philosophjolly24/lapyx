@@ -10,12 +10,13 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
+import 'package:icarus/providers/strategy_settings_provider.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/rotatable_widget.dart';
 import 'dart:math' as math;
 
 import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 
-class PlacedAbilityWidget extends StatefulWidget {
+class PlacedAbilityWidget extends ConsumerStatefulWidget {
   final PlacedAbility ability;
   final Function(DraggableDetails details) onDragEnd;
   final String id;
@@ -33,10 +34,11 @@ class PlacedAbilityWidget extends StatefulWidget {
   });
 
   @override
-  State<PlacedAbilityWidget> createState() => _PlacedAbilityWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _PlacedAbilityWidgetState();
 }
 
-class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
+class _PlacedAbilityWidgetState extends ConsumerState<PlacedAbilityWidget> {
   Offset rotationOrigin = Offset.zero;
 
   Offset lengthOrigin = Offset.zero;
@@ -72,6 +74,8 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
+
+    final abilitySize = ref.watch(strategySettingsProvider).abilitySize;
     if (localRotation == null) {
       return const SizedBox.shrink();
     }
@@ -119,10 +123,11 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
             widget.ability.data.abilityData is CenterSquareAbility;
         final double? buttonTop;
         if (isCenterSquare) {
-          buttonTop =
-              widget.ability.data.abilityData!.getAnchorPoint(mapScale).dy -
-                  Settings.abilitySize -
-                  30;
+          buttonTop = widget.ability.data.abilityData!
+                  .getAnchorPoint(mapScale, abilitySize)
+                  .dy -
+              abilitySize -
+              30;
         } else if (widget.ability.data.abilityData is ResizableSquareAbility) {
           final resizeWidget =
               (widget.ability.data.abilityData! as ResizableSquareAbility);
@@ -150,7 +155,8 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
             buttonTop: buttonTop,
             rotation: localRotation!,
             isDragging: isDragging,
-            origin: widget.ability.data.abilityData!.getAnchorPoint(mapScale),
+            origin: widget.ability.data.abilityData!
+                .getAnchorPoint(mapScale, abilitySize),
             onPanStart: (details) {
               log("Rotation Start");
               // ref.read(abilityProvider.notifier).updateRotationHistory(index);
@@ -158,7 +164,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
 
               final box = context.findRenderObject() as RenderBox;
               final bottomCenter = widget.ability.data.abilityData!
-                  .getAnchorPoint(mapScale)
+                  .getAnchorPoint(mapScale, abilitySize)
                   .scale(coordinateSystem.scaleFactor,
                       coordinateSystem.scaleFactor);
 
@@ -167,7 +173,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                 final resizeAbility = (widget.ability.data.abilityData!
                     as ResizableSquareAbility);
                 lengthOrigin = box.localToGlobal(
-                  resizeAbility.getLengthAnchor(mapScale).scale(
+                  resizeAbility.getLengthAnchor(mapScale, abilitySize).scale(
                       coordinateSystem.scaleFactor,
                       coordinateSystem.scaleFactor),
                 );
@@ -220,7 +226,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                 final RenderBox renderObject =
                     context.findRenderObject()! as RenderBox;
                 final anchorPoint = widget.ability.data.abilityData!
-                    .getAnchorPoint(mapScale)
+                    .getAnchorPoint(mapScale, abilitySize)
                     .scale(coordinateSystem.scaleFactor,
                         coordinateSystem.scaleFactor);
                 Offset rotatedPos = rotateOffset(
@@ -238,7 +244,7 @@ class _PlacedAbilityWidgetState extends State<PlacedAbilityWidget> {
                   angle: localRotation!,
                   alignment: Alignment.topLeft,
                   origin: widget.ability.data.abilityData!
-                      .getAnchorPoint(mapScale)
+                      .getAnchorPoint(mapScale, abilitySize)
                       .scale(
                           coordinateSystem.scaleFactor *
                               ref.watch(screenZoomProvider),

@@ -21,5 +21,25 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(PlacedTextAdapter());
     registerAdapter(PlacedWidgetAdapter());
     registerAdapter(StrategyDataAdapter());
+    registerAdapter(StrategySettingsAdapter());
+  }
+}
+
+extension IsolatedHiveRegistrar on IsolatedHiveInterface {
+  void registerAdapters() {
+    registerAdapter(AbilityInfoAdapter());
+    registerAdapter(AgentTypeAdapter());
+    registerAdapter(BoundingBoxAdapter());
+    registerAdapter(FreeDrawingAdapter());
+    registerAdapter(LineAdapter());
+    registerAdapter(MapValueAdapter());
+    registerAdapter(OffsetAdapter());
+    registerAdapter(PlacedAbilityAdapter());
+    registerAdapter(PlacedAgentAdapter());
+    registerAdapter(PlacedImageAdapter());
+    registerAdapter(PlacedTextAdapter());
+    registerAdapter(PlacedWidgetAdapter());
+    registerAdapter(StrategyDataAdapter());
+    registerAdapter(StrategySettingsAdapter());
   }
 }

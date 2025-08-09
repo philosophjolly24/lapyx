@@ -15,6 +15,7 @@ import 'package:icarus/providers/auto_save_notifier.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
+import 'package:icarus/providers/strategy_settings_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:icarus/const/drawing_element.dart';
@@ -36,6 +37,7 @@ class StrategyData extends HiveObject {
   final MapValue mapData;
   final DateTime lastEdited;
   final bool isAttack;
+  final StrategySettings strategySettings;
 
   StrategyData({
     this.isAttack = true,
@@ -49,7 +51,8 @@ class StrategyData extends HiveObject {
     required this.mapData,
     required this.versionNumber,
     required this.lastEdited,
-  });
+    StrategySettings? strategySettings,
+  }) : strategySettings = strategySettings ?? StrategySettings();
 }
 
 class StrategyState {
@@ -130,7 +133,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       isSaved: true,
       stratName: null,
       id: "testID",
-      storageDirectory: null,
+      storageDirectory: state.storageDirectory,
     );
   }
 
@@ -153,9 +156,15 @@ class StrategyProvider extends Notifier<StrategyState> {
     ref.read(agentProvider.notifier).fromHive(newStrat.agentData);
     ref.read(abilityProvider.notifier).fromHive(newStrat.abilityData);
     ref.read(drawingProvider.notifier).fromHive(newStrat.drawingData);
-    ref.read(mapProvider.notifier).updateMap(newStrat.mapData);
+    ref
+        .read(mapProvider.notifier)
+        .fromHive(newStrat.mapData, newStrat.isAttack);
     ref.read(textProvider.notifier).fromHive(newStrat.textData);
     ref.read(placedImageProvider.notifier).fromHive(newStrat.imageData);
+
+    ref
+        .read(strategySettingsProvider.notifier)
+        .fromHive(newStrat.strategySettings);
 
     final newDir = await setStorageDirectory(newStrat.id);
 
@@ -199,15 +208,10 @@ class StrategyProvider extends Notifier<StrategyState> {
     final List<DrawingElement> drawingData = ref
         .read(drawingProvider.notifier)
         .fromJson(jsonEncode(json["drawingData"]));
-    List<PlacedAgent> prevAgentData = ref
+    List<PlacedAgent> agentData = ref
         .read(agentProvider.notifier)
         .fromJson(jsonEncode(json["agentData"]));
 
-    List<PlacedAgent> agentData = [];
-    for (PlacedAgent agent in prevAgentData) {
-      agent.position = agent.position.translate(-2.6, -16.9);
-      agentData.add(agent);
-    }
     final List<PlacedAbility> abilityData = ref
         .read(abilityProvider.notifier)
         .fromJson(jsonEncode(json["abilityData"]));
@@ -219,19 +223,34 @@ class StrategyProvider extends Notifier<StrategyState> {
 
     final imageData = await ref.read(placedImageProvider.notifier).fromJson(
         jsonString: jsonEncode(json["imageData"] ?? []), strategyID: newID);
+    final StrategySettings settingsData;
+    final bool isAttack;
+    if (json["settingsData"] != null) {
+      settingsData = ref
+          .read(strategySettingsProvider.notifier)
+          .fromJson(jsonEncode(json["settingsData"]));
+    } else {
+      settingsData = StrategySettings();
+    }
+    if (json["isAttack"] != null) {
+      isAttack = json["isAttack"] == "true" ? true : false;
+    } else {
+      isAttack = true;
+    }
 
     final newStrategy = StrategyData(
-      id: newID,
-      name: path.basenameWithoutExtension(file.name),
-      drawingData: drawingData,
-      agentData: agentData,
-      abilityData: abilityData,
-      textData: textData,
-      imageData: imageData,
-      mapData: mapData,
-      versionNumber: Settings.versionNumber,
-      lastEdited: DateTime.now(),
-    );
+        id: newID,
+        name: path.basenameWithoutExtension(file.name),
+        drawingData: drawingData,
+        agentData: agentData,
+        abilityData: abilityData,
+        textData: textData,
+        imageData: imageData,
+        mapData: mapData,
+        versionNumber: Settings.versionNumber,
+        lastEdited: DateTime.now(),
+        isAttack: isAttack,
+        strategySettings: settingsData);
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .put(newStrategy.id, newStrategy);
@@ -250,6 +269,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       id: newID,
       name: name,
       lastEdited: DateTime.now(),
+      strategySettings: StrategySettings(),
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
@@ -262,6 +282,7 @@ class StrategyProvider extends Notifier<StrategyState> {
     await saveToHive(id);
     String fetchedImageData =
         await ref.read(placedImageProvider.notifier).toJson(id);
+    // Json has no trailing commas
     String data = '''
                 {
                 "versionNumber": "${Settings.versionNumber}",
@@ -270,7 +291,9 @@ class StrategyProvider extends Notifier<StrategyState> {
                 "abilityData": ${ref.read(abilityProvider.notifier).toJson()},
                 "textData": ${ref.read(textProvider.notifier).toJson()},
                 "mapData": ${ref.read(mapProvider.notifier).toJson()},
-                "imageData":$fetchedImageData
+                "imageData":$fetchedImageData,
+                "settingsData":${ref.read(strategySettingsProvider.notifier).toJson()},
+                "isAttack": "${ref.read(mapProvider).isAttack.toString()}"
                 }
               ''';
 
@@ -322,6 +345,7 @@ class StrategyProvider extends Notifier<StrategyState> {
     final textData = ref.read(textProvider);
     final mapData = ref.read(mapProvider);
     final imageData = ref.read(placedImageProvider).images;
+    final strategySettings = ref.read(strategySettingsProvider);
 
     final currentStategy = StrategyData(
       drawingData: drawingData,
@@ -335,6 +359,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       id: id,
       name: state.stratName ?? "placeholder",
       lastEdited: DateTime.now(),
+      strategySettings: strategySettings,
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)

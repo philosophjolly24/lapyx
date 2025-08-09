@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/providers/strategy_settings_provider.dart';
 
 class AbilityWidget extends ConsumerWidget {
   const AbilityWidget({
@@ -18,10 +19,10 @@ class AbilityWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final coordinateSystem = CoordinateSystem.instance;
-
+    final abilitySize = ref.watch(strategySettingsProvider).abilitySize;
     return Container(
-      width: coordinateSystem.scale(Settings.abilitySize),
-      height: coordinateSystem.scale(Settings.abilitySize),
+      width: coordinateSystem.scale(abilitySize),
+      height: coordinateSystem.scale(abilitySize),
       padding: EdgeInsets.all(coordinateSystem.scale(3)),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(

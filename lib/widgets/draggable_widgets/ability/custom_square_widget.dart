@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
-import 'package:icarus/const/settings.dart';
+import 'package:icarus/providers/strategy_settings_provider.dart';
 import 'package:icarus/widgets/custom_border_container.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
 
@@ -14,7 +14,6 @@ class CustomSquareWidget extends ConsumerWidget {
     required this.distanceBetweenAOE,
     this.rotation,
     required this.iconPath,
-    required this.origin,
     required this.id,
     required this.isAlly,
     required this.hasTopborder,
@@ -28,7 +27,6 @@ class CustomSquareWidget extends ConsumerWidget {
   final double width;
   final double height;
   final String iconPath;
-  final Offset origin;
   final double distanceBetweenAOE;
   final double? rotation;
   final bool isAlly;
@@ -41,9 +39,9 @@ class CustomSquareWidget extends ConsumerWidget {
     final coordinateSystem = CoordinateSystem.instance;
 
     final double scaledWidth;
-
+    final abilitySize = ref.watch(strategySettingsProvider).abilitySize;
     if (isWall) {
-      scaledWidth = coordinateSystem.scale(Settings.abilitySize * 2);
+      scaledWidth = coordinateSystem.scale(abilitySize * 2);
     } else {
       scaledWidth = coordinateSystem.scale(width);
     }
@@ -51,7 +49,7 @@ class CustomSquareWidget extends ConsumerWidget {
 
     final scaledHeight = coordinateSystem.scale(height);
     final scaledDistance = coordinateSystem.scale((distanceBetweenAOE));
-    final scaledAbilitySize = coordinateSystem.scale(Settings.abilitySize);
+    final scaledAbilitySize = coordinateSystem.scale(abilitySize);
     final totalHeight =
         scaledHeight + scaledDistance + scaledAbilitySize + resizeButtonOffset;
 
@@ -79,47 +77,15 @@ class CustomSquareWidget extends ConsumerWidget {
                   top: resizeButtonOffset,
                   left: 0,
                   child: IgnorePointer(
-                      child: CustomBorderContainer(
-                    color: color,
-                    width: scaledWidth,
-                    height: scaledHeight,
-                    hasTop: hasTopborder,
-                    hasSide: hasSideBorders,
-                    isTransparent: isTransparent,
-                  )
-
-                      // Container(
-                      //   width: scaledWidth,
-                      //   height: scaledHeight,
-                      //   decoration: BoxDecoration(
-                      //       color: (hasSideBorders)
-                      //           ? Colors.transparent
-                      //           : color.withAlpha(100),
-                      //       border: Border(
-                      //         top: BorderSide(
-                      //           color: color.withAlpha(200),
-                      //           width: 3,
-                      //           style: hasTopborder
-                      //               ? BorderStyle.solid
-                      //               : BorderStyle.none,
-                      //         ),
-                      //         left: BorderSide(
-                      //           color: color.withAlpha(100),
-                      //           width: 3,
-                      //           style: hasSideBorders
-                      //               ? BorderStyle.solid
-                      //               : BorderStyle.none,
-                      //         ),
-                      //         right: BorderSide(
-                      //           color: color.withAlpha(100),
-                      //           width: 3,
-                      //           style: hasSideBorders
-                      //               ? BorderStyle.solid
-                      //               : BorderStyle.none,
-                      //         ),
-                      //       )),
-                      // ),
-                      ),
+                    child: CustomBorderContainer(
+                      color: color,
+                      width: scaledWidth,
+                      height: scaledHeight,
+                      hasTop: hasTopborder,
+                      hasSide: hasSideBorders,
+                      isTransparent: isTransparent,
+                    ),
+                  ),
                 ),
 
           if (isWall)

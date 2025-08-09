@@ -27,6 +27,10 @@ class MapProvider extends Notifier<MapState> {
 
   void updateMap(MapValue map) => state = state.copyWith(currentMap: map);
 
+  void fromHive(MapValue map, bool isAttack) {
+    state = state.copyWith(currentMap: map, isAttack: isAttack);
+  }
+
   void switchSide() {
     state = state.copyWith(isAttack: !state.isAttack);
   }

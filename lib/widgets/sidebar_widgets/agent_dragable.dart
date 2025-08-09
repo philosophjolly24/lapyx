@@ -5,6 +5,7 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_bar_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/screen_zoom_provider.dart';
+import 'package:icarus/providers/strategy_settings_provider.dart';
 import 'package:icarus/widgets/draggable_widgets/agents/agent_feedback_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 
@@ -16,6 +17,7 @@ class AgentDragable extends ConsumerWidget {
   final AgentData agent;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final agentSize = ref.watch(strategySettingsProvider).agentSize;
     return Padding(
       padding: const EdgeInsets.all(1.0),
       child: Center(
@@ -44,12 +46,11 @@ class AgentDragable extends ConsumerWidget {
                 opacity: Settings.feedbackOpacity,
                 child: ZoomTransform(child: AgentFeedback(agent: agent)),
               ),
-              dragAnchorStrategy: (draggable, context, position) =>
-                  const Offset(
-                (Settings.agentSize / 2),
-                (Settings.agentSize / 2),
-              ).scale(ref.read(screenZoomProvider),
-                      ref.read(screenZoomProvider)),
+              dragAnchorStrategy: (draggable, context, position) => Offset(
+                (agentSize / 2),
+                (agentSize / 2),
+              ).scale(
+                  ref.read(screenZoomProvider), ref.read(screenZoomProvider)),
               child: RepaintBoundary(
                 child: InkWell(
                   onTap: () {

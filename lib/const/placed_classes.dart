@@ -232,11 +232,13 @@ class PlacedAbility extends PlacedWidget {
     }
   }
 
-  PlacedAbility(
-      {required this.data,
-      required super.position,
-      required super.id,
-      this.isAlly = true});
+  PlacedAbility({
+    required this.data,
+    required super.position,
+    required super.id,
+    this.isAlly = true,
+    this.length = 0,
+  });
 
   factory PlacedAbility.fromJson(Map<String, dynamic> json) =>
       _$PlacedAbilityFromJson(json);

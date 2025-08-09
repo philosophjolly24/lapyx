@@ -9,6 +9,7 @@ import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/sidebar.dart';
 import 'package:icarus/widgets/map_selector.dart';
 import 'package:icarus/widgets/save_and_load_button.dart';
+import 'package:icarus/widgets/settings_tab.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -91,13 +92,6 @@ class _StrategyViewState extends ConsumerState<StrategyView>
                             )
                           ],
                         )),
-                    // IconButton(
-                    //   onPressed: () {
-                    //     String id = ref.watch(strategyProvider).id;
-                    //     ref.read(strategyProvider.notifier).exportFile(id);
-                    //   },
-                    //   icon: const Icon(Icons.file_open_outlined),
-                    // )
                   ],
                 )
               ],
@@ -114,7 +108,12 @@ class _StrategyViewState extends ConsumerState<StrategyView>
                   alignment: Alignment.topLeft,
                   child: SaveButtonAndLoad(),
                 ),
-                SideBarUI()
+                SideBarUI(),
+
+                // Align(
+                //   alignment: Alignment.centerLeft,
+                //   child: SettingsTab(),
+                // )
               ],
             ),
           ),

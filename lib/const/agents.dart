@@ -521,16 +521,6 @@ class AgentData implements DraggableData {
         name: "Chamber",
       );
 
-      agent.abilities[0].abilityData = CircleAbility(
-        iconPath: agent.abilities[0].iconPath,
-        size: 50,
-        outlineColor: Colors.white,
-        hasCenterDot: true,
-        // hasPerimeter: true,
-        // perimeterSize: 10 * inGameMetersDiameter,
-        fillColor: Colors.amber,
-      );
-
       agent.abilities[2].abilityData = CircleAbility(
         iconPath: agent.abilities[2].iconPath,
         size: 18,

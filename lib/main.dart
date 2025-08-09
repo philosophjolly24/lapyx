@@ -9,6 +9,7 @@ import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_manager.dart';
 import 'package:icarus/strategy_view.dart';
 import 'package:icarus/widgets/global_shortcuts.dart';
+import 'package:icarus/widgets/settings_tab.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -74,6 +75,7 @@ class MyApp extends StatelessWidget {
         routes: {
           Routes.strategyManager: (context) => const StrategyManager(),
           Routes.strategyView: (context) => const StrategyView(),
+          Routes.settings: (context) => const SettingsTab(),
         },
         home: const MyHomePage(),
       ),

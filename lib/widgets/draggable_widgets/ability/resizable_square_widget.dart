@@ -1,10 +1,12 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/providers/strategy_settings_provider.dart';
 import 'package:icarus/widgets/custom_border_container.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
 
-class ResizableSquareWidget extends StatelessWidget {
+class ResizableSquareWidget extends ConsumerWidget {
   const ResizableSquareWidget(
       {super.key,
       required this.color,
@@ -16,7 +18,6 @@ class ResizableSquareWidget extends StatelessWidget {
       required this.length,
       this.id,
       required this.isAlly,
-      required this.origin,
       required this.isWall,
       required this.isTransparent,
       required this.hasTopborder,
@@ -30,19 +31,18 @@ class ResizableSquareWidget extends StatelessWidget {
   final double length;
   final String? id;
   final bool isAlly;
-  final Offset origin;
   final bool isWall;
   final bool isTransparent;
   final bool hasTopborder;
   final bool hasSideBorders;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final coordinateSystem = CoordinateSystem.instance;
-
+    final abilitySize = ref.watch(strategySettingsProvider).abilitySize;
     final double scaledWidth;
 
     if (isWall) {
-      scaledWidth = coordinateSystem.scale(Settings.abilitySize * 2);
+      scaledWidth = coordinateSystem.scale(abilitySize * 2);
     } else {
       scaledWidth = coordinateSystem.scale(width);
     }
@@ -50,7 +50,7 @@ class ResizableSquareWidget extends StatelessWidget {
     final scaledBoxHeight = coordinateSystem.scale(maxLength);
 
     final scaledDistance = coordinateSystem.scale((distanceBetweenAOE));
-    final scaledAbilitySize = coordinateSystem.scale(Settings.abilitySize);
+    final scaledAbilitySize = coordinateSystem.scale(abilitySize);
 
     //The 7.5 is to account for the size of the resize button
     final resizeButtonOffset = coordinateSystem.scale(7.5);

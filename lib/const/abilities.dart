@@ -12,7 +12,7 @@ import 'package:icarus/widgets/draggable_widgets/ability/rotatable_image_widget.
 import 'package:icarus/widgets/draggable_widgets/agents/agent_icon_widget.dart';
 
 abstract class Ability {
-  Offset getAnchorPoint([double? mapScale]);
+  Offset getAnchorPoint([double? mapScale, double? abilitySize]);
   Widget createWidget(String? id, bool isAlly, double mapScale,
       [double? rotation, double? length]);
 }
@@ -33,8 +33,8 @@ class BaseAbility extends Ability {
   }
 
   @override
-  Offset getAnchorPoint([double? mapScale]) {
-    return const Offset(Settings.abilitySize / 2, Settings.abilitySize / 2);
+  Offset getAnchorPoint([double? mapScale, double? abilitySize]) {
+    return Offset(abilitySize! / 2, abilitySize / 2);
   }
 }
 
@@ -50,7 +50,10 @@ class ImageAbility extends Ability {
   }
 
   @override
-  Offset getAnchorPoint([double? mapScale]) {
+  Offset getAnchorPoint([
+    double? mapScale,
+    double? abilitySize,
+  ]) {
     return Offset(size / 2, size / 2);
   }
 }
@@ -78,7 +81,10 @@ class CircleAbility extends Ability {
   final double? perimeterSize;
 
   @override
-  Offset getAnchorPoint([double? mapScale]) {
+  Offset getAnchorPoint([
+    double? mapScale,
+    double? abilitySize,
+  ]) {
     return Offset((size * mapScale!) / 2, (size * mapScale) / 2);
   }
 
@@ -126,12 +132,20 @@ class SquareAbility extends Ability {
   });
 
   @override
-  Offset getAnchorPoint([double? mapScale]) {
+  Offset getAnchorPoint([
+    double? mapScale,
+    double? abilitySize,
+  ]) {
+    if (abilitySize == null) {
+      log("Warning: abilitySize is null in SquareAbility.getAnchorPoint");
+      abilitySize = Settings.abilitySize;
+    }
+
     return Offset(
-      (isWall ? Settings.abilitySize * 2 : width * mapScale!) / 2,
+      (isWall ? abilitySize * 2 : width * mapScale!) / 2,
       (height * mapScale!) +
           (distanceBetweenAOE * mapScale) +
-          (Settings.abilitySize / 2) +
+          (abilitySize / 2) +
           7.5,
     );
   }
@@ -146,7 +160,6 @@ class SquareAbility extends Ability {
       iconPath: iconPath,
       distanceBetweenAOE: distanceBetweenAOE * mapScale,
       rotation: rotation,
-      origin: getAnchorPoint(mapScale),
       id: id,
       isAlly: isAlly,
       hasTopborder: hasTopborder,
@@ -172,9 +185,9 @@ class CenterSquareAbility extends Ability {
   });
 
   @override
-  Offset getAnchorPoint([double? mapScale]) {
+  Offset getAnchorPoint([double? mapScale, double? abilitySize]) {
     return Offset(
-      (Settings.abilitySize) / 2,
+      (abilitySize!) / 2,
       (height * mapScale!) / 2,
     );
   }
@@ -188,7 +201,6 @@ class CenterSquareAbility extends Ability {
       height: height * mapScale,
       iconPath: iconPath,
       rotation: rotation,
-      origin: getAnchorPoint(mapScale),
       id: id,
       isAlly: isAlly,
     );
@@ -207,7 +219,7 @@ class RotatableImageAbility extends Ability {
   });
 
   @override
-  Offset getAnchorPoint([double? mapScale]) {
+  Offset getAnchorPoint([double? mapScale, double? abilitySize]) {
     return Offset(width * mapScale! / 2, (height * mapScale / 2) + 30);
   }
 
@@ -252,7 +264,6 @@ class ResizableSquareAbility extends SquareAbility {
       minLength: minLength * mapScale,
       iconPath: iconPath,
       distanceBetweenAOE: distanceBetweenAOE * mapScale,
-      origin: getAnchorPoint(mapScale),
       id: id,
       isAlly: isAlly,
       hasTopborder: hasTopborder,
@@ -261,20 +272,20 @@ class ResizableSquareAbility extends SquareAbility {
     );
   }
 
-  Offset getLengthAnchor(double mapScale) {
+  Offset getLengthAnchor(double mapScale, double abilitySize) {
     return Offset(
-      (isWall ? Settings.abilitySize * 2 : width * mapScale) / 2,
+      (isWall ? abilitySize * 2 : width * mapScale) / 2,
       (height * mapScale) + 7.5,
     );
   }
 
   @override
-  Offset getAnchorPoint([double? mapScale]) {
+  Offset getAnchorPoint([double? mapScale, double? abilitySize]) {
     return Offset(
-      (isWall ? Settings.abilitySize * 2 : width * mapScale!) / 2,
+      (isWall ? abilitySize! * 2 : width * mapScale!) / 2,
       (height * mapScale!) +
           (distanceBetweenAOE * mapScale) +
-          (Settings.abilitySize / 2) +
+          (abilitySize! / 2) +
           7.5,
     );
   }
