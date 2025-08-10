@@ -46,7 +46,11 @@ class ImageAbility extends Ability {
   @override
   Widget createWidget(String? id, bool isAlly, double mapScale,
       [double? rotation, double? length]) {
-    return AgentIconWidget(imagePath: imagePath, size: size * mapScale);
+    return AgentIconWidget(
+      imagePath: imagePath,
+      size: size * mapScale,
+      id: id,
+    );
   }
 
   @override
@@ -230,6 +234,7 @@ class RotatableImageAbility extends Ability {
       imagePath: imagePath,
       height: height * mapScale,
       width: width * mapScale,
+      id: id,
     );
   }
 }

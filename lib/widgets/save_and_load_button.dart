@@ -58,6 +58,7 @@ class SaveButtonAndLoad extends ConsumerWidget {
           ),
           const AutoSaveButton(),
           IconButton(
+            tooltip: "Export",
             onPressed: () async {
               await ref
                   .read(strategyProvider.notifier)

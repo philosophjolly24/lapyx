@@ -98,7 +98,7 @@ class ResizableSquareWidget extends ConsumerWidget {
             left: (scaledWidth - scaledAbilitySize) / 2,
             child: AbilityWidget(
               iconPath: iconPath,
-              id: null,
+              id: id,
               isAlly: isAlly,
             ),
           ),

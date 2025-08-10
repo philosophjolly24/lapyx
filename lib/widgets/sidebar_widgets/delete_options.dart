@@ -65,6 +65,7 @@ class _DeleteOptionsState extends ConsumerState<DeleteOptions> {
                   children: [
                     Expanded(
                       child: IconButton(
+                        tooltip: "Clear Agent",
                         onPressed: () {
                           ref
                               .read(actionProvider.notifier)
@@ -75,6 +76,7 @@ class _DeleteOptionsState extends ConsumerState<DeleteOptions> {
                     ),
                     Expanded(
                       child: IconButton(
+                        tooltip: "Clear Ability",
                         onPressed: () {
                           ref
                               .read(actionProvider.notifier)
@@ -85,6 +87,7 @@ class _DeleteOptionsState extends ConsumerState<DeleteOptions> {
                     ),
                     Expanded(
                       child: IconButton(
+                        tooltip: "Clear Drawing",
                         onPressed: () {
                           ref
                               .read(actionProvider.notifier)
@@ -95,6 +98,7 @@ class _DeleteOptionsState extends ConsumerState<DeleteOptions> {
                     ),
                     Expanded(
                       child: IconButton(
+                        tooltip: "Clear Text",
                         onPressed: () {
                           ref
                               .read(actionProvider.notifier)
@@ -105,6 +109,7 @@ class _DeleteOptionsState extends ConsumerState<DeleteOptions> {
                     ),
                     Expanded(
                       child: IconButton(
+                        tooltip: "Clear Image",
                         onPressed: () {
                           ref
                               .read(actionProvider.notifier)

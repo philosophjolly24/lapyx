@@ -106,7 +106,7 @@ class CustomSquareWidget extends ConsumerWidget {
             left: (scaledWidth / 2) - (scaledAbilitySize / 2),
             child: AbilityWidget(
               iconPath: iconPath,
-              id: null,
+              id: id,
               isAlly: isAlly,
             ),
           ),

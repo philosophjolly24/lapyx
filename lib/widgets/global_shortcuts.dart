@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/shortcut_info.dart';
 import 'package:icarus/providers/action_provider.dart';
+import 'package:icarus/providers/interaction_state_provider.dart';
 
 class GlobalShortcuts extends ConsumerWidget {
   const GlobalShortcuts({super.key, required this.child});
@@ -20,6 +21,36 @@ class GlobalShortcuts extends ConsumerWidget {
             UndoActionIntent: CallbackAction<UndoActionIntent>(
               onInvoke: (intent) {
                 ref.read(actionProvider.notifier).undoAction();
+                return null;
+              },
+            ),
+            ToggleDrawingIntent: CallbackAction<ToggleDrawingIntent>(
+              onInvoke: (intent) {
+                if (ref.read(interactionStateProvider) ==
+                    InteractionState.drawing) {
+                  ref
+                      .read(interactionStateProvider.notifier)
+                      .update(InteractionState.navigation);
+                } else {
+                  ref
+                      .read(interactionStateProvider.notifier)
+                      .update(InteractionState.drawing);
+                }
+                return null;
+              },
+            ),
+            ToggleErasingIntent: CallbackAction<ToggleErasingIntent>(
+              onInvoke: (intent) {
+                if (ref.read(interactionStateProvider) ==
+                    InteractionState.erasing) {
+                  ref
+                      .read(interactionStateProvider.notifier)
+                      .update(InteractionState.navigation);
+                } else {
+                  ref
+                      .read(interactionStateProvider.notifier)
+                      .update(InteractionState.erasing);
+                }
                 return null;
               },
             ),

@@ -6,6 +6,7 @@ import 'package:cross_file/cross_file.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/abilities.dart';
 import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
@@ -124,7 +125,7 @@ class StrategyProvider extends Notifier<StrategyState> {
     if (!await customDirectory.exists()) {
       await customDirectory.create(recursive: true);
     }
-
+    log(customDirectory.path);
     return customDirectory;
   }
 
@@ -154,7 +155,18 @@ class StrategyProvider extends Notifier<StrategyState> {
         .deleteUnusedImages(newStrat.id, newStrat.imageData);
 
     ref.read(agentProvider.notifier).fromHive(newStrat.agentData);
-    ref.read(abilityProvider.notifier).fromHive(newStrat.abilityData);
+
+    final List<PlacedAbility> updatedAbility = [...newStrat.abilityData];
+    if (newStrat.versionNumber < 7) {
+      log("Updating ability positions for version < 7");
+      for (PlacedAbility ability in updatedAbility) {
+        if (ability.data.abilityData! is SquareAbility) {
+          ability.position = ability.position.translate(0, -7.5);
+        }
+      }
+    }
+
+    ref.read(abilityProvider.notifier).fromHive(updatedAbility);
     ref.read(drawingProvider.notifier).fromHive(newStrat.drawingData);
     ref
         .read(mapProvider.notifier)
@@ -238,19 +250,22 @@ class StrategyProvider extends Notifier<StrategyState> {
       isAttack = true;
     }
 
+    final versionNumber = int.tryParse(json["versionNumber"].toString()) ??
+        Settings.versionNumber;
     final newStrategy = StrategyData(
-        id: newID,
-        name: path.basenameWithoutExtension(file.name),
-        drawingData: drawingData,
-        agentData: agentData,
-        abilityData: abilityData,
-        textData: textData,
-        imageData: imageData,
-        mapData: mapData,
-        versionNumber: Settings.versionNumber,
-        lastEdited: DateTime.now(),
-        isAttack: isAttack,
-        strategySettings: settingsData);
+      id: newID,
+      name: path.basenameWithoutExtension(file.name),
+      drawingData: drawingData,
+      agentData: agentData,
+      abilityData: abilityData,
+      textData: textData,
+      imageData: imageData,
+      mapData: mapData,
+      versionNumber: versionNumber,
+      lastEdited: DateTime.now(),
+      isAttack: isAttack,
+      strategySettings: settingsData,
+    );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .put(newStrategy.id, newStrategy);
@@ -355,7 +370,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       imageData: imageData,
       mapData: mapData.currentMap,
       isAttack: mapData.isAttack,
-      versionNumber: 1,
+      versionNumber: Settings.versionNumber,
       id: id,
       name: state.stratName ?? "placeholder",
       lastEdited: DateTime.now(),

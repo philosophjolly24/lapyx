@@ -3,12 +3,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/placed_classes.dart';
+import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 
 import 'package:icarus/providers/screen_zoom_provider.dart';
 import 'package:icarus/widgets/draggable_widgets/image/image_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/image/scalable_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
+import 'package:icarus/widgets/mouse_watch.dart';
 
 class PlacedImageBuilder extends StatefulWidget {
   const PlacedImageBuilder({
@@ -30,7 +32,7 @@ class _PlacedImageBuilderState extends State<PlacedImageBuilder> {
   bool isPanning = false;
   bool isDragging = false;
   // Optionally define min and max scale values
-  static const double minScale = 200;
+  static const double minScale = 100;
   static const double maxScale = 800;
 
   @override
@@ -105,12 +107,23 @@ class _PlacedImageBuilderState extends State<PlacedImageBuilder> {
               isDragging = false;
             });
           },
-          child: ImageWidget(
-            fileExtension: widget.placedImage.fileExtension,
-            aspectRatio: widget.placedImage.aspectRatio,
-            link: widget.placedImage.link,
-            scale: localScale!,
-            id: widget.placedImage.id,
+          child: MouseWatch(
+            cursor: SystemMouseCursors.click,
+            onDeleteKeyPressed: () {
+              final id = widget.placedImage.id;
+              final action = UserAction(
+                  type: ActionType.deletion, id: id, group: ActionGroup.image);
+
+              ref.read(actionProvider.notifier).addAction(action);
+              ref.read(placedImageProvider.notifier).removeImage(id);
+            },
+            child: ImageWidget(
+              fileExtension: widget.placedImage.fileExtension,
+              aspectRatio: widget.placedImage.aspectRatio,
+              link: widget.placedImage.link,
+              scale: localScale!,
+              id: widget.placedImage.id,
+            ),
           ),
         ),
       );

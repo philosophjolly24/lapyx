@@ -38,11 +38,13 @@ class CenterSquareWidget extends ConsumerWidget {
           Positioned(
             child: Align(
               alignment: Alignment.center,
-              child: Container(
-                width: scaledWidth,
-                height: scaledHeight,
-                decoration: BoxDecoration(
-                  color: color.withAlpha(150),
+              child: IgnorePointer(
+                child: Container(
+                  width: scaledWidth,
+                  height: scaledHeight,
+                  decoration: BoxDecoration(
+                    color: color.withAlpha(150),
+                  ),
                 ),
               ),
             ),
@@ -52,7 +54,7 @@ class CenterSquareWidget extends ConsumerWidget {
               alignment: Alignment.center,
               child: AbilityWidget(
                 iconPath: iconPath,
-                id: null,
+                id: id,
                 isAlly: isAlly,
               ),
             ),

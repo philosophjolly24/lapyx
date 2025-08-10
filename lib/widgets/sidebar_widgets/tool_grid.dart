@@ -24,14 +24,14 @@ class ToolGrid extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentInteractionState = ref.watch(interactionStateProvider);
 
-    void showImageDialog() {
-      showDialog(
-        context: context,
-        builder: (dialogContext) {
-          return const ImageSelector();
-        },
-      );
-    }
+    // void showImageDialog() {
+    //   showDialog(
+    //     context: context,
+    //     builder: (dialogContext) {
+    //       return const ImageSelector();
+    //     },
+    //   );
+    // }
 
     return Theme(
       data: Theme.of(context).copyWith(
@@ -51,6 +51,7 @@ class ToolGrid extends ConsumerWidget {
             crossAxisCount: 5,
             children: [
               IconButton(
+                tooltip: "Draw Q",
                 onPressed: () {
                   switch (currentInteractionState) {
                     case InteractionState.drawing:
@@ -67,6 +68,7 @@ class ToolGrid extends ConsumerWidget {
                 isSelected: currentInteractionState == InteractionState.drawing,
               ),
               IconButton(
+                tooltip: "Eraser W",
                 onPressed: () {
                   switch (currentInteractionState) {
                     case InteractionState.erasing:
@@ -86,6 +88,7 @@ class ToolGrid extends ConsumerWidget {
                 isSelected: currentInteractionState == InteractionState.erasing,
               ),
               IconButton(
+                tooltip: "Delete E",
                 onPressed: () {
                   switch (currentInteractionState) {
                     case InteractionState.deleting:
@@ -105,6 +108,7 @@ class ToolGrid extends ConsumerWidget {
                 ),
               ),
               IconButton(
+                tooltip: "Add Text",
                 onPressed: () {
                   ref
                       .read(interactionStateProvider.notifier)
@@ -120,6 +124,7 @@ class ToolGrid extends ConsumerWidget {
                 icon: const Icon(Icons.text_fields),
               ),
               IconButton(
+                tooltip: "Add Image",
                 onPressed: () async {
                   ref
                       .read(interactionStateProvider.notifier)

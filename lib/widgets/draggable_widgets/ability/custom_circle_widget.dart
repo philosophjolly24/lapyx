@@ -130,7 +130,7 @@ class CustomCircleWidget extends ConsumerWidget {
         alignment: Alignment.center,
         child: AbilityWidget(
           iconPath: iconPath,
-          id: null,
+          id: id,
           isAlly: isAlly,
         ),
       ),
