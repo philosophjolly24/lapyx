@@ -1,5 +1,5 @@
 {
-    "current_version": "1.5.1",
-    "current_version_number": "6",
-    "release_notes": "Fixed app crash when closing,Removed radius on Chamber, added radius for phoenix molly, fixed deadlock being categorized as a duelist and added radius to KJ bot, Added Viper wall, Phoenix wall and Neon wall"
+    "current_version": "1.6.0",
+    "current_version_number": "7",
+    "release_notes": "1.6.0 Release: Major Feature & QoL Update with Shortcuts & New Abilities"
 }
