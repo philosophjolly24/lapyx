@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/shortcut_info.dart';
 import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/widgets/mouse_watch.dart';
@@ -43,15 +45,8 @@ class _TextWidgetState extends ConsumerState<TextWidget> {
   @override
   Widget build(BuildContext context) {
     _controller.text = widget.text;
-    return MouseWatch(
-      cursor: SystemMouseCursors.click,
-      onDeleteKeyPressed: () {
-        final action = UserAction(
-            type: ActionType.deletion, id: widget.id, group: ActionGroup.text);
-
-        ref.read(actionProvider.notifier).addAction(action);
-        ref.read(textProvider.notifier).removeText(widget.id);
-      },
+    return Shortcuts(
+      shortcuts: ShortcutInfo.textEditingOverrides,
       child: SizedBox(
         width: 200,
         child: IntrinsicHeight(

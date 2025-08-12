@@ -13,7 +13,7 @@ class GlobalShortcuts extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Focus(
       autofocus: true,
-      canRequestFocus: true,
+      // canRequestFocus: true,
       child: Shortcuts(
         shortcuts: ShortcutInfo.globalShortcuts,
         child: Actions(

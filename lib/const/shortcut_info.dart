@@ -18,6 +18,27 @@ class ShortcutInfo {
     LogicalKeySet(LogicalKeyboardKey.keyQ): const ToggleDrawingIntent(),
     LogicalKeySet(LogicalKeyboardKey.keyW): const ToggleErasingIntent(),
   };
+
+  // New map to disable global shortcuts when typing
+  static final Map<ShortcutActivator, Intent> textEditingOverrides = {
+    // Override Ctrl+Z/Cmd+Z (let the TextField handle these)
+    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyZ):
+        const DoNothingAndStopPropagationIntent(),
+    LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyZ):
+        const DoNothingAndStopPropagationIntent(),
+
+    // Override Ctrl+Shift+Z/Cmd+Shift+Z
+    LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyZ,
+        LogicalKeyboardKey.shift): const DoNothingAndStopPropagationIntent(),
+    LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyZ,
+        LogicalKeyboardKey.shift): const DoNothingAndStopPropagationIntent(),
+
+    // Override Q and W shortcuts
+    LogicalKeySet(LogicalKeyboardKey.keyQ):
+        const DoNothingAndStopPropagationIntent(),
+    LogicalKeySet(LogicalKeyboardKey.keyW):
+        const DoNothingAndStopPropagationIntent(),
+  };
 }
 
 class WidgetDeleteIntent extends Intent {
