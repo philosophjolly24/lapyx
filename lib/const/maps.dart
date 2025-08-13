@@ -21,13 +21,14 @@ class Maps {
     MapValue.icebox,
     MapValue.lotus,
     MapValue.corrode,
-    MapValue.split,
-    MapValue.sunset,
-    MapValue.pearl,
     MapValue.fracture,
   ];
 
-  static List<MapValue> outofplayMaps = [];
+  static List<MapValue> outofplayMaps = [
+    MapValue.split,
+    MapValue.sunset,
+    MapValue.pearl,
+  ];
 
   static Map<MapValue, String> mapNames = {
     MapValue.ascent: 'ascent',

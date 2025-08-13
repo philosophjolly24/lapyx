@@ -219,6 +219,43 @@ class DrawingProvider extends Notifier<DrawingState> {
     return (p - projection).distance;
   }
 
+  // void startSimpleTap(Offset start, CoordinateSystem coordinateSystem) {
+  //   if (state.currentElement != null) {
+  //     dev.log(
+  //         "An error occured the gesture detecture is attempting to draw while another line is active");
+  //     return;
+  //   }
+  //   final Offset normalizedStart = coordinateSystem.screenToCoordinate(start);
+
+  //   final id = const Uuid().v4();
+
+  //   FreeDrawing freeDrawing = FreeDrawing(
+  //     hasArrow: false,
+  //     isDotted: false,
+  //     color: Colors.white,
+  //     boundingBox: BoundingBox(min: normalizedStart, max: normalizedStart),
+  //     id: id,
+  //     listOfPoints: [normalizedStart],
+  //   );
+
+  //   // Draw a visible dot in screen space so it actually renders
+  //   // final radius = max(1.0, coordinateSystem.scale(2));
+
+  //   // freeDrawing.path.addOval(Rect.fromCircle(center: start, radius: radius));
+
+  //   state = state.copyWithButEvil(
+  //     elements: [...state.elements, freeDrawing],
+  //   );
+
+  //   final action = UserAction(
+  //       type: ActionType.addition,
+  //       id: freeDrawing.id,
+  //       group: ActionGroup.drawing);
+  //   ref.read(actionProvider.notifier).addAction(action);
+
+  //   _triggerRepaint();
+  // }
+
   void startFreeDrawing(Offset start, CoordinateSystem coordinateSystem,
       Color activeColor, bool isDotted, bool hasArrow) {
     if (state.currentElement != null) {
@@ -277,6 +314,7 @@ class DrawingProvider extends Notifier<DrawingState> {
     FreeDrawing simplifiedDrawing = douglasPeucker(currentDrawing, 1.4);
 
     simplifiedDrawing.rebuildPath(coordinateSystem);
+
     state = state.copyWithButEvil(
       elements: [...state.elements, simplifiedDrawing],
     );

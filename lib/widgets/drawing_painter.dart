@@ -51,6 +51,7 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
       child: RepaintBoundary(
         child: GestureDetector(
           onPanStart: (details) {
+            log("Pan start detected");
             final currentColor = ref.watch(penProvider).color;
             final hasArrow = ref.watch(penProvider).hasArrow;
             final isDotted = ref.watch(penProvider).isDotted;
@@ -77,6 +78,25 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
               default:
             }
           },
+          // onTapDown: (details) {
+          //   switch (currentInteractionState) {
+          //     // case InteractionState.drawLine:
+          //     //   Offset lineStart =
+          //     //       coordinateSystem.screenToCoordinate(details.localPosition);
+          //     //   ref.read(drawingProvider.notifier).startLine(lineStart);
+
+          //     case InteractionState.drawing:
+          //       ref
+          //           .read(drawingProvider.notifier)
+          //           .startSimpleTap(details.localPosition, coordinateSystem);
+
+          //     case InteractionState.erasing:
+          //       final normalizedPosition = CoordinateSystem.instance
+          //           .screenToCoordinate(details.localPosition);
+          //       ref.read(drawingProvider.notifier).onErase(normalizedPosition);
+          //     default:
+          //   }
+          // },
           onPanUpdate: (details) {
             switch (currentInteractionState) {
               // case InteractionState.drawLine:

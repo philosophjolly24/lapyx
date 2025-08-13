@@ -78,7 +78,17 @@ class FreeDrawing extends DrawingElement with HiveObjectMixin {
   }
 
   void rebuildPath(CoordinateSystem coordinateSystem) {
-    if (listOfPoints.length < 2) return;
+    if (listOfPoints.length < 2) {
+      if (listOfPoints.isEmpty) return;
+
+      final path = Path();
+      final screenPoint = coordinateSystem.coordinateToScreen(listOfPoints[0]);
+
+      path.addOval(Rect.fromCircle(center: screenPoint, radius: 5));
+      _path = path;
+
+      return;
+    }
 
     final path = Path();
     final screenPoints = listOfPoints

@@ -340,6 +340,13 @@ class AgentData implements DraggableData {
         name: "Sova",
       );
 
+      agent.abilities[1].abilityData = CircleAbility(
+        iconPath: agent.abilities[1].iconPath,
+        size: 4,
+        outlineColor: const Color.fromARGB(255, 1, 131, 237),
+        hasCenterDot: true,
+      );
+
       agent.abilities[2].abilityData = CircleAbility(
         iconPath: agent.abilities[2].iconPath,
         size: 30,
@@ -509,7 +516,7 @@ class AgentData implements DraggableData {
         iconPath: agent.abilities[1].iconPath,
         size: 3.72,
         outlineColor: Colors.white,
-        hasCenterDot: false,
+        hasCenterDot: true,
       );
 
       return agent;

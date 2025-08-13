@@ -89,31 +89,81 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
                               width: 2,
                             ),
                           ),
-                          child: ListView.builder(
-                            itemCount: Maps.mapNames.length,
-                            itemBuilder: (context, index) {
-                              MapValue mapValue =
-                                  Maps.mapNames.keys.elementAt(index);
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: ListView(
+                                  children: [
+                                    // Available maps section
+                                    // const Padding(
+                                    //   padding: EdgeInsets.all(8.0),
+                                    //   child: Text(
+                                    //     "Current Rotation",
+                                    //     style: TextStyle(
+                                    //       fontWeight: FontWeight.bold,
+                                    //       color: Colors.white,
+                                    //     ),
+                                    //     textAlign: TextAlign.center,
+                                    //   ),
+                                    // ),
+                                    ...Maps.mapNames.keys
+                                        .where((mapValue) => Maps.availableMaps
+                                            .contains(mapValue))
+                                        .map((mapValue) {
+                                      String mapName = Maps.mapNames[mapValue]!;
+                                      return Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: MapTile(
+                                          name: mapName,
+                                          onTap: () {
+                                            ref
+                                                .read(mapProvider.notifier)
+                                                .updateMap(mapValue);
+                                            _closePortal();
+                                          },
+                                        ),
+                                      );
+                                    }),
 
-                              if (!Maps.availableMaps.contains(mapValue))
-                                return const SizedBox.shrink();
+                                    // const Divider(
+                                    //   color: Colors.grey,
+                                    //   thickness: 1,
+                                    //   height: 24,
+                                    // ),
 
-                              String mapName = Maps.mapNames[mapValue]!;
-
-                              return Padding(
-                                padding: const EdgeInsets.all(4),
-                                child: MapTile(
-                                  name: mapName,
-                                  onTap: () {
-                                    ref
-                                        .read(mapProvider.notifier)
-                                        .updateMap(mapValue);
-
-                                    _closePortal();
-                                  },
+                                    // Out of play maps section
+                                    const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "Out of rotation",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          color: Color.fromARGB(
+                                              255, 160, 160, 160),
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    ...Maps.outofplayMaps.map((mapValue) {
+                                      String mapName = Maps.mapNames[mapValue]!;
+                                      return Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: MapTile(
+                                          name: mapName,
+                                          onTap: () {
+                                            ref
+                                                .read(mapProvider.notifier)
+                                                .updateMap(mapValue);
+                                            _closePortal();
+                                          },
+                                        ),
+                                      );
+                                    }),
+                                  ],
                                 ),
-                              );
-                            },
+                              ),
+                            ],
                           ),
                         ),
                       ),
