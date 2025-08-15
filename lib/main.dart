@@ -1,6 +1,8 @@
+import 'package:custom_mouse_cursor/custom_mouse_cursor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/adapters.dart';
+import 'package:icarus/const/custom_icons.dart';
 import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/const/routes.dart';
 import 'package:icarus/hive/hive_registrar.g.dart';
@@ -13,6 +15,7 @@ import 'package:icarus/widgets/settings_tab.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 
+CustomMouseCursor? drawingCursor;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final directory = await getApplicationSupportDirectory();
@@ -25,6 +28,13 @@ Future<void> main() async {
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
     title: "Icarus: Valorant Strategies & Line ups",
+  );
+  drawingCursor = await CustomMouseCursor.icon(
+    CustomIcons.drawcursor,
+    size: 8, hotX: 4, hotY: 4, color: Colors.white,
+    // hotX: 22,
+    // hotY: 17,
+    // color: Colors.pinkAccent,
   );
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();

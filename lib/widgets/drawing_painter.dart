@@ -1,11 +1,14 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
+import 'package:custom_mouse_cursor/custom_mouse_cursor.dart';
 import 'package:dash_painter/dash_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/custom_icons.dart';
 import 'package:icarus/const/drawing_element.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/main.dart';
 import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
@@ -21,6 +24,12 @@ class InteractivePainter extends ConsumerStatefulWidget {
 
 class _InteractivePainterState extends ConsumerState<InteractivePainter> {
   Size? _previousSize;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     CoordinateSystem coordinateSystem = CoordinateSystem.instance;
@@ -49,91 +58,98 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
     return IgnorePointer(
       ignoring: isNavigating,
       child: RepaintBoundary(
-        child: GestureDetector(
-          onPanStart: (details) {
-            log("Pan start detected");
-            final currentColor = ref.watch(penProvider).color;
-            final hasArrow = ref.watch(penProvider).hasArrow;
-            final isDotted = ref.watch(penProvider).isDotted;
-            log(currentColor.toString());
-            switch (currentInteractionState) {
-              // case InteractionState.drawLine:
-              //   Offset lineStart =
-              //       coordinateSystem.screenToCoordinate(details.localPosition);
-              //   ref.read(drawingProvider.notifier).startLine(lineStart);
+        child: MouseRegion(
+          cursor: drawingCursor!,
+          child: GestureDetector(
+            onPanStart: (details) {
+              log("Pan start detected");
+              final currentColor = ref.watch(penProvider).color;
+              final hasArrow = ref.watch(penProvider).hasArrow;
+              final isDotted = ref.watch(penProvider).isDotted;
+              log(currentColor.toString());
+              switch (currentInteractionState) {
+                // case InteractionState.drawLine:
+                //   Offset lineStart =
+                //       coordinateSystem.screenToCoordinate(details.localPosition);
+                //   ref.read(drawingProvider.notifier).startLine(lineStart);
 
-              case InteractionState.drawing:
-                ref.read(drawingProvider.notifier).startFreeDrawing(
-                      details.localPosition,
-                      coordinateSystem,
-                      currentColor,
-                      isDotted,
-                      hasArrow,
-                    );
+                case InteractionState.drawing:
+                  ref.read(drawingProvider.notifier).startFreeDrawing(
+                        details.localPosition,
+                        coordinateSystem,
+                        currentColor,
+                        isDotted,
+                        hasArrow,
+                      );
 
-              case InteractionState.erasing:
-                final normalizedPosition = CoordinateSystem.instance
-                    .screenToCoordinate(details.localPosition);
-                ref.read(drawingProvider.notifier).onErase(normalizedPosition);
-              default:
-            }
-          },
-          // onTapDown: (details) {
-          //   switch (currentInteractionState) {
-          //     // case InteractionState.drawLine:
-          //     //   Offset lineStart =
-          //     //       coordinateSystem.screenToCoordinate(details.localPosition);
-          //     //   ref.read(drawingProvider.notifier).startLine(lineStart);
+                case InteractionState.erasing:
+                  final normalizedPosition = CoordinateSystem.instance
+                      .screenToCoordinate(details.localPosition);
+                  ref
+                      .read(drawingProvider.notifier)
+                      .onErase(normalizedPosition);
+                default:
+              }
+            },
+            // onTapDown: (details) {
+            //   switch (currentInteractionState) {
+            //     // case InteractionState.drawLine:
+            //     //   Offset lineStart =
+            //     //       coordinateSystem.screenToCoordinate(details.localPosition);
+            //     //   ref.read(drawingProvider.notifier).startLine(lineStart);
 
-          //     case InteractionState.drawing:
-          //       ref
-          //           .read(drawingProvider.notifier)
-          //           .startSimpleTap(details.localPosition, coordinateSystem);
+            //     case InteractionState.drawing:
+            //       ref
+            //           .read(drawingProvider.notifier)
+            //           .startSimpleTap(details.localPosition, coordinateSystem);
 
-          //     case InteractionState.erasing:
-          //       final normalizedPosition = CoordinateSystem.instance
-          //           .screenToCoordinate(details.localPosition);
-          //       ref.read(drawingProvider.notifier).onErase(normalizedPosition);
-          //     default:
-          //   }
-          // },
-          onPanUpdate: (details) {
-            switch (currentInteractionState) {
-              // case InteractionState.drawLine:
-              //   Offset lineEnd =
-              //       coordinateSystem.screenToCoordinate(details.localPosition);
+            //     case InteractionState.erasing:
+            //       final normalizedPosition = CoordinateSystem.instance
+            //           .screenToCoordinate(details.localPosition);
+            //       ref.read(drawingProvider.notifier).onErase(normalizedPosition);
+            //     default:
+            //   }
+            // },
+            onPanUpdate: (details) {
+              switch (currentInteractionState) {
+                // case InteractionState.drawLine:
+                //   Offset lineEnd =
+                //       coordinateSystem.screenToCoordinate(details.localPosition);
 
-              //   ref.read(drawingProvider.notifier).updateCurrentLine(lineEnd);
-              case InteractionState.drawing:
-                ref
-                    .read(drawingProvider.notifier)
-                    .updateFreeDrawing(details.localPosition, coordinateSystem);
-              case InteractionState.erasing:
-                final normalizedPosition = CoordinateSystem.instance
-                    .screenToCoordinate(details.localPosition);
-                ref.read(drawingProvider.notifier).onErase(normalizedPosition);
-              default:
-            }
-          },
-          onPanEnd: (details) {
-            switch (currentInteractionState) {
-              // case InteractionState.drawLine:
-              //   Offset lineEnd =
-              //       coordinateSystem.screenToCoordinate(details.localPosition);
-              //   ref.read(drawingProvider.notifier).finishCurrentLine(lineEnd);
-              case InteractionState.drawing:
-                ref
-                    .read(drawingProvider.notifier)
-                    .finishFreeDrawing(details.localPosition, coordinateSystem);
-              case InteractionState.erasing:
-                final normalizedPosition = CoordinateSystem.instance
-                    .screenToCoordinate(details.localPosition);
-                ref.read(drawingProvider.notifier).onErase(normalizedPosition);
-              default:
-            }
-          },
-          child: CustomPaint(
-            painter: drawingPainter,
+                //   ref.read(drawingProvider.notifier).updateCurrentLine(lineEnd);
+                case InteractionState.drawing:
+                  ref.read(drawingProvider.notifier).updateFreeDrawing(
+                      details.localPosition, coordinateSystem);
+                case InteractionState.erasing:
+                  final normalizedPosition = CoordinateSystem.instance
+                      .screenToCoordinate(details.localPosition);
+                  ref
+                      .read(drawingProvider.notifier)
+                      .onErase(normalizedPosition);
+                default:
+              }
+            },
+            onPanEnd: (details) {
+              switch (currentInteractionState) {
+                // case InteractionState.drawLine:
+                //   Offset lineEnd =
+                //       coordinateSystem.screenToCoordinate(details.localPosition);
+                //   ref.read(drawingProvider.notifier).finishCurrentLine(lineEnd);
+                case InteractionState.drawing:
+                  ref.read(drawingProvider.notifier).finishFreeDrawing(
+                      details.localPosition, coordinateSystem);
+                case InteractionState.erasing:
+                  final normalizedPosition = CoordinateSystem.instance
+                      .screenToCoordinate(details.localPosition);
+                  ref
+                      .read(drawingProvider.notifier)
+                      .onErase(normalizedPosition);
+                default:
+              }
+            },
+            child: CustomPaint(
+              painter: drawingPainter,
+            ),
           ),
         ),
       ),
