@@ -660,7 +660,16 @@ class AgentData implements DraggableData {
         type: AgentType.clove,
         role: AgentRole.controller,
         name: "Clove",
-      );
+      )..abilities[2] = AbilityInfo(
+          type: AgentType.brimstone,
+          index: 2,
+          name: "Sky Smoke",
+          iconPath: 'assets/agents/Clove/3.webp',
+          abilityData: ImageAbility(
+            imagePath: 'assets/agents/Clove/Smoke.webp',
+            size: 4 * inGameMetersDiameter,
+          ),
+        );
 
       agent.abilities[1].abilityData = CircleAbility(
         iconPath: agent.abilities[1].iconPath,
@@ -747,7 +756,16 @@ class AgentData implements DraggableData {
         type: AgentType.harbor,
         role: AgentRole.controller,
         name: "Harbor",
-      );
+      )..abilities[1] = AbilityInfo(
+          type: AgentType.brimstone,
+          index: 1,
+          name: "Sky Smoke",
+          iconPath: 'assets/agents/Harbor/2.webp',
+          abilityData: ImageAbility(
+            imagePath: 'assets/agents/Harbor/Smoke.webp',
+            size: 4 * inGameMetersDiameter,
+          ),
+        );
 
       agent.abilities.first.abilityData = ResizableSquareAbility(
         width: 9.75 * inGameMeters,

@@ -16,6 +16,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 
 CustomMouseCursor? drawingCursor;
+CustomMouseCursor? erasingCursor;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final directory = await getApplicationSupportDirectory();
@@ -29,13 +31,28 @@ Future<void> main() async {
   WindowOptions windowOptions = const WindowOptions(
     title: "Icarus: Valorant Strategies & Line ups",
   );
+
   drawingCursor = await CustomMouseCursor.icon(
     CustomIcons.drawcursor,
-    size: 8, hotX: 4, hotY: 4, color: Colors.white,
+    size: 12, hotX: 6, hotY: 6, color: Colors.white,
     // hotX: 22,
     // hotY: 17,
     // color: Colors.pinkAccent,
   );
+
+  erasingCursor = await CustomMouseCursor.icon(
+    CustomIcons.eraser,
+    size: 12, hotX: 6, hotY: 6, color: Colors.white,
+    // hotX: 22,
+    // hotY: 17,
+    // color: Colors.pinkAccent,
+  );
+
+  // drawingCursor = await CustomMouseCursor.asset(
+  //   "assets/drawCursor.webp",
+  //   hotX: 12,
+  //   hotY: 4,
+  // );
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();

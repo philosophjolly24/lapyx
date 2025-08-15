@@ -59,7 +59,10 @@ class _InteractivePainterState extends ConsumerState<InteractivePainter> {
       ignoring: isNavigating,
       child: RepaintBoundary(
         child: MouseRegion(
-          cursor: drawingCursor!,
+          cursor:
+              ref.watch(interactionStateProvider) == InteractionState.drawing
+                  ? drawingCursor!
+                  : erasingCursor!,
           child: GestureDetector(
             onPanStart: (details) {
               log("Pan start detected");
