@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/custom_icons.dart';
 import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/settings.dart';
-import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/widgets/map_tile.dart';
 
@@ -192,7 +192,7 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
                       children: [
                         Icon(
                           (ref.watch(mapProvider).isAttack)
-                              ? Icons.rocket
+                              ? CustomIcons.sword
                               : Icons.shield,
                           size: 20,
                           color: (ref.watch(mapProvider).isAttack)
@@ -202,7 +202,7 @@ class _MapSelectorState extends ConsumerState<MapSelector> {
                         Text(
                           (ref.watch(mapProvider).isAttack)
                               ? "Attack"
-                              : "Defend",
+                              : "Defense",
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,

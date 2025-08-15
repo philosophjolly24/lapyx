@@ -32,6 +32,7 @@ dependencies:
   cross_file: ^0.3.4+2
   image: ^4.5.4
   http: ^1.4.0
+  custom_mouse_cursor: ^1.1.3
   
  
       
