@@ -1,9 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/providers/screenshot_provider.dart';
 
-class RotatableWidget extends StatefulWidget {
+class RotatableWidget extends ConsumerStatefulWidget {
   final Widget child;
   final double rotation;
   final Offset origin;
@@ -29,16 +31,17 @@ class RotatableWidget extends StatefulWidget {
   bool isHovered = false;
 
   @override
-  State<RotatableWidget> createState() => _RotatableWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _RotatableWidgetState();
 }
 
-class _RotatableWidgetState extends State<RotatableWidget> {
+class _RotatableWidgetState extends ConsumerState<RotatableWidget> {
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
     final rotationOrigin = widget.origin
         .scale(coordinateSystem.scaleFactor, coordinateSystem.scaleFactor);
-
+    final isScreenshot = ref.watch(screenshotProvider);
     return Transform.rotate(
       angle: widget.rotation,
       alignment: Alignment.topLeft,
@@ -47,7 +50,7 @@ class _RotatableWidgetState extends State<RotatableWidget> {
         clipBehavior: Clip.none,
         children: [
           widget.child,
-          if (!widget.isDragging)
+          if (!widget.isDragging && !isScreenshot)
             Positioned(
               left: coordinateSystem
                   .scale((widget.buttonLeft ?? widget.origin.dx - 7.5)),
@@ -91,3 +94,39 @@ class _RotatableWidgetState extends State<RotatableWidget> {
     );
   }
 }
+// }
+// class RotatableWidget extends StatefulWidget {
+//   final Widget child;
+//   final double rotation;
+//   final Offset origin;
+//   final Function(DragUpdateDetails details) onPanUpdate;
+//   final Function(DragStartDetails details) onPanStart;
+
+//   final Function(DragEndDetails details) onPanEnd;
+//   final bool isDragging;
+//   final double? buttonLeft;
+//   final double? buttonTop;
+//   RotatableWidget({
+//     super.key,
+//     required this.child,
+//     required this.rotation,
+//     required this.onPanUpdate,
+//     required this.onPanStart,
+//     required this.onPanEnd,
+//     required this.origin,
+//     required this.isDragging,
+//     this.buttonLeft,
+//     this.buttonTop,
+//   });
+//   bool isHovered = false;
+
+//   @override
+//   State<RotatableWidget> createState() => _RotatableWidgetState();
+// }
+
+// class _RotatableWidgetState extends State<RotatableWidget> {
+//   @override
+//   Widget build(BuildContext context) {
+
+//   }
+// }

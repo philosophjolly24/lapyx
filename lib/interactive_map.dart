@@ -15,10 +15,14 @@ import 'package:icarus/widgets/dot_painter.dart';
 
 import 'package:icarus/widgets/drawing_painter.dart';
 import 'package:icarus/widgets/draggable_widgets/placed_widget_builder.dart';
+import 'package:screenshot/screenshot.dart';
 
 class InteractiveMap extends ConsumerStatefulWidget {
-  const InteractiveMap({super.key});
-
+  const InteractiveMap({
+    super.key,
+    required this.screenshotController,
+  });
+  final ScreenshotController screenshotController;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _InteractiveMapState();
 }
@@ -29,8 +33,10 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
   Widget build(BuildContext context) {
     log(MediaQuery.sizeOf(context).height.toString());
     bool isAttack = ref.watch(mapProvider).isAttack;
+
     String assetName =
         'assets/maps/${Maps.mapNames[ref.watch(mapProvider).currentMap]}_map${isAttack ? "" : "_defense"}.svg';
+
     final double height = MediaQuery.sizeOf(context).height - 90;
     final Size playAreaSize = Size(height * 1.2, height);
     CoordinateSystem(playAreaSize: playAreaSize);
@@ -38,81 +44,81 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
 
     return Row(
       children: [
-        Container(
-          width: coordinateSystem.playAreaSize.width,
-          height: coordinateSystem.playAreaSize.height,
-          color: const Color(0xFF1B1B1B),
-          child: InteractiveViewer(
-            transformationController: controller,
-            onInteractionEnd: (details) {
-              ref
-                  .read(screenZoomProvider.notifier)
-                  .updateZoom(controller.value.getMaxScaleOnAxis());
-            },
-            child: Stack(
-              children: [
-                //Dot Grid
-                Positioned.fill(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                      ref.read(abilityBarProvider.notifier).updateData(null);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
+        Screenshot(
+          controller: widget.screenshotController,
+          child: Container(
+            width: coordinateSystem.playAreaSize.width,
+            height: coordinateSystem.playAreaSize.height,
+            color: const Color(0xFF1B1B1B),
+            child: InteractiveViewer(
+              transformationController: controller,
+              onInteractionEnd: (details) {
+                ref
+                    .read(screenZoomProvider.notifier)
+                    .updateZoom(controller.value.getMaxScaleOnAxis());
+              },
+              child: Stack(
+                children: [
+                  //Dot Grid
+                  Positioned.fill(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        ref.read(abilityBarProvider.notifier).updateData(null);
+                      },
                       child: DotGrid(),
                     ),
                   ),
-                ),
 
-                // // Map SVG
-                // Positioned.fill(
-                //   child: GestureDetector(
-                //     behavior: HitTestBehavior.translucent,
-                //     onTap: () {
-                //       ref.read(abilityBarProvider.notifier).updateData(null);
-                //     },
-                //     child: SvgPicture.asset(
+                  // // Map SVG
+                  // Positioned.fill(
+                  //   child: GestureDetector(
+                  //     behavior: HitTestBehavior.translucent,
+                  //     onTap: () {
+                  //       ref.read(abilityBarProvider.notifier).updateData(null);
+                  //     },
+                  //     child: SvgPicture.asset(
 
-                //       assetName,
-                //       semanticsLabel: 'Map',
-                //       fit: BoxFit.contain,
-                //     ),
-                //   ),
-                // ),
-                // Map SVG
-                Positioned.fill(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.translucent,
-                    onTap: () {
-                      ref.read(abilityBarProvider.notifier).updateData(null);
-                    },
-                    child: SvgPicture.asset(
-                      assetName,
-                      semanticsLabel: 'Map',
-                      fit: BoxFit.contain,
+                  //       assetName,
+                  //       semanticsLabel: 'Map',
+                  //       fit: BoxFit.contain,
+                  //     ),
+                  //   ),
+                  // ),
+                  // Map SVG
+                  Positioned.fill(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        ref.read(abilityBarProvider.notifier).updateData(null);
+                      },
+                      child: SvgPicture.asset(
+                        assetName,
+                        semanticsLabel: 'Map',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
-                ),
 
-                //Agents
-                Positioned.fill(
-                  child: PlacedWidgetBuilder(),
-                ),
+                  //Agents
+                  Positioned.fill(
+                    child: PlacedWidgetBuilder(),
+                  ),
 
-                //Painting
-                Positioned.fill(
-                  child: InteractivePainter(),
-                ),
-                // TODO: Later
-                // Positioned.fill(
-                //   child: MouseRegion(
-                //     onHover: (event) {
-                //       // if(ref.watch(interactionStateProvider).)
-                //     },
-                //   ),
-                // )
-              ],
+                  //Painting
+                  Positioned.fill(
+                    child: InteractivePainter(),
+                  ),
+                  // TODO: Later
+                  // Positioned.fill(
+                  //   child: MouseRegion(
+                  //     onHover: (event) {
+                  //       // if(ref.watch(interactionStateProvider).)
+                  //     },
+                  //   ),
+                  // )
+                ],
+              ),
             ),
           ),
         ),

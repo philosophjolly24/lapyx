@@ -36,4 +36,6 @@ class Settings {
 
   static const Duration autoSaveOffset = Duration(seconds: 15);
   static const int versionNumber = 7;
+
+  static const Size screenShotSize = Size(1080, 1296);
 }

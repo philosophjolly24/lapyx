@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,8 +25,8 @@ import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 import 'package:uuid/uuid.dart';
 
 class PlacedWidgetBuilder extends ConsumerStatefulWidget {
-  const PlacedWidgetBuilder({super.key});
-
+  const PlacedWidgetBuilder({super.key, this.isScreenshot = false});
+  final bool isScreenshot;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _PlacedWidgetBuilderState();

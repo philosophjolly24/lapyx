@@ -52,15 +52,22 @@ import 'package:flutter/material.dart';
 import 'package:icarus/const/coordinate_system.dart';
 
 class DotGrid extends StatelessWidget {
-  const DotGrid({super.key});
-
+  const DotGrid({
+    super.key,
+    this.isScreenshot = false,
+  });
+  final bool isScreenshot;
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: DotPainter());
+    return CustomPaint(painter: DotPainter(isScreenshot: isScreenshot));
   }
 }
 
 class DotPainter extends CustomPainter {
+  DotPainter({required this.isScreenshot});
+
+  final bool isScreenshot;
+
   final playAreaSize = CoordinateSystem.instance.playAreaSize;
   static const double dotSize = 3; // Size of each dot
   static const double dotSpacing = 9.5;

@@ -9,7 +9,7 @@ import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/sidebar.dart';
 import 'package:icarus/widgets/map_selector.dart';
 import 'package:icarus/widgets/save_and_load_button.dart';
-import 'package:icarus/widgets/settings_tab.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -26,7 +26,7 @@ class _StrategyViewState extends ConsumerState<StrategyView>
   void initState() {
     super.initState();
     windowManager.addListener(this);
-    _init();
+    // _init();
   }
 
   @override
@@ -35,12 +35,12 @@ class _StrategyViewState extends ConsumerState<StrategyView>
     super.dispose();
   }
 
-  void _init() async {
-    // Add this line to override the default close handler
-    // await windowManager.setPreventClose(true);
-    setState(() {});
-  }
-
+  // void _init() async {
+  //   // Add this line to override the default close handler
+  //   // await windowManager.setPreventClose(true);
+  //   setState(() {});
+  // }
+  final ScreenshotController screenshotController = ScreenshotController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,18 +55,19 @@ class _StrategyViewState extends ConsumerState<StrategyView>
                 Row(
                   children: [
                     IconButton(
-                        onPressed: () async {
-                          await ref
-                              .read(strategyProvider.notifier)
-                              .saveToHive(ref.read(strategyProvider).id);
+                      onPressed: () async {
+                        await ref
+                            .read(strategyProvider.notifier)
+                            .saveToHive(ref.read(strategyProvider).id);
 
-                          if (!context.mounted) return;
-                          Navigator.pop(context);
-                          ref
-                              .read(strategyProvider.notifier)
-                              .clearCurrentStrategy();
-                        },
-                        icon: const Icon(Icons.home)),
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                        ref
+                            .read(strategyProvider.notifier)
+                            .clearCurrentStrategy();
+                      },
+                      icon: const Icon(Icons.home),
+                    ),
                     const SizedBox(width: 5),
                     const MapSelector(),
                   ],
@@ -97,18 +98,22 @@ class _StrategyViewState extends ConsumerState<StrategyView>
               ],
             ),
           ),
-          const Expanded(
+          Expanded(
             child: Stack(
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: InteractiveMap(),
+                  child: InteractiveMap(
+                    screenshotController: screenshotController,
+                  ),
                 ),
                 Align(
                   alignment: Alignment.topLeft,
-                  child: SaveButtonAndLoad(),
+                  child: SaveButtonAndLoad(
+                    screenshotController: screenshotController,
+                  ),
                 ),
-                SideBarUI(),
+                const SideBarUI(),
 
                 // Align(
                 //   alignment: Alignment.centerLeft,
