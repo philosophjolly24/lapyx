@@ -36,6 +36,8 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
 
     String assetName =
         'assets/maps/${Maps.mapNames[ref.watch(mapProvider).currentMap]}_map${isAttack ? "" : "_defense"}.svg';
+    String barrierAssetName =
+        'assets/maps/${Maps.mapNames[ref.watch(mapProvider).currentMap]}_map_spawn_wall${isAttack ? "" : "_defense"}.svg';
 
     final double height = MediaQuery.sizeOf(context).height - 90;
     final Size playAreaSize = Size(height * 1.2, height);
@@ -69,22 +71,6 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                       child: DotGrid(),
                     ),
                   ),
-
-                  // // Map SVG
-                  // Positioned.fill(
-                  //   child: GestureDetector(
-                  //     behavior: HitTestBehavior.translucent,
-                  //     onTap: () {
-                  //       ref.read(abilityBarProvider.notifier).updateData(null);
-                  //     },
-                  //     child: SvgPicture.asset(
-
-                  //       assetName,
-                  //       semanticsLabel: 'Map',
-                  //       fit: BoxFit.contain,
-                  //     ),
-                  //   ),
-                  // ),
                   // Map SVG
                   Positioned.fill(
                     child: GestureDetector(
@@ -99,7 +85,14 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                       ),
                     ),
                   ),
-
+                  if (ref.watch(mapProvider).showSpawnBarrier)
+                    Positioned.fill(
+                      child: SvgPicture.asset(
+                        barrierAssetName,
+                        semanticsLabel: 'Barrier',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                   //Agents
                   Positioned.fill(
                     child: PlacedWidgetBuilder(),

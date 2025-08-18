@@ -2,9 +2,14 @@ import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/shortcut_info.dart';
 import 'package:icarus/providers/action_provider.dart';
+import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
+import 'package:icarus/providers/text_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class GlobalShortcuts extends ConsumerWidget {
   const GlobalShortcuts({super.key, required this.child});
@@ -24,13 +29,31 @@ class GlobalShortcuts extends ConsumerWidget {
                 return null;
               },
             ),
+            AddedTextIntent: CallbackAction<AddedTextIntent>(
+              onInvoke: (intent) {
+                const uuid = Uuid();
+                ref.read(textProvider.notifier).addText(
+                      PlacedText(
+                        position: const Offset(500, 500),
+                        id: uuid.v4(),
+                      ),
+                    );
+                return null;
+              },
+            ),
             ToggleDrawingIntent: CallbackAction<ToggleDrawingIntent>(
               onInvoke: (intent) {
                 if (ref.read(interactionStateProvider) ==
                     InteractionState.drawing) {
+                  final coordinateSystem = CoordinateSystem.instance;
+
                   ref
                       .read(interactionStateProvider.notifier)
                       .update(InteractionState.navigation);
+
+                  ref
+                      .read(drawingProvider.notifier)
+                      .finishFreeDrawing(null, coordinateSystem);
                 } else {
                   ref
                       .read(interactionStateProvider.notifier)

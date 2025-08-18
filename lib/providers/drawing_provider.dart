@@ -306,10 +306,12 @@ class DrawingProvider extends Notifier<DrawingState> {
     _triggerRepaint();
   }
 
-  void finishFreeDrawing(Offset offset, CoordinateSystem coordinateSystem) {
+  void finishFreeDrawing(Offset? offset, CoordinateSystem coordinateSystem) {
     final currentDrawing = state.currentElement as FreeDrawing;
-    currentDrawing.listOfPoints
-        .add(coordinateSystem.screenToCoordinate(offset));
+    if (offset != null) {
+      currentDrawing.listOfPoints
+          .add(coordinateSystem.screenToCoordinate(offset));
+    }
 
     FreeDrawing simplifiedDrawing = douglasPeucker(currentDrawing, 1.4);
 

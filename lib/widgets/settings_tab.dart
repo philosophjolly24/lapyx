@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
+import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/strategy_settings_provider.dart';
 
 class SettingsTab extends ConsumerWidget {
@@ -68,7 +69,7 @@ class SettingsTab extends ConsumerWidget {
                         const SizedBox(height: 10),
                         SettingsSection(
                           title: "Agents",
-                          child: [
+                          children: [
                             const Text(
                               "Scale",
                               style: TextStyle(fontSize: 15),
@@ -90,7 +91,7 @@ class SettingsTab extends ConsumerWidget {
                         ),
                         SettingsSection(
                           title: "Abilities",
-                          child: [
+                          children: [
                             const Text(
                               "Scale",
                               style: TextStyle(fontSize: 15),
@@ -111,6 +112,44 @@ class SettingsTab extends ConsumerWidget {
                             )
                           ],
                         ),
+                        SettingsSection(
+                          title: "Abilities",
+                          children: [
+                            const Text(
+                              "Scale",
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            const SizedBox(height: 10),
+                            Slider(
+                              min: Settings.abilitySizeMin,
+                              max: Settings.abilitySizeMax,
+                              divisions: 15,
+                              value: ref
+                                  .watch(strategySettingsProvider)
+                                  .abilitySize,
+                              onChanged: (value) {
+                                ref
+                                    .read(strategySettingsProvider.notifier)
+                                    .updateAbilitySize(value);
+                              },
+                            )
+                          ],
+                        ),
+                        SettingsSection(title: "Map Settings", children: [
+                          Row(children: [
+                            const Text("Show Spawn Barrier"),
+                            const Spacer(),
+                            Checkbox(
+                                value: ref.watch(mapProvider).showSpawnBarrier,
+                                onChanged: (value) {
+                                  if (value == null) return;
+
+                                  ref
+                                      .read(mapProvider.notifier)
+                                      .updateSpawnBarrier(value);
+                                })
+                          ])
+                        ])
                       ],
                     ),
                   ),
@@ -125,9 +164,10 @@ class SettingsTab extends ConsumerWidget {
 }
 
 class SettingsSection extends StatelessWidget {
-  const SettingsSection({super.key, required this.title, required this.child});
+  const SettingsSection(
+      {super.key, required this.title, required this.children});
   final String title;
-  final List<Widget> child;
+  final List<Widget> children;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -143,7 +183,7 @@ class SettingsSection extends StatelessWidget {
         const SizedBox(
           height: 10,
         ),
-        ...child
+        ...children
       ],
     );
   }

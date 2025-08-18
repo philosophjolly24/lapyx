@@ -11,41 +11,6 @@ class TeamPicker extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isAlly = ref.watch(teamProvider);
 
-    // return Row(
-    //   children: [
-    //     TextButton(
-    //       onPressed: () {
-    //         ref.read(teamProvider.notifier).isAlly(true);
-    //       },
-    //       style: TextButton.styleFrom(
-    //         splashFactory: InkRipple.splashFactory,
-    //         foregroundColor: isAlly ? Colors.greenAccent : Colors.grey,
-    //       ),
-    //       child: Text(
-    //         "Ally",
-    //         style: TextStyle(
-    //           color: isAlly ? Colors.greenAccent : Colors.grey,
-    //         ),
-    //       ),
-    //     ),
-    //     TextButton(
-    //       onPressed: () {
-    //         ref.read(teamProvider.notifier).isAlly(false);
-    //       },
-    //       style: TextButton.styleFrom(
-    //         splashFactory: InkRipple.splashFactory,
-    //         foregroundColor: !isAlly ? Colors.redAccent : Colors.grey,
-    //       ),
-    //       child: Text(
-    //         "Enemy",
-    //         style: TextStyle(
-    //           color: !isAlly ? Colors.redAccent : Colors.grey,
-    //         ),
-    //       ),
-    //     )
-    //   ],
-    // );
-
     return CustomSlidingSegmentedControl<bool>(
       height: 32,
       initialValue: isAlly,

@@ -17,6 +17,7 @@ class ShortcutInfo {
         LogicalKeyboardKey.shift): const RedoActionIntent(),
     LogicalKeySet(LogicalKeyboardKey.keyQ): const ToggleDrawingIntent(),
     LogicalKeySet(LogicalKeyboardKey.keyW): const ToggleErasingIntent(),
+    LogicalKeySet(LogicalKeyboardKey.keyT): const AddedTextIntent(),
   };
 
   // New map to disable global shortcuts when typing
@@ -27,6 +28,8 @@ class ShortcutInfo {
     LogicalKeySet(LogicalKeyboardKey.meta, LogicalKeyboardKey.keyZ):
         const DoNothingAndStopPropagationIntent(),
 
+    LogicalKeySet(LogicalKeyboardKey.keyT):
+        const DoNothingAndStopPropagationIntent(),
     // Override Ctrl+Shift+Z/Cmd+Shift+Z
     LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyZ,
         LogicalKeyboardKey.shift): const DoNothingAndStopPropagationIntent(),
@@ -47,6 +50,10 @@ class WidgetDeleteIntent extends Intent {
 
 class ToggleDrawingIntent extends Intent {
   const ToggleDrawingIntent();
+}
+
+class AddedTextIntent extends Intent {
+  const AddedTextIntent();
 }
 
 class ToggleErasingIntent extends Intent {

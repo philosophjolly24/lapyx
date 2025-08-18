@@ -8,13 +8,19 @@ final mapProvider = NotifierProvider<MapProvider, MapState>(MapProvider.new);
 class MapState {
   final MapValue currentMap;
   final bool isAttack;
+  final bool showSpawnBarrier;
 
-  MapState({required this.currentMap, required this.isAttack});
+  MapState(
+      {required this.currentMap,
+      required this.isAttack,
+      this.showSpawnBarrier = false});
 
-  MapState copyWith({MapValue? currentMap, bool? isAttack}) {
+  MapState copyWith(
+      {MapValue? currentMap, bool? isAttack, bool? showSpawnBarrier}) {
     return MapState(
       currentMap: currentMap ?? this.currentMap,
       isAttack: isAttack ?? this.isAttack,
+      showSpawnBarrier: showSpawnBarrier ?? this.showSpawnBarrier,
     );
   }
 }
@@ -29,6 +35,10 @@ class MapProvider extends Notifier<MapState> {
 
   void fromHive(MapValue map, bool isAttack) {
     state = state.copyWith(currentMap: map, isAttack: isAttack);
+  }
+
+  void updateSpawnBarrier(bool value) {
+    state = state.copyWith(showSpawnBarrier: value);
   }
 
   void switchSide() {
