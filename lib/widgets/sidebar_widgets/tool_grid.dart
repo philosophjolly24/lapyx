@@ -108,7 +108,7 @@ class ToolGrid extends ConsumerWidget {
                 ),
               ),
               IconButton(
-                tooltip: "Add Text",
+                tooltip: "Add Text T",
                 onPressed: () {
                   ref
                       .read(interactionStateProvider.notifier)
@@ -168,6 +168,7 @@ class ToolGrid extends ConsumerWidget {
           ),
           const DrawingTools(),
           const DeleteOptions(),
+          const TickerMode(enabled: false, child: Text("sfeafe"))
         ],
       ),
     );
