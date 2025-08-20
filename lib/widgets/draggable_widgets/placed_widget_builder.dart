@@ -234,43 +234,43 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                                 .updatePosition(virtualOffset, placedImage.id);
                           },
                         )),
-                  for (PlacedUtility placedUtility
-                      in ref.watch(utilityProvider))
-                    Positioned(
-                      left: coordinateSystem
-                          .coordinateToScreen(placedUtility.position)
-                          .dx,
-                      top: coordinateSystem
-                          .coordinateToScreen(placedUtility.position)
-                          .dy,
-                      child: PlacedUtilityBuilder(
-                        placedUtility: placedUtility,
-                        onDragEnd: (details) {
-                          RenderBox renderBox =
-                              context.findRenderObject() as RenderBox;
-                          Offset localOffset =
-                              renderBox.globalToLocal(details.offset);
+                  // for (PlacedUtility placedUtility
+                  //     in ref.watch(utilityProvider))
+                  //   Positioned(
+                  //     left: coordinateSystem
+                  //         .coordinateToScreen(placedUtility.position)
+                  //         .dx,
+                  //     top: coordinateSystem
+                  //         .coordinateToScreen(placedUtility.position)
+                  //         .dy,
+                  //     child: PlacedUtilityBuilder(
+                  //       placedUtility: placedUtility,
+                  //       onDragEnd: (details) {
+                  //         RenderBox renderBox =
+                  //             context.findRenderObject() as RenderBox;
+                  //         Offset localOffset =
+                  //             renderBox.globalToLocal(details.offset);
 
-                          //Basically makes sure that if more than half is of the screen it gets deleted
-                          Offset virtualOffset =
-                              coordinateSystem.screenToCoordinate(localOffset);
-                          double safeArea = agentSize / 2;
+                  //         //Basically makes sure that if more than half is of the screen it gets deleted
+                  //         Offset virtualOffset =
+                  //             coordinateSystem.screenToCoordinate(localOffset);
+                  //         double safeArea = agentSize / 2;
 
-                          if (coordinateSystem.isOutOfBounds(
-                              virtualOffset.translate(safeArea, safeArea))) {
-                            ref
-                                .read(utilityProvider.notifier)
-                                .removeUtility(placedUtility.id);
+                  //         if (coordinateSystem.isOutOfBounds(
+                  //             virtualOffset.translate(safeArea, safeArea))) {
+                  //           ref
+                  //               .read(utilityProvider.notifier)
+                  //               .removeUtility(placedUtility.id);
 
-                            return;
-                          }
+                  //           return;
+                  //         }
 
-                          ref
-                              .read(utilityProvider.notifier)
-                              .updatePosition(virtualOffset, placedUtility.id);
-                        },
-                      ),
-                    ),
+                  //         ref
+                  //             .read(utilityProvider.notifier)
+                  //             .updatePosition(virtualOffset, placedUtility.id);
+                  //       },
+                  //     ),
+                  //   ),
                 ],
               ),
             );
