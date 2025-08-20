@@ -32,7 +32,7 @@ class CustomExpansionTile extends StatefulWidget {
   final Widget? leading;
 
   /// A widget that remains visible even when the expansion tile is collapsed.
-  final Widget? persistentRow;
+  final List<Widget>? persistentRow;
 
   /// The widgets that are displayed when the tile expands.
   final List<Widget> children;
@@ -141,7 +141,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
         ? widget.backgroundColor ?? Colors.transparent
         : widget.collapsedBackgroundColor ?? Colors.transparent;
 
-    final Color titleColor = _isExpanded
+    final Color? titleColor = _isExpanded
         ? widget.textColor ?? colorScheme.primary
         : widget.collapsedTextColor ?? theme.textTheme.titleMedium?.color;
 
@@ -159,7 +159,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
             onTap: _handleTap,
             child: Padding(
               padding: widget.tilePadding ??
-                  const EdgeInsets.symmetric(horizontal: 16.0),
+                  const EdgeInsets.only(left: 16.0, right: 16, top: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -189,8 +189,10 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
           if (widget.persistentRow != null)
             Padding(
               padding: widget.tilePadding ??
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: widget.persistentRow!,
+                  const EdgeInsets.symmetric(vertical: 8.0),
+              child: Column(
+                children: widget.persistentRow!,
+              ),
             ),
 
           // Expandable children

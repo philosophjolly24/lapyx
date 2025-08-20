@@ -15,6 +15,7 @@ enum ActionType {
   addition,
   deletion,
   edit,
+  util
   // clearAll,
 }
 

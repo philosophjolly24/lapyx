@@ -259,3 +259,78 @@ class PositionAction extends WidgetAction {
 
   PositionAction({required this.position});
 }
+
+enum UtilityType {
+  spike,
+}
+
+@JsonSerializable()
+class PlacedUtility extends PlacedWidget {
+  final UtilityType type;
+
+  double rotation = 0;
+  double length = 0;
+
+  void updateRotation(double newRotation, double newLength) {
+    rotation = newRotation;
+    length = newLength;
+  }
+
+  void updateRotationHistory() {
+    final action = RotationAction(rotation: rotation, length: length);
+    _actionHistory.add(action);
+  }
+
+  void _undoRotation() {
+    final action = RotationAction(rotation: rotation, length: length);
+
+    _poppedAction.add(action);
+    rotation = (_actionHistory.last as RotationAction).rotation;
+    length = (_actionHistory.last as RotationAction).length;
+    _actionHistory.removeLast();
+  }
+
+  void _redoRotation() {
+    if (_poppedAction.isEmpty) return;
+
+    final action = RotationAction(rotation: rotation, length: length);
+
+    _actionHistory.add(action);
+    rotation = (_poppedAction.last as RotationAction).rotation;
+    length = (_poppedAction.last as RotationAction).length;
+    _poppedAction.removeLast();
+  }
+
+  @override
+  void undoAction() {
+    if (_actionHistory.isEmpty) return;
+
+    if (_actionHistory.last is PositionAction) {
+      _undoPosition();
+    } else if (_actionHistory.last is RotationAction) {
+      _undoRotation();
+    }
+  }
+
+  @override
+  void redoAction() {
+    if (_poppedAction.isEmpty) return;
+
+    if (_poppedAction.last is PositionAction) {
+      _redoPosition();
+    } else if (_poppedAction.last is RotationAction) {
+      _redoRotation();
+    }
+  }
+
+  PlacedUtility({
+    required this.type,
+    required super.position,
+    required super.id,
+  });
+
+  factory PlacedUtility.fromJson(Map<String, dynamic> json) =>
+      _$PlacedUtilityFromJson(json);
+  @override
+  Map<String, dynamic> toJson() => _$PlacedUtilityToJson(this);
+}

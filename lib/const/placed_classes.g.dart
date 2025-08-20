@@ -130,3 +130,28 @@ Map<String, dynamic> _$PlacedAbilityToJson(PlacedAbility instance) =>
       'rotation': instance.rotation,
       'length': instance.length,
     };
+
+PlacedUtility _$PlacedUtilityFromJson(Map<String, dynamic> json) =>
+    PlacedUtility(
+      type: $enumDecode(_$UtilityTypeEnumMap, json['type']),
+      position: const OffsetConverter()
+          .fromJson(json['position'] as Map<String, dynamic>),
+      id: json['id'] as String,
+    )
+      ..isDeleted = json['isDeleted'] as bool? ?? false
+      ..rotation = (json['rotation'] as num).toDouble()
+      ..length = (json['length'] as num).toDouble();
+
+Map<String, dynamic> _$PlacedUtilityToJson(PlacedUtility instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'isDeleted': instance.isDeleted,
+      'position': const OffsetConverter().toJson(instance.position),
+      'type': _$UtilityTypeEnumMap[instance.type]!,
+      'rotation': instance.rotation,
+      'length': instance.length,
+    };
+
+const _$UtilityTypeEnumMap = {
+  UtilityType.spike: 'spike',
+};

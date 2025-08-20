@@ -49,7 +49,7 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   msix: ^3.16.8
   # dart run msix:create
-
+  # flutter pub run build_runner build --delete-conflicting-outputs
 msix_config:
   display_name: 'Icarus: Valorant Strategies & Line ups'
   publisher_display_name: Dara A

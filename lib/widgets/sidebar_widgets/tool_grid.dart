@@ -11,6 +11,7 @@ import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
+import 'package:icarus/widgets/custom_expansion_tile.dart';
 import 'package:icarus/widgets/sidebar_widgets/delete_options.dart';
 import 'package:icarus/widgets/sidebar_widgets/drawing_tools.dart';
 import 'package:icarus/widgets/sidebar_widgets/image_selector.dart';
@@ -39,13 +40,13 @@ class ToolGrid extends ConsumerWidget {
         highlightColor: Colors.transparent,
         hoverColor: Colors.transparent,
       ),
-      child: ExpansionTile(
+      child: CustomExpansionTile(
         title: const Text(
           "Tools",
           style: TextStyle(fontSize: 20),
         ),
         initiallyExpanded: true,
-        children: [
+        persistentRow: [
           GridView.count(
             shrinkWrap: true,
             crossAxisCount: 5,
@@ -163,13 +164,13 @@ class ToolGrid extends ConsumerWidget {
                   // showImageDialog();
                 },
                 icon: const Icon(Icons.image_outlined),
-              )
+              ),
             ],
           ),
           const DrawingTools(),
           const DeleteOptions(),
-          const TickerMode(enabled: false, child: Text("sfeafe"))
         ],
+        children: const [],
       ),
     );
   }
