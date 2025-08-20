@@ -8,14 +8,21 @@ import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
+import 'package:icarus/providers/utility_provider.dart';
 
-enum ActionGroup { agent, ability, drawing, text, image }
+enum ActionGroup {
+  agent,
+  ability,
+  drawing,
+  text,
+  image,
+  utility,
+}
 
 enum ActionType {
   addition,
   deletion,
   edit,
-  util
   // clearAll,
 }
 
@@ -83,6 +90,8 @@ class ActionProvider extends Notifier<List<UserAction>> {
         ref.read(textProvider.notifier).redoAction(poppedAction);
       case ActionGroup.image:
         ref.read(placedImageProvider.notifier).redoAction(poppedAction);
+      case ActionGroup.utility:
+        ref.read(utilityProvider.notifier).redoAction(poppedAction);
     }
 
     final newState = [...state];
@@ -111,6 +120,8 @@ class ActionProvider extends Notifier<List<UserAction>> {
         ref.read(textProvider.notifier).undoAction(currentAction);
       case ActionGroup.image:
         ref.read(placedImageProvider.notifier).undoAction(currentAction);
+      case ActionGroup.utility:
+        ref.read(utilityProvider.notifier).undoAction(currentAction);
     }
     // log("Undo action was called");
     final newState = [...state];
@@ -153,6 +164,8 @@ class ActionProvider extends Notifier<List<UserAction>> {
         ref.read(textProvider.notifier).clearAll();
       case ActionGroup.image:
         ref.read(placedImageProvider.notifier).clearAll();
+      case ActionGroup.utility:
+        ref.read(utilityProvider.notifier).clearAll();
     }
     // Optionally, you may want to notify or update strategy provider state.
     ref.read(strategyProvider.notifier).setUnsaved();

@@ -5,16 +5,16 @@ import 'dart:ui' as ui;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:icarus/const/custom_icons.dart';
 import 'package:icarus/const/placed_classes.dart';
-import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
+import 'package:icarus/providers/utility_provider.dart';
 import 'package:icarus/widgets/custom_expansion_tile.dart';
 import 'package:icarus/widgets/sidebar_widgets/delete_options.dart';
 import 'package:icarus/widgets/sidebar_widgets/drawing_tools.dart';
-import 'package:icarus/widgets/sidebar_widgets/image_selector.dart';
 import 'package:path/path.dart' as path;
 import 'package:uuid/uuid.dart';
 
@@ -170,7 +170,37 @@ class ToolGrid extends ConsumerWidget {
           const DrawingTools(),
           const DeleteOptions(),
         ],
-        children: const [],
+        children: [
+          GridView.count(
+            shrinkWrap: true,
+            crossAxisCount: 5,
+            children: [
+              IconButton(
+                tooltip: "Spike",
+                onPressed: () {
+                  ref
+                      .read(interactionStateProvider.notifier)
+                      .update(InteractionState.navigation);
+                  const uuid = Uuid();
+
+                  ref.read(utilityProvider.notifier).addUtility(
+                        PlacedUtility(
+                          position: const Offset(500, 500),
+                          id: uuid.v4(),
+                          type: UtilityType.spike,
+                        ),
+                      );
+                },
+                icon: SvgPicture.asset(
+                  "assets/spike.svg",
+                  width: 20,
+                  height: 20,
+                ),
+                isSelected: currentInteractionState == InteractionState.drawing,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
