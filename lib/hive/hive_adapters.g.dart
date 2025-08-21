@@ -28,6 +28,7 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       mapData: fields[6] as MapValue,
       versionNumber: (fields[0] as num).toInt(),
       lastEdited: fields[9] as DateTime,
+      utilityData: (fields[12] as List).cast<PlacedUtility>(),
       strategySettings: fields[11] as StrategySettings?,
     );
   }
@@ -35,7 +36,7 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
   @override
   void write(BinaryWriter writer, StrategyData obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(13)
       ..writeByte(0)
       ..write(obj.versionNumber)
       ..writeByte(1)
@@ -59,7 +60,9 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       ..writeByte(10)
       ..write(obj.isAttack)
       ..writeByte(11)
-      ..write(obj.strategySettings);
+      ..write(obj.strategySettings)
+      ..writeByte(12)
+      ..write(obj.utilityData);
   }
 
   @override
@@ -733,6 +736,88 @@ class StrategySettingsAdapter extends TypeAdapter<StrategySettings> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is StrategySettingsAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class PlacedUtilityAdapter extends TypeAdapter<PlacedUtility> {
+  @override
+  final typeId = 15;
+
+  @override
+  PlacedUtility read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return PlacedUtility(
+      type: fields[0] as UtilityType,
+      position: fields[5] as Offset,
+      id: fields[3] as String,
+    )
+      ..rotation = (fields[1] as num).toDouble()
+      ..length = (fields[2] as num).toDouble()
+      ..isDeleted = fields[4] as bool;
+  }
+
+  @override
+  void write(BinaryWriter writer, PlacedUtility obj) {
+    writer
+      ..writeByte(6)
+      ..writeByte(0)
+      ..write(obj.type)
+      ..writeByte(1)
+      ..write(obj.rotation)
+      ..writeByte(2)
+      ..write(obj.length)
+      ..writeByte(3)
+      ..write(obj.id)
+      ..writeByte(4)
+      ..write(obj.isDeleted)
+      ..writeByte(5)
+      ..write(obj.position);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PlacedUtilityAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class UtilityTypeAdapter extends TypeAdapter<UtilityType> {
+  @override
+  final typeId = 16;
+
+  @override
+  UtilityType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return UtilityType.spike;
+      default:
+        return UtilityType.spike;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, UtilityType obj) {
+    switch (obj) {
+      case UtilityType.spike:
+        writer.writeByte(0);
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UtilityTypeAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

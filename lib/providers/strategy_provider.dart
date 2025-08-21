@@ -22,6 +22,7 @@ import 'package:hive_ce/hive.dart';
 import 'package:icarus/const/drawing_element.dart';
 import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/placed_classes.dart';
+import 'package:icarus/providers/utility_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -35,6 +36,7 @@ class StrategyData extends HiveObject {
   final List<PlacedAbility> abilityData;
   final List<PlacedText> textData;
   final List<PlacedImage> imageData;
+  final List<PlacedUtility> utilityData;
   final MapValue mapData;
   final DateTime lastEdited;
   final bool isAttack;
@@ -52,6 +54,7 @@ class StrategyData extends HiveObject {
     required this.mapData,
     required this.versionNumber,
     required this.lastEdited,
+    required this.utilityData,
     StrategySettings? strategySettings,
   }) : strategySettings = strategySettings ?? StrategySettings();
 }
@@ -177,6 +180,7 @@ class StrategyProvider extends Notifier<StrategyState> {
     ref
         .read(strategySettingsProvider.notifier)
         .fromHive(newStrat.strategySettings);
+    ref.read(utilityProvider.notifier).fromHive(newStrat.utilityData);
 
     final newDir = await setStorageDirectory(newStrat.id);
 
@@ -235,8 +239,11 @@ class StrategyProvider extends Notifier<StrategyState> {
 
     final imageData = await ref.read(placedImageProvider.notifier).fromJson(
         jsonString: jsonEncode(json["imageData"] ?? []), strategyID: newID);
+
     final StrategySettings settingsData;
     final bool isAttack;
+    final List<PlacedUtility> utilityData;
+
     if (json["settingsData"] != null) {
       settingsData = ref
           .read(strategySettingsProvider.notifier)
@@ -248,6 +255,14 @@ class StrategyProvider extends Notifier<StrategyState> {
       isAttack = json["isAttack"] == "true" ? true : false;
     } else {
       isAttack = true;
+    }
+
+    if (json["utilityData"] != null) {
+      utilityData = ref
+          .read(utilityProvider.notifier)
+          .fromJson(jsonEncode(json["utilityData"]));
+    } else {
+      utilityData = [];
     }
 
     final versionNumber = int.tryParse(json["versionNumber"].toString()) ??
@@ -265,6 +280,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       lastEdited: DateTime.now(),
       isAttack: isAttack,
       strategySettings: settingsData,
+      utilityData: utilityData,
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
@@ -279,6 +295,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       abilityData: [],
       textData: [],
       imageData: [],
+      utilityData: [],
       mapData: MapValue.ascent,
       versionNumber: Settings.versionNumber,
       id: newID,
@@ -308,7 +325,8 @@ class StrategyProvider extends Notifier<StrategyState> {
                 "mapData": ${ref.read(mapProvider.notifier).toJson()},
                 "imageData":$fetchedImageData,
                 "settingsData":${ref.read(strategySettingsProvider.notifier).toJson()},
-                "isAttack": "${ref.read(mapProvider).isAttack.toString()}"
+                "isAttack": "${ref.read(mapProvider).isAttack.toString()}",
+                "utilityData": ${ref.read(utilityProvider.notifier).toJson()}
                 }
               ''';
 
@@ -361,6 +379,7 @@ class StrategyProvider extends Notifier<StrategyState> {
     final mapData = ref.read(mapProvider);
     final imageData = ref.read(placedImageProvider).images;
     final strategySettings = ref.read(strategySettingsProvider);
+    final utilityData = ref.read(utilityProvider);
 
     final currentStategy = StrategyData(
       drawingData: drawingData,
@@ -370,6 +389,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       imageData: imageData,
       mapData: mapData.currentMap,
       isAttack: mapData.isAttack,
+      utilityData: utilityData,
       versionNumber: Settings.versionNumber,
       id: id,
       name: state.stratName ?? "placeholder",
