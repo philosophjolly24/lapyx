@@ -284,6 +284,7 @@ class DrawingProvider extends Notifier<DrawingState> {
   }
 
   void updateFreeDrawing(Offset offset, CoordinateSystem coordinateSystem) {
+    if (state.currentElement == null) return;
     final currentDrawing = (state.currentElement as FreeDrawing);
     final normalizedOffset = coordinateSystem.screenToCoordinate(offset);
 
@@ -307,6 +308,9 @@ class DrawingProvider extends Notifier<DrawingState> {
   }
 
   void finishFreeDrawing(Offset? offset, CoordinateSystem coordinateSystem) {
+    if (state.currentElement == null) return;
+
+    // if (state.currentElement == null) return;
     final currentDrawing = state.currentElement as FreeDrawing;
     if (offset != null) {
       currentDrawing.listOfPoints

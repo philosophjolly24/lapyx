@@ -18,6 +18,7 @@ class ShortcutInfo {
     LogicalKeySet(LogicalKeyboardKey.keyQ): const ToggleDrawingIntent(),
     LogicalKeySet(LogicalKeyboardKey.keyW): const ToggleErasingIntent(),
     LogicalKeySet(LogicalKeyboardKey.keyT): const AddedTextIntent(),
+    LogicalKeySet(LogicalKeyboardKey.keyA): const NavigationActionIntent(),
   };
 
   // New map to disable global shortcuts when typing
@@ -41,6 +42,8 @@ class ShortcutInfo {
         const DoNothingAndStopPropagationIntent(),
     LogicalKeySet(LogicalKeyboardKey.keyW):
         const DoNothingAndStopPropagationIntent(),
+
+    LogicalKeySet(LogicalKeyboardKey.keyA): const NavigationActionIntent(),
   };
 }
 
@@ -66,4 +69,8 @@ class UndoActionIntent extends Intent {
 
 class RedoActionIntent extends Intent {
   const RedoActionIntent();
+}
+
+class NavigationActionIntent extends Intent {
+  const NavigationActionIntent();
 }

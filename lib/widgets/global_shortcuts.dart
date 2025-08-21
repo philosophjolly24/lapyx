@@ -45,15 +45,9 @@ class GlobalShortcuts extends ConsumerWidget {
               onInvoke: (intent) {
                 if (ref.read(interactionStateProvider) ==
                     InteractionState.drawing) {
-                  final coordinateSystem = CoordinateSystem.instance;
-
                   ref
                       .read(interactionStateProvider.notifier)
                       .update(InteractionState.navigation);
-
-                  ref
-                      .read(drawingProvider.notifier)
-                      .finishFreeDrawing(null, coordinateSystem);
                 } else {
                   ref
                       .read(interactionStateProvider.notifier)
@@ -82,6 +76,16 @@ class GlobalShortcuts extends ConsumerWidget {
                 log("I triggered");
 
                 ref.read(actionProvider.notifier).redoAction();
+                return null;
+              },
+            ),
+            NavigationActionIntent: CallbackAction<NavigationActionIntent>(
+              onInvoke: (intent) {
+                log("I triggered");
+
+                ref
+                    .read(interactionStateProvider.notifier)
+                    .update(InteractionState.navigation);
                 return null;
               },
             ),

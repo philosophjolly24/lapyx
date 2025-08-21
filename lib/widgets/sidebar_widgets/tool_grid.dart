@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:icarus/const/custom_icons.dart';
 import 'package:icarus/const/placed_classes.dart';
+import 'package:icarus/const/utilities.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
