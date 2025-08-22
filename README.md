@@ -10,4 +10,6 @@ Download: https://apps.microsoft.com/detail/9PBWHHZRQFW6?hl=en-us&gl=US&ocid=pdp
 DEV LOG HERE: https://youtu.be/dDn2rafvjMQ?si=mm1Sz-XrjvNQiRWE
 
 <img src=https://l7y6qjyp5m.ufs.sh/f/usun6XPoM0UCnar5XbcjR2aezOZ4lNvPKq05MfxnY3hisyg1>
-<a href="https:/www.buymeacoffee.com/daradoescode" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+## Support
+This project in completely free on open source and your support helps maintain it!!
+<a href="https://www.buymeacoffee.com/daradoescode" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
