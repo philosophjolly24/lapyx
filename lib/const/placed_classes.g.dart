@@ -24,10 +24,10 @@ PlacedText _$PlacedTextFromJson(Map<String, dynamic> json) => PlacedText(
       position: const OffsetConverter()
           .fromJson(json['position'] as Map<String, dynamic>),
       id: json['id'] as String,
+      size: (json['size'] as num?)?.toDouble() ?? 200,
     )
       ..isDeleted = json['isDeleted'] as bool? ?? false
-      ..text = json['text'] as String
-      ..size = (json['size'] as num?)?.toDouble();
+      ..text = json['text'] as String;
 
 Map<String, dynamic> _$PlacedTextToJson(PlacedText instance) =>
     <String, dynamic>{

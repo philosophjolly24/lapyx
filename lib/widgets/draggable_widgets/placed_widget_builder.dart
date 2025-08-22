@@ -21,7 +21,8 @@ import 'package:icarus/widgets/draggable_widgets/agents/agent_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/placed_image_builder.dart';
 import 'package:icarus/widgets/delete_area.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/placed_ability_widget.dart';
-import 'package:icarus/widgets/draggable_widgets/text_widget.dart';
+import 'package:icarus/widgets/draggable_widgets/text/placed_text_builder.dart';
+import 'package:icarus/widgets/draggable_widgets/text/text_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/utilities/utility_widget_builder.dart';
 import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 import 'package:uuid/uuid.dart';
@@ -156,19 +157,9 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                       top: coordinateSystem
                           .coordinateToScreen(placedText.position)
                           .dy,
-                      child: Draggable<PlacedWidget>(
-                        data: placedText,
-                        feedback: ZoomTransform(
-                          child: TextWidget(
-                            id: placedText.id,
-                            text: placedText.text,
-                            isDragged: true,
-                          ),
-                        ),
-                        childWhenDragging: const SizedBox.shrink(),
-                        dragAnchorStrategy: ref
-                            .read(screenZoomProvider.notifier)
-                            .zoomDragAnchorStrategy,
+                      child: PlacedTextBuilder(
+                        size: placedText.size,
+                        placedText: placedText,
                         onDragEnd: (details) {
                           RenderBox renderBox =
                               context.findRenderObject() as RenderBox;
@@ -185,6 +176,7 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                             ref
                                 .read(textProvider.notifier)
                                 .removeText(placedText.id);
+
                             return;
                           }
 
@@ -192,10 +184,6 @@ class _PlacedWidgetBuilderState extends ConsumerState<PlacedWidgetBuilder> {
                               .read(textProvider.notifier)
                               .updatePosition(virtualOffset, placedText.id);
                         },
-                        child: TextWidget(
-                          text: placedText.text,
-                          id: placedText.id,
-                        ),
                       ),
                     ),
                   for (PlacedImage placedImage

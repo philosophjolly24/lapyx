@@ -54,7 +54,7 @@ class StrategyData extends HiveObject {
     required this.mapData,
     required this.versionNumber,
     required this.lastEdited,
-    required this.utilityData,
+    this.utilityData = const [],
     StrategySettings? strategySettings,
   }) : strategySettings = strategySettings ?? StrategySettings();
 }

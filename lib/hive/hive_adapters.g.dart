@@ -28,7 +28,9 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       mapData: fields[6] as MapValue,
       versionNumber: (fields[0] as num).toInt(),
       lastEdited: fields[9] as DateTime,
-      utilityData: (fields[12] as List).cast<PlacedUtility>(),
+      utilityData: fields[12] == null
+          ? const []
+          : (fields[12] as List).cast<PlacedUtility>(),
       strategySettings: fields[11] as StrategySettings?,
     );
   }
@@ -226,9 +228,9 @@ class PlacedTextAdapter extends TypeAdapter<PlacedText> {
     return PlacedText(
       position: fields[4] as Offset,
       id: fields[2] as String,
+      size: fields[1] == null ? 200 : (fields[1] as num).toDouble(),
     )
       ..text = fields[0] as String
-      ..size = (fields[1] as num?)?.toDouble()
       ..isDeleted = fields[3] as bool;
   }
 

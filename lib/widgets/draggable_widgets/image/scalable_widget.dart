@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/custom_icons.dart';
 
-class ScalableWidget extends ConsumerWidget {
-  const ScalableWidget({
+class ImageScaleController extends ConsumerWidget {
+  const ImageScaleController({
     super.key,
     required this.child,
     required this.onPanUpdate,

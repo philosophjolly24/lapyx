@@ -56,7 +56,7 @@ class _PlacedImageBuilderState extends State<PlacedImageBuilder> {
         localScale = ref.read(placedImageProvider).images[index].scale;
       }
 
-      return ScalableWidget(
+      return ImageScaleController(
         isDragging: isDragging,
         onPanUpdate: (details) {
           log("I'm being panned");

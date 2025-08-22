@@ -107,6 +107,14 @@ class TextProvider extends Notifier<List<PlacedText>> {
     state = newState;
   }
 
+  void updateSize(int index, double size) {
+    final newState = [...state];
+    if (index < 0 || index >= newState.length) return;
+
+    newState[index].size = size;
+    state = newState;
+  }
+
   void removeText(String id) {
     final newState = [...state];
     final index = PlacedWidget.getIndexByID(id, newState);

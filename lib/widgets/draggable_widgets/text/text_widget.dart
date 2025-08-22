@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/shortcut_info.dart';
-import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
-import 'package:icarus/widgets/mouse_watch.dart';
 
 class TextWidget extends ConsumerStatefulWidget {
   const TextWidget({
@@ -12,7 +9,9 @@ class TextWidget extends ConsumerStatefulWidget {
     required this.text,
     this.isDragged,
     required this.id,
+    required this.size,
   });
+  final double size;
   final String text;
   final bool? isDragged;
   final String id;
@@ -48,7 +47,7 @@ class _TextWidgetState extends ConsumerState<TextWidget> {
     return Shortcuts(
       shortcuts: ShortcutInfo.textEditingOverrides,
       child: SizedBox(
-        width: 200,
+        width: widget.size,
         child: IntrinsicHeight(
           child: Row(
             children: [
