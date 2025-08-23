@@ -1,11 +1,9 @@
 import 'dart:developer';
 import 'dart:math' as math;
 
-import 'package:custom_mouse_cursor/custom_mouse_cursor.dart';
 import 'package:dash_painter/dash_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/custom_icons.dart';
 import 'package:icarus/const/drawing_element.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/main.dart';
