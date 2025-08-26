@@ -37,7 +37,7 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
     String assetName =
         'assets/maps/${Maps.mapNames[ref.watch(mapProvider).currentMap]}_map${isAttack ? "" : "_defense"}.svg';
     String barrierAssetName =
-        'assets/maps/${Maps.mapNames[ref.watch(mapProvider).currentMap]}_map_spawn_wall${isAttack ? "" : "_defense"}.svg';
+        'assets/maps/${Maps.mapNames[ref.watch(mapProvider).currentMap]}_map_spawn_wall.svg';
 
     final double height = MediaQuery.sizeOf(context).height - 90;
     final Size playAreaSize = Size(height * 1.2, height);
@@ -87,10 +87,16 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                   ),
                   if (ref.watch(mapProvider).showSpawnBarrier)
                     Positioned.fill(
-                      child: SvgPicture.asset(
-                        barrierAssetName,
-                        semanticsLabel: 'Barrier',
-                        fit: BoxFit.contain,
+                      top: 0,
+                      left: isAttack ? -1.5 : 1.5,
+                      child: Transform.flip(
+                        flipX: !isAttack,
+                        flipY: !isAttack,
+                        child: SvgPicture.asset(
+                          barrierAssetName,
+                          semanticsLabel: 'Barrier',
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   //Agents

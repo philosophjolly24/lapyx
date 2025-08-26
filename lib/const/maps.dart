@@ -28,6 +28,7 @@ class Maps {
     MapValue.split,
     MapValue.sunset,
     MapValue.pearl,
+    MapValue.abyss,
   ];
 
   static Map<MapValue, String> mapNames = {
@@ -54,7 +55,7 @@ class Maps {
     MapValue.haven: 1.09,
     MapValue.fracture: 1,
     MapValue.pearl: 1,
-    MapValue.abyss: 1,
+    MapValue.abyss: 1.167,
     MapValue.sunset: 1.048,
     MapValue.bind: .835,
     MapValue.corrode: .985,
