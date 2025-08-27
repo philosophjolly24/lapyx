@@ -11,7 +11,12 @@ class CoordinateSystem {
   final Size _playAreaSize;
   Size get playAreaSize => _playAreaSize;
 
+  static const Size screenShotSize = Size(1080, 1296);
+  bool isScreenshot = false;
   static CoordinateSystem? _instance;
+
+  // Use screenshot dimensions when isScreenshot is true; otherwise use play area size
+  Size get _effectiveSize => isScreenshot ? screenShotSize : _playAreaSize;
 
   // The normalized coordinate space will maintain this aspect ratio
   final double normalizedHeight = 1000.0;
@@ -33,25 +38,26 @@ class CoordinateSystem {
   Offset screenToCoordinate(Offset screenPoint) {
     // Convert screen points to the normalized space while maintaining aspect ratio
     double normalizedX =
-        (screenPoint.dx / _playAreaSize.width) * normalizedWidth;
+        (screenPoint.dx / _effectiveSize.width) * normalizedWidth;
     double normalizedY =
-        (screenPoint.dy / _playAreaSize.height) * normalizedHeight;
+        (screenPoint.dy / _effectiveSize.height) * normalizedHeight;
 
     return Offset(normalizedX, normalizedY);
   }
 
   Offset coordinateToScreen(Offset coordinates) {
     // Convert from normalized space back to screen space while maintaining aspect ratio
-    double screenX = (coordinates.dx / normalizedWidth) * (_playAreaSize.width);
+    double screenX =
+        (coordinates.dx / normalizedWidth) * (_effectiveSize.width);
     double screenY =
-        (coordinates.dy / normalizedHeight) * (_playAreaSize.height);
+        (coordinates.dy / normalizedHeight) * (_effectiveSize.height);
 
     return Offset(screenX, screenY);
   }
 
   final double _baseHeight = 831.0;
   // Get the scale factor based on screen height
-  double get _scaleFactor => _playAreaSize.height / _baseHeight;
+  double get _scaleFactor => _effectiveSize.height / _baseHeight;
 
   double get scaleFactor => _scaleFactor;
   // Scale any dimension based on height
@@ -66,7 +72,7 @@ class CoordinateSystem {
 
   Offset convertOldCoordinateToNew(Offset oldCoordinate) {
     // Calculate the ratio between old and new play area heights
-    double screenHeight = playAreaSize.height + 90;
+    double screenHeight = _effectiveSize.height + 90;
     log("currentScreen height: $screenHeight");
     double oldPlayAreaHeight = screenHeight - 56;
     double newPlayAreaHeight = screenHeight - 90;
@@ -80,9 +86,10 @@ class CoordinateSystem {
 
   Offset loggedCoordinateToScreen(Offset coordinates) {
     // Convert from normalized space back to screen space while maintaining aspect ratio
-    double screenX = (coordinates.dx / normalizedWidth) * (_playAreaSize.width);
+    double screenX =
+        (coordinates.dx / normalizedWidth) * (_effectiveSize.width);
     double screenY =
-        (coordinates.dy / normalizedHeight) * (_playAreaSize.height);
+        (coordinates.dy / normalizedHeight) * (_effectiveSize.height);
 
     log("normalized Coordinates: ${coordinates.toString()}");
     log("screen Coordinates: ${Offset(screenX, screenY).toString()}");

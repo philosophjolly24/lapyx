@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/maps.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/map_provider.dart';
@@ -19,8 +20,8 @@ class ScreenshotView extends ConsumerWidget {
         'assets/maps/${Maps.mapNames[ref.watch(mapProvider).currentMap]}_map${isAttack ? "" : "_defense"}.svg';
     return Container(
       color: const Color(0xFF1B1B1B),
-      height: Settings.screenShotSize.height,
-      width: Settings.screenShotSize.width,
+      height: CoordinateSystem.screenShotSize.height,
+      width: CoordinateSystem.screenShotSize.width,
       child: Stack(
         children: [
           const DotGrid(isScreenshot: true),
