@@ -5,13 +5,14 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/coordinate_system.dart';
+import 'package:hive_ce/hive.dart';
+import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/providers/screenshot_provider.dart';
 import 'package:icarus/providers/strategy_provider.dart';
+import 'package:icarus/screenshot/screen_interactive_map.dart';
 import 'package:icarus/screenshot/screenshot_view.dart';
 import 'package:icarus/widgets/settings_tab.dart';
 import 'package:icarus/widgets/strategy_save_icon_button.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 
 class SaveButtonAndLoad extends ConsumerWidget {
@@ -83,30 +84,32 @@ class SaveButtonAndLoad extends ConsumerWidget {
             onPressed: () async {
               // final dir = await getDownloadsDirectory();
               ref.read(screenshotProvider.notifier).setIsScreenShot(true);
+              final String id = ref.read(strategyProvider).id;
+              await ref.read(strategyProvider.notifier).saveToHive(id);
 
+              final newStrat =
+                  Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
+                      .values
+                      .where((StrategyData strategy) {
+                return strategy.id == id;
+              }).firstOrNull;
+
+              if (newStrat == null) {
+                log("Couldn't find save");
+                return;
+              }
               // screenshotController.capture().then((Uint8List image){});
-              screenshotController.capture().then((Uint8List? image) async {
-                if (image == null) return;
-                File file;
-                // log("File name: ${state.fileName}");
 
-                String? outputFile = await FilePicker.platform.saveFile(
-                  type: FileType.custom,
-                  dialogTitle: 'Please select an output file:',
-                  fileName:
-                      "${ref.read(strategyProvider).stratName ?? "new image"}.png",
-                  allowedExtensions: ['png'],
-                );
-
-                if (outputFile == null) return;
-
-                file = File(outputFile);
-
-                file.writeAsBytes(image);
-                ref.read(screenshotProvider.notifier).setIsScreenShot(false);
-              }).catchError((onError) {
-                log(onError);
-              });
+              screenshotController.captureFromWidget(ScreenShotInteractiveMap(
+                mapValue: newStrat.mapData,
+                agents: newStrat.agentData,
+                abilities: newStrat.abilityData,
+                text: newStrat.textData,
+                items: newStrat.imageData,
+                drawings: newStrat.drawingData,
+                utilities: newStrat.utilityData,
+                strategySettings: newStrat.strategySettings,
+              ));
             },
             icon: const Icon(Icons.camera_alt_outlined),
           ),

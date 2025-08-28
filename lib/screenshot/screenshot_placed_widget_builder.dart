@@ -1,11 +1,27 @@
 import 'package:flutter/widgets.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/coordinate_system.dart';
+import 'package:icarus/const/placed_classes.dart';
+import 'package:icarus/providers/strategy_settings_provider.dart';
 import 'package:icarus/widgets/draggable_widgets/agents/agent_widget.dart';
 
 class ScreenshotPlacedWidgetBuilder extends StatelessWidget {
-  const ScreenshotPlacedWidgetBuilder({super.key});
-
+  const ScreenshotPlacedWidgetBuilder(
+      {super.key,
+      required this.agents,
+      required this.abilities,
+      required this.text,
+      required this.images,
+      required this.mapScale,
+      required this.strategySettings,
+      required this.utilities});
+  final List<PlacedAgent> agents;
+  final List<PlacedAbility> abilities;
+  final List<PlacedText> text;
+  final List<PlacedImage> images;
+  final List<PlacedUtility> utilities;
+  final double mapScale;
+  final StrategySettings strategySettings;
   @override
   Widget build(BuildContext context) {
     final coordinateSystem = CoordinateSystem.instance;
@@ -18,39 +34,16 @@ class ScreenshotPlacedWidgetBuilder extends StatelessWidget {
       builder: (context, constraints) {
         return Stack(
           children: [
-            for (PlacedAbility ability in ref.watch(abilityProvider))
+            for (PlacedAbility ability in abilities)
               PlacedAbilityWidget(
                 rotation: ability.rotation,
                 data: ability,
                 ability: ability,
                 id: ability.id,
                 length: ability.length,
-                onDragEnd: (details) {
-                  RenderBox renderBox = context.findRenderObject() as RenderBox;
-                  Offset localOffset = renderBox.globalToLocal(details.offset);
-                  // Updating info
-
-                  Offset virtualOffset =
-                      coordinateSystem.screenToCoordinate(localOffset);
-                  Offset safeArea = ability.data.abilityData!
-                      .getAnchorPoint(mapScale, abilitySize);
-
-                  if (coordinateSystem.isOutOfBounds(
-                      virtualOffset.translate(safeArea.dx, safeArea.dy))) {
-                    ref
-                        .read(abilityProvider.notifier)
-                        .removeAbility(ability.id);
-                    return;
-                  }
-
-                  log(renderBox.size.toString());
-
-                  ref.read(abilityProvider.notifier).updatePosition(
-                      coordinateSystem.screenToCoordinate(localOffset),
-                      ability.id);
-                },
+                onDragEnd: (details) {},
               ),
-            for (PlacedAgent agent in ref.watch(agentProvider))
+            for (PlacedAgent agent in agents)
               Positioned(
                 left: coordinateSystem.coordinateToScreen(agent.position).dx,
                 top: coordinateSystem.coordinateToScreen(agent.position).dy,
@@ -60,7 +53,7 @@ class ScreenshotPlacedWidgetBuilder extends StatelessWidget {
                   agent: AgentData.agents[agent.type]!,
                 ),
               ),
-            for (PlacedText placedText in ref.watch(textProvider))
+            for (PlacedText placedText in text)
               Positioned(
                 left:
                     coordinateSystem.coordinateToScreen(placedText.position).dx,
@@ -69,32 +62,10 @@ class ScreenshotPlacedWidgetBuilder extends StatelessWidget {
                 child: PlacedTextBuilder(
                   size: placedText.size,
                   placedText: placedText,
-                  onDragEnd: (details) {
-                    RenderBox renderBox =
-                        context.findRenderObject() as RenderBox;
-                    Offset localOffset =
-                        renderBox.globalToLocal(details.offset);
-
-                    //Basically makes sure that if more than half is of the screen it gets deleted
-                    Offset virtualOffset =
-                        coordinateSystem.screenToCoordinate(localOffset);
-                    double safeArea = agentSize / 2;
-
-                    if (coordinateSystem.isOutOfBounds(
-                        virtualOffset.translate(safeArea, safeArea))) {
-                      ref.read(textProvider.notifier).removeText(placedText.id);
-
-                      return;
-                    }
-
-                    ref
-                        .read(textProvider.notifier)
-                        .updatePosition(virtualOffset, placedText.id);
-                  },
+                  onDragEnd: (details) {},
                 ),
               ),
-            for (PlacedImage placedImage
-                in ref.watch(placedImageProvider).images)
+            for (PlacedImage placedImage in images)
               Positioned(
                   left: coordinateSystem
                       .coordinateToScreen(placedImage.position)
@@ -105,32 +76,9 @@ class ScreenshotPlacedWidgetBuilder extends StatelessWidget {
                   child: PlacedImageBuilder(
                     placedImage: placedImage,
                     scale: placedImage.scale,
-                    onDragEnd: (details) {
-                      RenderBox renderBox =
-                          context.findRenderObject() as RenderBox;
-                      Offset localOffset =
-                          renderBox.globalToLocal(details.offset);
-
-                      //Basically makes sure that if more than half is of the screen it gets deleted
-                      Offset virtualOffset =
-                          coordinateSystem.screenToCoordinate(localOffset);
-                      double safeArea = agentSize / 2;
-
-                      if (coordinateSystem.isOutOfBounds(
-                          virtualOffset.translate(safeArea, safeArea))) {
-                        ref
-                            .read(placedImageProvider.notifier)
-                            .removeImage(placedImage.id);
-
-                        return;
-                      }
-
-                      ref
-                          .read(placedImageProvider.notifier)
-                          .updatePosition(virtualOffset, placedImage.id);
-                    },
+                    onDragEnd: (details) {},
                   )),
-            for (PlacedUtility placedUtility in ref.watch(utilityProvider))
+            for (PlacedUtility placedUtility in utilities)
               Positioned(
                 left: coordinateSystem
                     .coordinateToScreen(placedUtility.position)
@@ -143,30 +91,7 @@ class ScreenshotPlacedWidgetBuilder extends StatelessWidget {
                   length: placedUtility.length,
                   utility: placedUtility,
                   id: placedUtility.id,
-                  onDragEnd: (details) {
-                    RenderBox renderBox =
-                        context.findRenderObject() as RenderBox;
-                    Offset localOffset =
-                        renderBox.globalToLocal(details.offset);
-
-                    //Basically makes sure that if more than half is of the screen it gets deleted
-                    Offset virtualOffset =
-                        coordinateSystem.screenToCoordinate(localOffset);
-                    double safeArea = agentSize / 2;
-
-                    if (coordinateSystem.isOutOfBounds(
-                        virtualOffset.translate(safeArea, safeArea))) {
-                      ref
-                          .read(utilityProvider.notifier)
-                          .removeUtility(placedUtility.id);
-
-                      return;
-                    }
-
-                    ref
-                        .read(utilityProvider.notifier)
-                        .updatePosition(virtualOffset, placedUtility.id);
-                  },
+                  onDragEnd: (details) {},
                 ),
               ),
           ],
