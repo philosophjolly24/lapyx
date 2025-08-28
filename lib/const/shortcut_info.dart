@@ -43,7 +43,8 @@ class ShortcutInfo {
     LogicalKeySet(LogicalKeyboardKey.keyW):
         const DoNothingAndStopPropagationIntent(),
 
-    LogicalKeySet(LogicalKeyboardKey.keyA): const NavigationActionIntent(),
+    LogicalKeySet(LogicalKeyboardKey.keyA):
+        const DoNothingAndStopPropagationIntent(),
   };
 }
 
