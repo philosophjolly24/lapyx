@@ -36,4 +36,34 @@ class Settings {
 
   static const Duration autoSaveOffset = Duration(seconds: 15);
   static const int versionNumber = 7;
+
+  static ThemeData appTheme = ThemeData(
+      colorScheme: const ColorScheme.dark(
+        // primary: Color.fromARGB(255, 129, 75, 223),
+        primary: Colors.deepPurpleAccent,
+        secondary: Colors.teal,
+        error: Colors.red,
+        surface: Color(0xFF1B1B1B),
+      ),
+      dividerColor: Colors.transparent,
+      useMaterial3: true,
+      expansionTileTheme: const ExpansionTileThemeData(),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+          // You can also set other properties like textStyle here if needed
+          // textStyle: MaterialStateProperty.all<TextStyle>(
+          //   const TextStyle(color: Colors.white),
+          // ),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ButtonStyle(
+          foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
+          // You can also set other properties like textStyle here if needed
+          // textStyle: MaterialStateProperty.all<TextStyle>(
+          //   const TextStyle(color: Colors.white),
+          // ),
+        ),
+      ));
 }

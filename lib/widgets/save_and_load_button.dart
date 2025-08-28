@@ -6,23 +6,28 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/hive_boxes.dart';
+import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/screenshot_provider.dart';
 import 'package:icarus/providers/strategy_provider.dart';
-import 'package:icarus/screenshot/screen_interactive_map.dart';
 import 'package:icarus/screenshot/screenshot_view.dart';
 import 'package:icarus/widgets/settings_tab.dart';
 import 'package:icarus/widgets/strategy_save_icon_button.dart';
 import 'package:screenshot/screenshot.dart';
 
-class SaveButtonAndLoad extends ConsumerWidget {
-  const SaveButtonAndLoad({
-    super.key,
-    required this.screenshotController,
-  });
-  final ScreenshotController screenshotController;
+class SaveAndLoadButton extends ConsumerStatefulWidget {
+  const SaveAndLoadButton({super.key});
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _SaveAndLoadButtonState();
+}
+
+class _SaveAndLoadButtonState extends ConsumerState<SaveAndLoadButton> {
+  bool _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -82,9 +87,13 @@ class SaveButtonAndLoad extends ConsumerWidget {
           IconButton(
             tooltip: "Screenshot",
             onPressed: () async {
-              // final dir = await getDownloadsDirectory();
-              ref.read(screenshotProvider.notifier).setIsScreenShot(true);
+              if (_isLoading) return;
+              setState(() {
+                _isLoading = true;
+              });
+              CoordinateSystem.instance.setIsScreenshot(true);
               final String id = ref.read(strategyProvider).id;
+
               await ref.read(strategyProvider.notifier).saveToHive(id);
 
               final newStrat =
@@ -98,20 +107,68 @@ class SaveButtonAndLoad extends ConsumerWidget {
                 log("Couldn't find save");
                 return;
               }
-              // screenshotController.capture().then((Uint8List image){});
+              final newController = ScreenshotController();
+              newController
+                  .captureFromWidget(
+                targetSize: CoordinateSystem.screenShotSize,
+                ProviderScope(
+                  child: MediaQuery(
+                    data: const MediaQueryData(
+                        size: CoordinateSystem.screenShotSize),
+                    child: MaterialApp(
+                      theme: Settings.appTheme,
+                      debugShowCheckedModeBanner: false,
+                      home: ScreenshotView(
+                        isAttack: newStrat.isAttack,
+                        mapValue: newStrat.mapData,
+                        agents: newStrat.agentData,
+                        abilities: newStrat.abilityData,
+                        text: newStrat.textData,
+                        images: newStrat.imageData,
+                        drawings: newStrat.drawingData,
+                        utilities: newStrat.utilityData,
+                        strategySettings: newStrat.strategySettings,
+                      ),
+                    ),
+                  ),
+                ),
+              )
+                  .then((Uint8List? image) async {
+                if (image == null) return;
+                File file;
+                // log("File name: ${state.fileName}");
+                setState(() {
+                  _isLoading = false;
+                });
+                String? outputFile = await FilePicker.platform.saveFile(
+                  type: FileType.custom,
+                  dialogTitle: 'Please select an output file:',
+                  fileName:
+                      "${ref.read(strategyProvider).stratName ?? "new image"}.png",
+                  allowedExtensions: ['png'],
+                );
 
-              screenshotController.captureFromWidget(ScreenShotInteractiveMap(
-                mapValue: newStrat.mapData,
-                agents: newStrat.agentData,
-                abilities: newStrat.abilityData,
-                text: newStrat.textData,
-                items: newStrat.imageData,
-                drawings: newStrat.drawingData,
-                utilities: newStrat.utilityData,
-                strategySettings: newStrat.strategySettings,
-              ));
+                if (outputFile == null) return;
+
+                file = File(outputFile);
+
+                file.writeAsBytes(image);
+                ref.read(screenshotProvider.notifier).setIsScreenShot(false);
+              }).catchError((onError) {
+                log(onError);
+              });
+
+              CoordinateSystem.instance.setIsScreenshot(false);
             },
-            icon: const Icon(Icons.camera_alt_outlined),
+            icon: _isLoading
+                ? const SizedBox(
+                    height: 18,
+                    width: 18,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  )
+                : const Icon(Icons.camera_alt_outlined),
           ),
         ],
       ),

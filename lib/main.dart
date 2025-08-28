@@ -5,6 +5,7 @@ import 'package:hive_ce_flutter/adapters.dart';
 import 'package:icarus/const/custom_icons.dart';
 import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/const/routes.dart';
+import 'package:icarus/const/settings.dart' show Settings;
 import 'package:icarus/hive/hive_registrar.g.dart';
 import 'package:icarus/home_view.dart';
 import 'package:icarus/providers/strategy_provider.dart';
@@ -70,35 +71,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Icarus',
-        theme: ThemeData(
-            colorScheme: const ColorScheme.dark(
-              // primary: Color.fromARGB(255, 129, 75, 223),
-              primary: Colors.deepPurpleAccent,
-              secondary: Colors.teal,
-              error: Colors.red,
-              surface: Color(0xFF1B1B1B),
-            ),
-            dividerColor: Colors.transparent,
-            useMaterial3: true,
-            expansionTileTheme: const ExpansionTileThemeData(),
-            textButtonTheme: TextButtonThemeData(
-              style: ButtonStyle(
-                foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
-                // You can also set other properties like textStyle here if needed
-                // textStyle: MaterialStateProperty.all<TextStyle>(
-                //   const TextStyle(color: Colors.white),
-                // ),
-              ),
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ButtonStyle(
-                foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
-                // You can also set other properties like textStyle here if needed
-                // textStyle: MaterialStateProperty.all<TextStyle>(
-                //   const TextStyle(color: Colors.white),
-                // ),
-              ),
-            )),
+        theme: Settings.appTheme,
         routes: {
           Routes.strategyManager: (context) => const StrategyManager(),
           Routes.strategyView: (context) => const StrategyView(),

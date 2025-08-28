@@ -107,11 +107,9 @@ class _StrategyViewState extends ConsumerState<StrategyView>
                     screenshotController: screenshotController,
                   ),
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.topLeft,
-                  child: SaveButtonAndLoad(
-                    screenshotController: screenshotController,
-                  ),
+                  child: SaveAndLoadButton(),
                 ),
                 const SideBarUI(),
 

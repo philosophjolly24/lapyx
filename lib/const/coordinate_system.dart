@@ -11,8 +11,13 @@ class CoordinateSystem {
   final Size _playAreaSize;
   Size get playAreaSize => _playAreaSize;
 
-  static const Size screenShotSize = Size(1080, 1296);
+  static const Size screenShotSize = Size(1296, 1080);
   bool isScreenshot = false;
+
+  void setIsScreenshot(bool value) {
+    isScreenshot = value;
+  }
+
   static CoordinateSystem? _instance;
 
   // Use screenshot dimensions when isScreenshot is true; otherwise use play area size

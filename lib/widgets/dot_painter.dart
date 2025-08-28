@@ -68,7 +68,7 @@ class DotPainter extends CustomPainter {
 
   final bool isScreenshot;
 
-  final playAreaSize = CoordinateSystem.instance.playAreaSize;
+  Size playAreaSize = CoordinateSystem.instance.playAreaSize;
   static const double dotSize = 3; // Size of each dot
   static const double dotSpacing = 9.5;
 
@@ -107,9 +107,15 @@ class DotPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(DotPainter oldDelegate) {
-    if (oldDelegate.playAreaSize != playAreaSize) {
+    if (oldDelegate.isScreenshot != isScreenshot) {
+      playAreaSize = isScreenshot
+          ? CoordinateSystem.screenShotSize
+          : CoordinateSystem.instance.playAreaSize;
       return true;
     }
+    // if (oldDelegate.playAreaSize != playAreaSize) {
+    //   return true;
+    // }
     return false;
   }
 }

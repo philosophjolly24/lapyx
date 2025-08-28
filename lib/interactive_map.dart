@@ -68,7 +68,10 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
                       onTap: () {
                         ref.read(abilityBarProvider.notifier).updateData(null);
                       },
-                      child: DotGrid(),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: DotGrid(),
+                      ),
                     ),
                   ),
                   // Map SVG

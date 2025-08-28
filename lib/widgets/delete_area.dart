@@ -7,6 +7,7 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
+import 'package:icarus/providers/screenshot_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 
 class DeleteArea extends ConsumerWidget {
@@ -14,42 +15,47 @@ class DeleteArea extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SizedBox(
-        height: 70,
-        width: 70,
-        child: DragTarget(
-          builder: (context, candidateData, rejectedData) {
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              color:
-                  candidateData.isNotEmpty ? Colors.red : Settings.sideBarColor,
-              child: const Icon(
-                Icons.delete_outline,
-                color: Color.fromARGB(255, 245, 245, 245),
-              ),
-            );
-          },
-          onAcceptWithDetails: (dragData) {
-            final placedData = dragData.data;
+    return ref.watch(screenshotProvider)
+        ? const SizedBox.shrink()
+        : Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              height: 70,
+              width: 70,
+              child: DragTarget(
+                builder: (context, candidateData, rejectedData) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
+                    color: candidateData.isNotEmpty
+                        ? Colors.red
+                        : Settings.sideBarColor,
+                    child: const Icon(
+                      Icons.delete_outline,
+                      color: Color.fromARGB(255, 245, 245, 245),
+                    ),
+                  );
+                },
+                onAcceptWithDetails: (dragData) {
+                  final placedData = dragData.data;
 
-            if (placedData is PlacedAgent) {
-              final action = UserAction(
-                  type: ActionType.deletion,
-                  id: placedData.id,
-                  group: ActionGroup.agent);
-              ref.read(agentProvider.notifier).removeAgent(placedData.id);
-              ref.read(actionProvider.notifier).addAction(action);
-            } else if (placedData is PlacedAbility) {
-              ref.read(abilityProvider.notifier).removeAbility(placedData.id);
-            } else if (placedData is PlacedText) {
-              ref.read(textProvider.notifier).removeText(placedData.id);
-            }
-            log("I worked");
-          },
-        ),
-      ),
-    );
+                  if (placedData is PlacedAgent) {
+                    final action = UserAction(
+                        type: ActionType.deletion,
+                        id: placedData.id,
+                        group: ActionGroup.agent);
+                    ref.read(agentProvider.notifier).removeAgent(placedData.id);
+                    ref.read(actionProvider.notifier).addAction(action);
+                  } else if (placedData is PlacedAbility) {
+                    ref
+                        .read(abilityProvider.notifier)
+                        .removeAbility(placedData.id);
+                  } else if (placedData is PlacedText) {
+                    ref.read(textProvider.notifier).removeText(placedData.id);
+                  }
+                  log("I worked");
+                },
+              ),
+            ),
+          );
   }
 }
