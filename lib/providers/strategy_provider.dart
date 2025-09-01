@@ -41,6 +41,7 @@ class StrategyData extends HiveObject {
   final DateTime lastEdited;
   final bool isAttack;
   final StrategySettings strategySettings;
+  String? folderID;
 
   StrategyData({
     this.isAttack = true,
@@ -102,6 +103,11 @@ class StrategyProvider extends Notifier<StrategyState> {
   }
 
   Timer? _saveTimer;
+
+  //Used For Images
+  void setFromState(StrategyState newState) {
+    state = newState;
+  }
 
   void setUnsaved() async {
     log("Setting unsaved is being called");

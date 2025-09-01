@@ -144,25 +144,6 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
                   });
                   await navigateWithLoading(context);
                   if (!context.mounted) return;
-                  // Navigator.pushNamed(context, Routes.strategyView);
-
-                  // Navigator.push(
-                  //   context,
-                  //   PageRouteBuilder(
-                  //     pageBuilder: (_, __, ___) => const StrategyView(),
-                  //     transitionsBuilder: (_, animation, __, child) {
-                  //       const begin = Offset(1.0, 0.0);
-                  //       const end = Offset.zero;
-                  //       const curve = Curves.ease;
-                  //       var tween = Tween(begin: begin, end: end)
-                  //           .chain(CurveTween(curve: curve));
-                  //       return SlideTransition(
-                  //         position: animation.drive(tween),
-                  //         child: child,
-                  //       );
-                  //     },
-                  //   ),
-                  // );
                 },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 100),

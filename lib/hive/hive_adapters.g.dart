@@ -32,13 +32,13 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
           ? const []
           : (fields[12] as List).cast<PlacedUtility>(),
       strategySettings: fields[11] as StrategySettings?,
-    );
+    )..folderID = fields[13] as String?;
   }
 
   @override
   void write(BinaryWriter writer, StrategyData obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.versionNumber)
       ..writeByte(1)
@@ -64,7 +64,9 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       ..writeByte(11)
       ..write(obj.strategySettings)
       ..writeByte(12)
-      ..write(obj.utilityData);
+      ..write(obj.utilityData)
+      ..writeByte(13)
+      ..write(obj.folderID);
   }
 
   @override
@@ -820,6 +822,49 @@ class UtilityTypeAdapter extends TypeAdapter<UtilityType> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is UtilityTypeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class FolderAdapter extends TypeAdapter<Folder> {
+  @override
+  final typeId = 17;
+
+  @override
+  Folder read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Folder(
+      name: fields[0] as String,
+      id: fields[1] as String,
+      dateCreated: fields[3] as DateTime,
+      parentID: fields[2] as String?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Folder obj) {
+    writer
+      ..writeByte(4)
+      ..writeByte(0)
+      ..write(obj.name)
+      ..writeByte(1)
+      ..write(obj.id)
+      ..writeByte(2)
+      ..write(obj.parentID)
+      ..writeByte(3)
+      ..write(obj.dateCreated);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FolderAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

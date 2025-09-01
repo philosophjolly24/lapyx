@@ -8,6 +8,7 @@ import 'package:icarus/const/routes.dart';
 import 'package:icarus/const/settings.dart' show Settings;
 import 'package:icarus/hive/hive_registrar.g.dart';
 import 'package:icarus/home_view.dart';
+import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_manager.dart';
 import 'package:icarus/strategy_view.dart';
@@ -27,6 +28,8 @@ Future<void> main() async {
   Hive.registerAdapters();
 
   await Hive.openBox<StrategyData>(HiveBoxNames.strategiesBox);
+  await Hive.openBox<Folder>(HiveBoxNames.foldersBox);
+
   // await Hive.box<StrategyData>(HiveBoxNames.strategiesBox).clear();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(

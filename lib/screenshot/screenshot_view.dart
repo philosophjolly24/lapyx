@@ -11,6 +11,7 @@ import 'package:icarus/providers/drawing_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/screenshot_provider.dart';
+import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/providers/strategy_settings_provider.dart';
 import 'package:icarus/providers/text_provider.dart';
 import 'package:icarus/providers/utility_provider.dart';
@@ -30,7 +31,9 @@ class ScreenshotView extends ConsumerWidget {
     required this.utilities,
     required this.strategySettings,
     required this.isAttack,
+    required this.strategyState,
   });
+  final StrategyState strategyState;
   final MapValue mapValue;
   final List<PlacedAgent> agents;
   final List<PlacedAbility> abilities;
@@ -43,6 +46,7 @@ class ScreenshotView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.read(strategyProvider.notifier).setFromState(strategyState);
     ref.read(agentProvider.notifier).fromHive(agents);
     ref.read(screenshotProvider.notifier).setIsScreenShot(true);
 

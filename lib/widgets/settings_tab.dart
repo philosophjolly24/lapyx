@@ -135,21 +135,21 @@ class SettingsTab extends ConsumerWidget {
                             )
                           ],
                         ),
-                        SettingsSection(title: "Map Settings", children: [
-                          Row(children: [
-                            const Text("Show Spawn Barrier"),
-                            const Spacer(),
-                            Checkbox(
-                                value: ref.watch(mapProvider).showSpawnBarrier,
-                                onChanged: (value) {
-                                  if (value == null) return;
+                        // SettingsSection(title: "Map Settings", children: [
+                        //   Row(children: [
+                        //     const Text("Show Spawn Barrier"),
+                        //     const Spacer(),
+                        //     Checkbox(
+                        //         value: ref.watch(mapProvider).showSpawnBarrier,
+                        //         onChanged: (value) {
+                        //           if (value == null) return;
 
-                                  ref
-                                      .read(mapProvider.notifier)
-                                      .updateSpawnBarrier(value);
-                                })
-                          ])
-                        ])
+                        //           ref
+                        //               .read(mapProvider.notifier)
+                        //               .updateSpawnBarrier(value);
+                        //         })
+                        //   ])
+                        // ])
                       ],
                     ),
                   ),

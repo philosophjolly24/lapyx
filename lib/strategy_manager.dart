@@ -6,16 +6,25 @@ import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/const/update_checker.dart';
+import 'package:icarus/providers/folder_provider.dart';
+import 'package:icarus/widgets/custom_button.dart';
 import 'package:icarus/widgets/dialogs/new_strategy_dialog.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_tile.dart';
 import 'package:icarus/strategy_view.dart';
 import 'package:icarus/widgets/bg_dot_painter.dart';
 import 'package:icarus/widgets/custom_drop_target.dart';
+import 'package:icarus/widgets/folder_tile.dart';
+import 'package:uuid/uuid.dart';
 import 'package:window_manager/window_manager.dart';
 
-final strategiesProvider = Provider<ValueListenable<Box<StrategyData>>>((ref) {
+final strategiesListenable =
+    Provider<ValueListenable<Box<StrategyData>>>((ref) {
   return Hive.box<StrategyData>(HiveBoxNames.strategiesBox).listenable();
+});
+
+final foldersListenable = Provider<ValueListenable<Box<Folder>>>((ref) {
+  return Hive.box<Folder>(HiveBoxNames.foldersBox).listenable();
 });
 
 class StrategyManager extends ConsumerStatefulWidget {
@@ -73,83 +82,55 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
       }
     }
 
-    // UpdateChecker.checkForUpdate(context);
-    final strategiesListenable = ref.watch(strategiesProvider);
+    final strategiesBoxListenable = ref.watch(strategiesListenable);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Strategies"),
         toolbarHeight: 90,
+        actionsPadding: const EdgeInsets.only(right: 24),
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: SizedBox(
-              height: 40,
-              child: TextButton.icon(
+          Row(
+            spacing: 15,
+            children: [
+              CustomButton(
                 onPressed: () async {
                   await ref
                       .read(strategyProvider.notifier)
                       .loadFromFilePicker();
                 },
+                height: 40,
                 icon: const Icon(Icons.file_download, color: Colors.white),
-                label: const Text(
-                  "Import .ica",
-                  // textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
-                ),
-                style: ButtonStyle(
-                  alignment: Alignment.center,
-                  backgroundColor:
-                      WidgetStateProperty.all(Settings.highlightColor),
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                    (Set<WidgetState> states) {
-                      if (states.contains(WidgetState.pressed)) {
-                        return Colors.white.withAlpha(51);
-                      }
-                      return null;
-                    },
-                  ),
-                ),
+                label: "Import .ica",
+                labelColor: Colors.white,
+                backgroundColor: Settings.highlightColor,
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 24),
-            child: SizedBox(
-              height: 40,
-              child: TextButton.icon(
+              CustomButton(
+                onPressed: () async {
+                  final newFolder = Folder(
+                    name: "test",
+                    id: const Uuid().v4(),
+                    dateCreated: DateTime.now(),
+                  );
+                  FolderProvider.createFolder(newFolder);
+                },
+                height: 40,
+                icon: const Icon(Icons.create_new_folder_rounded,
+                    color: Colors.white),
+                label: "Add Folder",
+                labelColor: Colors.white,
+                backgroundColor: Settings.highlightColor,
+              ),
+              CustomButton(
                 onPressed: showCreateDialog,
+                height: 40,
                 icon: const Icon(Icons.add, color: Colors.white),
-                label: const Text(
-                  "Create Strategy",
-                  // textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white),
-                ),
-                style: ButtonStyle(
-                  alignment: Alignment.center,
-                  backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
-                  shape: WidgetStateProperty.all(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                    (Set<WidgetState> states) {
-                      if (states.contains(WidgetState.pressed)) {
-                        return Colors.white.withAlpha(51);
-                      }
-                      return null;
-                    },
-                  ),
-                ),
+                label: "Create Strategy",
+                labelColor: Colors.white,
+                backgroundColor: Colors.deepPurple,
               ),
-            ),
-          ),
+            ],
+          )
         ],
       ),
       body: Stack(
@@ -165,39 +146,71 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
           ),
           Positioned.fill(
             child: ValueListenableBuilder<Box<StrategyData>>(
-              valueListenable: strategiesListenable,
-              builder: (context, box, _) {
-                final strategies = box.values.toList();
-                strategies.sort((a, b) => b.lastEdited.compareTo(a.lastEdited));
-                if (strategies.isEmpty) {
-                  return const FileImportDropTarget(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('No strategies available'),
-                          Text("Create a new strategy or drop an .ica file")
-                        ],
-                      ),
-                    ),
-                  );
-                }
+              valueListenable: strategiesBoxListenable,
+              builder: (context, strategyBox, _) {
+                final foldersBoxListenable = ref.watch(foldersListenable);
+                return ValueListenableBuilder<Box<Folder>>(
+                  valueListenable: foldersBoxListenable,
+                  builder: (context, folderBox, _) {
+                    final folders = folderBox.values.toList();
+                    folders
+                        .sort((a, b) => a.dateCreated.compareTo(b.dateCreated));
 
-                return FileImportDropTarget(
-                  child: GridView.builder(
-                    itemCount: strategies.length,
-                    padding: const EdgeInsets.all(16),
-                    gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 306,
-                      mainAxisExtent: 250,
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                    ),
-                    itemBuilder: (context, index) {
-                      return StrategyTile(strategyData: strategies[index]);
-                    },
-                  ),
+                    final strategies = strategyBox.values.toList();
+                    strategies
+                        .sort((a, b) => b.lastEdited.compareTo(a.lastEdited));
+
+                    List<GridItem> gridItems = [
+                      ...folders.map((folder) => FolderItem(folder)),
+                      ...strategies.map((strategy) => StrategyItem(strategy)),
+                    ];
+
+                    if (gridItems.isEmpty) {
+                      return const FileImportDropTarget(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('No strategies available'),
+                              Text("Create a new strategy or drop an .ica file")
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+
+                    return FileImportDropTarget(
+                      child: GridView.builder(
+                        itemCount: gridItems.length,
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate:
+                            const SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 306,
+                          mainAxisExtent: 250,
+                          crossAxisSpacing: 20,
+                          mainAxisSpacing: 20,
+                        ),
+                        itemBuilder: (context, index) {
+                          final item = gridItems[index];
+                          if (item is FolderItem) {
+                            return FolderTile(folder: item.folder);
+                          } else if (item is StrategyItem) {
+                            return StrategyTile(strategyData: item.strategy);
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      ),
+                    );
+
+                    return ListView.builder(
+                      itemCount: folders.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(folders[index].name),
+                        );
+                      },
+                    );
+                  },
                 );
               },
             ),
@@ -262,4 +275,18 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
       // Show error message
     }
   }
+}
+
+abstract class GridItem {}
+
+class FolderItem extends GridItem {
+  final Folder folder;
+
+  FolderItem(this.folder);
+}
+
+class StrategyItem extends GridItem {
+  final StrategyData strategy;
+
+  StrategyItem(this.strategy);
 }
