@@ -180,35 +180,39 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
                     }
 
                     return FileImportDropTarget(
-                      child: GridView.builder(
-                        itemCount: gridItems.length,
-                        padding: const EdgeInsets.all(16),
-                        gridDelegate:
-                            const SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 306,
-                          mainAxisExtent: 250,
-                          crossAxisSpacing: 20,
-                          mainAxisSpacing: 20,
-                        ),
-                        itemBuilder: (context, index) {
-                          final item = gridItems[index];
-                          if (item is FolderItem) {
-                            return FolderTile(folder: item.folder);
-                          } else if (item is StrategyItem) {
-                            return StrategyTile(strategyData: item.strategy);
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    );
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        // Calculate how many columns can fit with minimum width
+                        const double minTileWidth = 250; // Your minimum width
+                        const double spacing = 20;
+                        const double padding = 32; // 16 * 2
 
-                    return ListView.builder(
-                      itemCount: folders.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(folders[index].name),
+                        int crossAxisCount =
+                            ((constraints.maxWidth - padding + spacing) /
+                                    (minTileWidth + spacing))
+                                .floor();
+                        crossAxisCount =
+                            crossAxisCount.clamp(1, double.infinity).toInt();
+                        return GridView.builder(
+                          itemCount: gridItems.length,
+                          padding: const EdgeInsets.all(16),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            mainAxisExtent: 250,
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                          ),
+                          itemBuilder: (context, index) {
+                            final item = gridItems[index];
+                            if (item is FolderItem) {
+                              return FolderTile(folder: item.folder);
+                            } else if (item is StrategyItem) {
+                              return StrategyTile(strategyData: item.strategy);
+                            }
+                            return const SizedBox.shrink();
+                          },
                         );
-                      },
+                      }),
                     );
                   },
                 );

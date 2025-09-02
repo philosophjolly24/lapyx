@@ -1,11 +1,7 @@
-import 'dart:developer';
-
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
-import 'package:icarus/widgets/bg_dot_painter.dart';
 
 class FileImportDropTarget extends ConsumerStatefulWidget {
   const FileImportDropTarget({super.key, required this.child});

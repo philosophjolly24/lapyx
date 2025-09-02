@@ -1,12 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:icarus/const/abilities.dart';
 import 'package:icarus/const/coordinate_system.dart';
-import 'package:icarus/providers/ability_provider.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/ability_widget.dart';
-import 'package:icarus/widgets/mouse_watch.dart';
 
 class CustomCircleWidget extends ConsumerWidget {
   const CustomCircleWidget({

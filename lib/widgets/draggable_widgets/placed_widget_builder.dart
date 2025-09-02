@@ -22,7 +22,6 @@ import 'package:icarus/widgets/draggable_widgets/placed_image_builder.dart';
 import 'package:icarus/widgets/delete_area.dart';
 import 'package:icarus/widgets/draggable_widgets/ability/placed_ability_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/text/placed_text_builder.dart';
-import 'package:icarus/widgets/draggable_widgets/text/text_widget.dart';
 import 'package:icarus/widgets/draggable_widgets/utilities/utility_widget_builder.dart';
 import 'package:icarus/widgets/draggable_widgets/zoom_transform.dart';
 import 'package:uuid/uuid.dart';

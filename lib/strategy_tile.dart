@@ -152,7 +152,10 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
                   decoration: BoxDecoration(
                     color: Settings.sideBarColor,
                     borderRadius: const BorderRadius.all(Radius.circular(16)),
-                    border: Border.all(color: highlightColor, width: 2),
+                    border: Border.all(
+                      color: highlightColor,
+                      width: 2,
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8),

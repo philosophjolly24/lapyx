@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:icarus/strategy_manager.dart';
-import 'package:icarus/strategy_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
