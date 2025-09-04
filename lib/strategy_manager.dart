@@ -14,6 +14,7 @@ import 'package:icarus/strategy_tile.dart';
 import 'package:icarus/strategy_view.dart';
 import 'package:icarus/widgets/bg_dot_painter.dart';
 import 'package:icarus/widgets/custom_drop_target.dart';
+import 'package:icarus/widgets/dot_painter.dart';
 import 'package:icarus/widgets/folder_tile.dart';
 import 'package:uuid/uuid.dart';
 import 'package:window_manager/window_manager.dart';
@@ -107,12 +108,7 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
               ),
               CustomButton(
                 onPressed: () async {
-                  final newFolder = Folder(
-                    name: "test",
-                    id: const Uuid().v4(),
-                    dateCreated: DateTime.now(),
-                  );
-                  FolderProvider.createFolder(newFolder);
+                  await ref.read(folderProvider.notifier).createFolder();
                 },
                 height: 40,
                 icon: const Icon(Icons.create_new_folder_rounded,
@@ -135,13 +131,10 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
       ),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return BGDotGrid(
-                  size: Size(constraints.maxWidth, constraints.maxHeight),
-                );
-              },
+          const Positioned.fill(
+            child: Padding(
+              padding: EdgeInsets.all(4.0),
+              child: DotGrid(),
             ),
           ),
           Positioned.fill(
@@ -160,6 +153,11 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
                     strategies
                         .sort((a, b) => b.lastEdited.compareTo(a.lastEdited));
 
+                    // Filter strategies and folders by the current folder
+                    strategies
+                        .removeWhere((strategy) => strategy.folderID != null);
+                    folders.removeWhere(
+                        (listFolder) => listFolder.parentID != null);
                     List<GridItem> gridItems = [
                       ...folders.map((folder) => FolderItem(folder)),
                       ...strategies.map((strategy) => StrategyItem(strategy)),

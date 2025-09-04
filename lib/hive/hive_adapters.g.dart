@@ -28,11 +28,12 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       mapData: fields[6] as MapValue,
       versionNumber: (fields[0] as num).toInt(),
       lastEdited: fields[9] as DateTime,
+      folderID: fields[13] as String?,
       utilityData: fields[12] == null
           ? const []
           : (fields[12] as List).cast<PlacedUtility>(),
       strategySettings: fields[11] as StrategySettings?,
-    )..folderID = fields[13] as String?;
+    );
   }
 
   @override

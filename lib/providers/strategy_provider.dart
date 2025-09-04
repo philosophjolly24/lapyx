@@ -14,6 +14,7 @@ import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/auto_save_notifier.dart';
 import 'package:icarus/providers/drawing_provider.dart';
+import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/strategy_settings_provider.dart';
@@ -55,6 +56,7 @@ class StrategyData extends HiveObject {
     required this.mapData,
     required this.versionNumber,
     required this.lastEdited,
+    required this.folderID,
     this.utilityData = const [],
     StrategySettings? strategySettings,
   }) : strategySettings = strategySettings ?? StrategySettings();
@@ -274,20 +276,20 @@ class StrategyProvider extends Notifier<StrategyState> {
     final versionNumber = int.tryParse(json["versionNumber"].toString()) ??
         Settings.versionNumber;
     final newStrategy = StrategyData(
-      id: newID,
-      name: path.basenameWithoutExtension(file.name),
-      drawingData: drawingData,
-      agentData: agentData,
-      abilityData: abilityData,
-      textData: textData,
-      imageData: imageData,
-      mapData: mapData,
-      versionNumber: versionNumber,
-      lastEdited: DateTime.now(),
-      isAttack: isAttack,
-      strategySettings: settingsData,
-      utilityData: utilityData,
-    );
+        id: newID,
+        name: path.basenameWithoutExtension(file.name),
+        drawingData: drawingData,
+        agentData: agentData,
+        abilityData: abilityData,
+        textData: textData,
+        imageData: imageData,
+        mapData: mapData,
+        versionNumber: versionNumber,
+        lastEdited: DateTime.now(),
+        isAttack: isAttack,
+        strategySettings: settingsData,
+        utilityData: utilityData,
+        folderID: null);
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .put(newStrategy.id, newStrategy);
@@ -308,6 +310,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       name: name,
       lastEdited: DateTime.now(),
       strategySettings: StrategySettings(),
+      folderID: ref.read(folderProvider),
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
@@ -401,6 +404,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       name: state.stratName ?? "placeholder",
       lastEdited: DateTime.now(),
       strategySettings: strategySettings,
+      folderID: ref.read(folderProvider.notifier).state,
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)

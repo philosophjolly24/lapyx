@@ -1,6 +1,8 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/providers/strategy_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class Folder extends HiveObject {
   String name;
@@ -18,9 +20,28 @@ class Folder extends HiveObject {
   bool get isRoot => parentID == null;
 }
 
-class FolderProvider {
-  static Future<void> createFolder(Folder folder) async {
-    await Hive.box<Folder>(HiveBoxNames.foldersBox).put(folder.id, folder);
+final folderProvider =
+    NotifierProvider<FolderProvider, String?>(FolderProvider.new);
+
+class FolderProvider extends Notifier<String?> {
+  Future<void> createFolder() async {
+    final newFolder = Folder(
+      name: "test",
+      id: const Uuid().v4(),
+      dateCreated: DateTime.now(),
+      parentID: state,
+    );
+
+    await Hive.box<Folder>(HiveBoxNames.foldersBox)
+        .put(newFolder.id, newFolder);
+  }
+
+  void updateID(String? id) {
+    state = id;
+  }
+
+  void clearID() {
+    state = null;
   }
 
   void deleteFolder(String folderID) async {
@@ -42,5 +63,10 @@ class FolderProvider {
     }
 
     await Hive.box<Folder>(HiveBoxNames.foldersBox).delete(folderID);
+  }
+
+  @override
+  String? build() {
+    return null;
   }
 }

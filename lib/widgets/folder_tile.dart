@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/widgets/custom_folder_painter.dart';
+import 'package:icarus/widgets/folder_view.dart';
 
 class FolderTile extends ConsumerStatefulWidget {
   const FolderTile({
@@ -46,38 +47,50 @@ class _FolderTileState extends ConsumerState<FolderTile>
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 558 / 445,
-      child: MouseRegion(
-        onEnter: (_) {
-          _animationController.forward();
+      child: GestureDetector(
+        onTap: () {
+          ref.read(folderProvider.notifier).updateID(widget.folder.id);
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (context) => FolderView(folder: widget.folder),
+            ),
+          );
         },
-        onExit: (_) {
-          _animationController.reverse();
-        },
-        child: AnimatedBuilder(
-          animation: _colorAnimation,
-          builder: (context, child) {
-            return Stack(
-              children: [
-                Positioned.fill(
-                  child: CustomPaint(
-                    painter: CustomFolderPainter(
-                      strokeColor:
-                          _colorAnimation.value ?? const Color(0xFF272528),
-                    ),
-                  ),
-                ),
-                const Positioned.fill(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Icon(
-                      size: 92,
-                      Icons.star_rate_rounded,
-                    ),
-                  ),
-                )
-              ],
-            );
+        child: MouseRegion(
+          onEnter: (_) {
+            _animationController.forward();
           },
+          onExit: (_) {
+            _animationController.reverse();
+          },
+          cursor: SystemMouseCursors.click,
+          child: AnimatedBuilder(
+            animation: _colorAnimation,
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: CustomFolderPainter(
+                        strokeColor:
+                            _colorAnimation.value ?? const Color(0xFF272528),
+                      ),
+                    ),
+                  ),
+                  const Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Icon(
+                        size: 92,
+                        Icons.star_rate_rounded,
+                      ),
+                    ),
+                  )
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
