@@ -75,7 +75,7 @@ class _FolderTileState extends ConsumerState<FolderTile>
                     child: CustomPaint(
                       painter: CustomFolderPainter(
                         strokeColor:
-                            _colorAnimation.value ?? const Color(0xFF272528),
+                            _colorAnimation.value ?? Settings.highlightColor,
                       ),
                     ),
                   ),

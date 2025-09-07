@@ -12,11 +12,10 @@ import 'package:icarus/widgets/dialogs/new_strategy_dialog.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_tile.dart';
 import 'package:icarus/strategy_view.dart';
-import 'package:icarus/widgets/bg_dot_painter.dart';
 import 'package:icarus/widgets/custom_drop_target.dart';
 import 'package:icarus/widgets/dot_painter.dart';
+import 'package:icarus/widgets/folder_edit.dart';
 import 'package:icarus/widgets/folder_tile.dart';
-import 'package:uuid/uuid.dart';
 import 'package:window_manager/window_manager.dart';
 
 final strategiesListenable =
@@ -108,7 +107,13 @@ class _StrategyManagerState extends ConsumerState<StrategyManager>
               ),
               CustomButton(
                 onPressed: () async {
-                  await ref.read(folderProvider.notifier).createFolder();
+                  await showDialog<String>(
+                    context: context,
+                    builder: (context) {
+                      return const FolderEditDialog();
+                    },
+                  );
+                  // await ref.read(folderProvider.notifier).createFolder();
                 },
                 height: 40,
                 icon: const Icon(Icons.create_new_folder_rounded,
