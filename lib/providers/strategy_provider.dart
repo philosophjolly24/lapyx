@@ -390,6 +390,9 @@ class StrategyProvider extends Notifier<StrategyState> {
     final strategySettings = ref.read(strategySettingsProvider);
     final utilityData = ref.read(utilityProvider);
 
+    final StrategyData? savedStrat =
+        Hive.box<StrategyData>(HiveBoxNames.strategiesBox).get(id);
+
     final currentStategy = StrategyData(
       drawingData: drawingData,
       agentData: agentData,
@@ -404,7 +407,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       name: state.stratName ?? "placeholder",
       lastEdited: DateTime.now(),
       strategySettings: strategySettings,
-      folderID: ref.read(folderProvider.notifier).state,
+      folderID: savedStrat?.folderID,
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
