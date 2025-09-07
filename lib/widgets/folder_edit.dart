@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/widgets/custom_button.dart';
+import 'package:icarus/widgets/custom_text_field.dart';
 import 'package:icarus/widgets/dot_painter.dart';
 import 'package:icarus/widgets/folder_tile.dart';
 
@@ -15,6 +16,25 @@ class FolderEditDialog extends ConsumerStatefulWidget {
 }
 
 class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
+  final TextEditingController _folderNameController = TextEditingController();
+  final IconData _selectedIcon = Folder.folderIcons[0];
+  @override
+  void dispose() {
+    _folderNameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen to text changes and rebuild
+    _folderNameController.addListener(() {
+      setState(() {
+        // This will trigger a rebuild when text changes
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -56,9 +76,11 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
                         padding: const EdgeInsets.all(24.0),
                         child: FolderTile(
                           folder: Folder(
-                              name: "Example Folder",
-                              id: "1",
-                              dateCreated: DateTime.now()),
+                            name: _folderNameController.text,
+                            id: "null",
+                            dateCreated: DateTime.now(),
+                          ),
+                          isDemo: true,
                         ),
                       ),
                     ),
@@ -81,7 +103,7 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
               child: GridView.builder(
                 padding: const EdgeInsets.all(8),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 6, // Number of icons per row
+                  crossAxisCount: 8, // Number of icons per row
                   mainAxisSpacing: 8,
                   crossAxisSpacing: 8,
                   childAspectRatio: 1,
@@ -120,32 +142,12 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
               children: [
                 Expanded(
                   child: SizedBox(
-                    height: 40,
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(
-                              color: Settings.highlightColor, width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: const BorderSide(
-                              color: Colors.deepPurple, width: 2),
-                        ),
-                        filled: true,
-                        fillColor: Settings.abilityBGColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        hintText: 'Folder Name',
-                        hintStyle: const TextStyle(color: Colors.white54),
-                      ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
+                      height: 40,
+                      child: CustomTextField(
+                        hintText: "Folder Name",
+                        textAlign: TextAlign.center,
+                        controller: _folderNameController,
+                      )),
                 ),
                 const SizedBox(width: 30),
                 CustomButton(

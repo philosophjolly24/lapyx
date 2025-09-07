@@ -21,14 +21,21 @@ class Folder extends HiveObject {
 
   static List<IconData> folderIcons = [
     // 📂 Folder & File Related
-    Icons.folder,
-    Icons.folder_open,
-    Icons.create_new_folder,
+
+    Icons.star_rate_rounded,
+    Icons.ac_unit_sharp,
+    Icons.bug_report,
+    Icons.cake,
+    Icons.code,
+    Icons.add_shopping_cart_rounded,
+    Icons.airline_stops_sharp,
+    Icons.all_inclusive,
+    Icons.api_rounded,
+
     Icons.drive_folder_upload,
     Icons.folder_shared,
     Icons.folder_special,
     Icons.workspaces,
-    Icons.inventory_2,
 
     // 🗂️ Organization & Structure
     Icons.category,
@@ -38,8 +45,9 @@ class Folder extends HiveObject {
     Icons.assignment,
     Icons.assignment_turned_in,
     Icons.dashboard,
-    Icons.view_list,
-    Icons.view_module,
+    Icons.anchor,
+    Icons.hourglass_bottom_outlined,
+    Icons.image_search,
     Icons.view_quilt,
 
     // 🎯 Strategy & Planning

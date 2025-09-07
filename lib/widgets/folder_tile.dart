@@ -9,9 +9,10 @@ class FolderTile extends ConsumerStatefulWidget {
   const FolderTile({
     super.key,
     required this.folder,
+    this.isDemo = false,
   });
   final Folder folder;
-
+  final bool isDemo;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _FolderTileState();
 }
@@ -50,6 +51,7 @@ class _FolderTileState extends ConsumerState<FolderTile>
       aspectRatio: 558 / 445,
       child: GestureDetector(
         onTap: () {
+          if (widget.isDemo) return;
           ref.read(folderProvider.notifier).updateID(widget.folder.id);
           Navigator.push(
             context,
@@ -127,6 +129,7 @@ class _FolderTileState extends ConsumerState<FolderTile>
                         menuChildren: [
                           MenuItemButton(
                             onPressed: () async {
+                              if (widget.isDemo) return;
                               // await showDialog(
                               //   context: context,
                               //   builder: (context) {
@@ -155,6 +158,7 @@ class _FolderTileState extends ConsumerState<FolderTile>
                           ),
                           MenuItemButton(
                             onPressed: () async {
+                              if (widget.isDemo) return;
                               // await ref
                               //     .read(strategyProvider.notifier)
                               //     .loadFromHive(widget.strategyData.id);
@@ -179,6 +183,7 @@ class _FolderTileState extends ConsumerState<FolderTile>
                           ),
                           MenuItemButton(
                             onPressed: () async {
+                              if (widget.isDemo) return;
                               // showDialog(
                               //   context: context,
                               //   builder: (context) {

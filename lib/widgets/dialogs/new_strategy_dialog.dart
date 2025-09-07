@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/providers/strategy_provider.dart';
+import 'package:icarus/widgets/custom_button.dart';
+import 'package:icarus/widgets/custom_text_field.dart';
 
 class CreateStrategyDialog extends ConsumerStatefulWidget {
   const CreateStrategyDialog({super.key});
@@ -23,19 +25,9 @@ class _NameStrategyDialogState extends ConsumerState<CreateStrategyDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Name Strategy"),
-      content: TextField(
+      content: CustomTextField(
+        hintText: "Enter strategy name",
         controller: _textController,
-        decoration: InputDecoration(
-          hintText: "Enter strategy name",
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: const BorderSide(), // Default border color
-          ),
-
-          contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 12.0), // Padding inside the text field
-        ),
       ),
       actions: [
         TextButton(
@@ -44,37 +36,30 @@ class _NameStrategyDialogState extends ConsumerState<CreateStrategyDialog> {
           },
           child: const Text("Cancel"),
         ),
-        SizedBox(
-          height: 35,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(Colors.deepPurple),
-              shape: WidgetStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+        CustomButton(
+          onPressed: () async {
+            final strategyName = _textController.text;
+            if (strategyName.isNotEmpty) {
+              final strategyID = await ref
+                  .read(strategyProvider.notifier)
+                  .createNewStrategy(strategyName);
+              if (!context.mounted) return;
+              Navigator.of(context).pop(strategyID); // Close the dialog
+            } else {
+              // Optionally, show an error message if the name is empty
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Strategy name cannot be empty."),
                 ),
-              ),
-            ),
-            onPressed: () async {
-              final strategyName = _textController.text;
-              if (strategyName.isNotEmpty) {
-                final strategyID = await ref
-                    .read(strategyProvider.notifier)
-                    .createNewStrategy(strategyName);
-                if (!context.mounted) return;
-                Navigator.of(context).pop(strategyID); // Close the dialog
-              } else {
-                // Optionally, show an error message if the name is empty
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Strategy name cannot be empty."),
-                  ),
-                );
-              }
-            },
-            child: const Text("Create"),
-          ),
-        ),
+              );
+            }
+          },
+          height: 35,
+          icon: const Icon(Icons.draw),
+          label: "Create",
+          labelColor: Colors.white,
+          backgroundColor: Colors.deepPurple,
+        )
       ],
       shape: RoundedRectangleBorder(
         borderRadius:
