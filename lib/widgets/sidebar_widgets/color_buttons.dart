@@ -7,7 +7,11 @@ class ColorButtons extends ConsumerStatefulWidget {
     required this.color,
     required this.isSelected,
     required this.onTap,
+    required this.height,
+    required this.width,
   });
+  final double height;
+  final double width;
   final bool isSelected;
   final Color color;
   final VoidCallback onTap;
@@ -34,8 +38,8 @@ class _ColorButtonsState extends ConsumerState<ColorButtons> {
           strokeAlign: BorderSide.strokeAlignCenter,
         ),
       ),
-      height: 26,
-      width: 26,
+      height: widget.height,
+      width: widget.width,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: (event) {
@@ -52,8 +56,8 @@ class _ColorButtonsState extends ConsumerState<ColorButtons> {
           onTap: widget.onTap,
           child: Center(
             child: Container(
-              height: 24,
-              width: 24,
+              height: widget.height - 2,
+              width: widget.width - 2,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(4)),
                 border: Border.all(

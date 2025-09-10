@@ -6,19 +6,49 @@ import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:uuid/uuid.dart';
 
+enum FolderColor {
+  red,
+  blue,
+  green,
+  orange,
+  purple,
+  custom,
+}
+
 class Folder extends HiveObject {
   String name;
   final String id;
   final DateTime dateCreated;
-  String? parentID; // null for root folders, clearer than empty string
+  final String? parentID; // null for root folders, clearer than empty string
+  final IconData icon;
+  final FolderColor color;
+  final Color? customColor;
 
   Folder({
     required this.name,
     required this.id,
     required this.dateCreated,
+    required this.icon,
+    this.color = FolderColor.red,
     this.parentID, // Optional, defaults to null (root)
+    this.customColor,
   });
 
+  static Map<FolderColor, Color> folderColorMap = {
+    FolderColor.red: Colors.red,
+    FolderColor.blue: Colors.blue,
+    FolderColor.green: Colors.green,
+    FolderColor.orange: Colors.orange,
+    FolderColor.purple: Colors.purple,
+  };
+
+  static List<FolderColor> folderColors = [
+    FolderColor.red,
+    FolderColor.blue,
+    FolderColor.green,
+    FolderColor.orange,
+    FolderColor.purple,
+  ];
   static List<IconData> folderIcons = [
     // 📂 Folder & File Related
 
@@ -81,6 +111,7 @@ final folderProvider =
 class FolderProvider extends Notifier<String?> {
   Future<void> createFolder() async {
     final newFolder = Folder(
+      icon: Folder.folderIcons[0],
       name: "test",
       id: const Uuid().v4(),
       dateCreated: DateTime.now(),

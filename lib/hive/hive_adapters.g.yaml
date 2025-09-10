@@ -277,7 +277,7 @@ types:
         index: 0
   Folder:
     typeId: 17
-    nextIndex: 4
+    nextIndex: 7
     fields:
       name:
         index: 0
@@ -287,3 +287,9 @@ types:
         index: 2
       dateCreated:
         index: 3
+      icon:
+        index: 4
+      color:
+        index: 5
+      customColor:
+        index: 6

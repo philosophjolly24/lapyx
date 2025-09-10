@@ -85,11 +85,11 @@ class _FolderTileState extends ConsumerState<FolderTile>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        const SizedBox(
+                        SizedBox(
                           height: 102,
                           width: 102,
                           child: Icon(
-                            Icons.star_rate_rounded,
+                            widget.folder.icon,
                             size: 102,
                           ),
                         ),

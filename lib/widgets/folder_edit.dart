@@ -6,10 +6,14 @@ import 'package:icarus/widgets/custom_button.dart';
 import 'package:icarus/widgets/custom_text_field.dart';
 import 'package:icarus/widgets/dot_painter.dart';
 import 'package:icarus/widgets/folder_tile.dart';
+import 'package:icarus/widgets/sidebar_widgets/color_buttons.dart';
 
 class FolderEditDialog extends ConsumerStatefulWidget {
-  const FolderEditDialog({super.key});
-
+  const FolderEditDialog({
+    super.key,
+    this.folder,
+  });
+  final Folder? folder;
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       _FolderEditDialogState();
@@ -17,7 +21,10 @@ class FolderEditDialog extends ConsumerStatefulWidget {
 
 class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
   final TextEditingController _folderNameController = TextEditingController();
-  final IconData _selectedIcon = Folder.folderIcons[0];
+
+  IconData _selectedIcon = Folder.folderIcons[0];
+  FolderColor? _selectedColor;
+
   @override
   void dispose() {
     _folderNameController.dispose();
@@ -28,6 +35,7 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
   void initState() {
     super.initState();
     // Listen to text changes and rebuild
+    _selectedColor = widget.folder?.color;
     _folderNameController.addListener(() {
       setState(() {
         // This will trigger a rebuild when text changes
@@ -76,6 +84,7 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
                         padding: const EdgeInsets.all(24.0),
                         child: FolderTile(
                           folder: Folder(
+                            icon: _selectedIcon,
                             name: _folderNameController.text,
                             id: "null",
                             dateCreated: DateTime.now(),
@@ -88,7 +97,30 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
+            // const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  for (final (index, color) in Folder.folderColors.indexed)
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: ColorButtons(
+                        height: 30,
+                        width: 30,
+                        color: Folder.folderColorMap[color]!,
+                        isSelected: _selectedColor == color,
+                        onTap: () {
+                          setState(() {
+                            _selectedColor = color;
+                          });
+                          // ref.read(penProvider.notifier).setColor(index);
+                        },
+                      ),
+                    ),
+                ],
+              ),
+            ),
             Container(
               height: 200,
               width: 358,
@@ -103,31 +135,30 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
               child: GridView.builder(
                 padding: const EdgeInsets.all(8),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 8, // Number of icons per row
+                  crossAxisCount: 7, // Number of icons per row
                   mainAxisSpacing: 8,
                   crossAxisSpacing: 8,
                   childAspectRatio: 1,
                 ),
                 itemCount: Folder.folderIcons.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      // Handle icon selection
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.transparent),
+                  return IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedIcon = Folder.folderIcons[index];
+                        });
+                      },
+                      isSelected: _selectedIcon == Folder.folderIcons[index],
+                      icon: Icon(
+                        Folder.folderIcons[index],
+                        size: 24,
+                        color: Colors.white,
                       ),
-                      child: Center(
-                        child: Icon(
-                          Folder.folderIcons[index],
-                          size: 30,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  );
+                      selectedIcon: Icon(
+                        Folder.folderIcons[index],
+                        size: 24,
+                        color: Colors.deepPurpleAccent,
+                      ));
                 },
               ),
             ),
