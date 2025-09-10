@@ -31,5 +31,7 @@ import 'package:icarus/providers/strategy_settings_provider.dart';
   AdapterSpec<PlacedUtility>(),
   AdapterSpec<UtilityType>(),
   AdapterSpec<Folder>(),
+  AdapterSpec<IconData>(),
+  AdapterSpec<FolderColor>(),
 ])
 part 'hive_adapters.g.dart';

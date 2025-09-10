@@ -6,8 +6,8 @@ import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_view.dart';
-import 'package:icarus/widgets/dialogs/delete_strategy_alert_dialog.dart';
-import 'package:icarus/widgets/dialogs/rename_strategy_dialog.dart';
+import 'package:icarus/widgets/dialogs/strategy/delete_strategy_alert_dialog.dart';
+import 'package:icarus/widgets/dialogs/strategy/rename_strategy_dialog.dart';
 
 String capitalizeFirstLetter(String text) {
   if (text.isEmpty) return text;

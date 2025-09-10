@@ -11,10 +11,11 @@ import 'package:icarus/strategy_tile.dart';
 import 'package:icarus/strategy_view.dart';
 import 'package:icarus/widgets/custom_button.dart';
 import 'package:icarus/widgets/custom_drop_target.dart';
-import 'package:icarus/widgets/dialogs/new_strategy_dialog.dart';
+import 'package:icarus/widgets/dialogs/strategy/create_strategy_dialog.dart';
 import 'package:icarus/widgets/dot_painter.dart';
+import 'package:icarus/widgets/folder_edit_dialog.dart';
 import 'package:icarus/widgets/folder_tile.dart';
-import 'package:uuid/uuid.dart';
+// import 'package:uuid/uuid.dart';
 
 class FolderView extends ConsumerWidget {
   FolderView({
@@ -117,7 +118,14 @@ class FolderView extends ConsumerWidget {
                 ),
                 CustomButton(
                   onPressed: () async {
-                    await ref.read(folderProvider.notifier).createFolder();
+                    await showDialog<String>(
+                      context: context,
+                      builder: (context) {
+                        return const FolderEditDialog();
+                      },
+                    );
+
+                    // await ref.read(folderProvider.notifier).createFolder();
                   },
                   height: 40,
                   icon: const Icon(Icons.create_new_folder_rounded,

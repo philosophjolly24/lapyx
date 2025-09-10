@@ -55,7 +55,10 @@ class _NameStrategyDialogState extends ConsumerState<CreateStrategyDialog> {
             }
           },
           height: 35,
-          icon: const Icon(Icons.draw),
+          icon: const Icon(
+            Icons.draw,
+            color: Colors.white,
+          ),
           label: "Create",
           labelColor: Colors.white,
           backgroundColor: Colors.deepPurple,

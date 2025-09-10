@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/folder_provider.dart';
+import 'package:icarus/widgets/color_picker_button.dart';
 import 'package:icarus/widgets/custom_button.dart';
 import 'package:icarus/widgets/custom_text_field.dart';
 import 'package:icarus/widgets/dot_painter.dart';
@@ -23,8 +25,8 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
   final TextEditingController _folderNameController = TextEditingController();
 
   IconData _selectedIcon = Folder.folderIcons[0];
-  FolderColor? _selectedColor;
-
+  FolderColor _selectedColor = FolderColor.red;
+  Color? _customColor;
   @override
   void dispose() {
     _folderNameController.dispose();
@@ -35,11 +37,14 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
   void initState() {
     super.initState();
     // Listen to text changes and rebuild
-    _selectedColor = widget.folder?.color;
+    _selectedColor = widget.folder?.color ?? FolderColor.generic;
+    if (widget.folder != null) {
+      _folderNameController.text = widget.folder!.name;
+      _selectedIcon = widget.folder!.icon;
+      _customColor = widget.folder!.customColor;
+    }
     _folderNameController.addListener(() {
-      setState(() {
-        // This will trigger a rebuild when text changes
-      });
+      setState(() {});
     });
   }
 
@@ -88,6 +93,8 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
                             name: _folderNameController.text,
                             id: "null",
                             dateCreated: DateTime.now(),
+                            color: _selectedColor,
+                            customColor: _customColor,
                           ),
                           isDemo: true,
                         ),
@@ -102,7 +109,7 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  for (final (index, color) in Folder.folderColors.indexed)
+                  for (final color in Folder.folderColors)
                     Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: ColorButtons(
@@ -118,6 +125,44 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
                         },
                       ),
                     ),
+                  ColorPickerButton(
+                    height: 30,
+                    width: 30,
+                    onTap: () {
+                      // Open color picker dialog
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            backgroundColor: Settings.sideBarColor,
+                            title: const Text("Pick a custom color"),
+                            content: SingleChildScrollView(
+                              child: ColorPicker(
+                                pickerColor:
+                                    Folder.folderColorMap[_selectedColor]!,
+                                onColorChanged: (color) {
+                                  setState(() {
+                                    _selectedColor = FolderColor.custom;
+                                    _customColor = color;
+                                  });
+                                },
+                                showLabel: true,
+                                pickerAreaHeightPercent: 0.8,
+                              ),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Done'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  )
                 ],
               ),
             ),
@@ -185,8 +230,30 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
                   padding: WidgetStateProperty.all(
                     const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                   ),
-                  onPressed: () {
-                    // Show create strategy dialog
+                  onPressed: () async {
+                    if (widget.folder != null) {
+                      ref.read(folderProvider.notifier).editFolder(
+                            folder: widget.folder!,
+                            newName: _folderNameController.text.isEmpty
+                                ? "New Folder"
+                                : _folderNameController.text,
+                            newIcon: _selectedIcon,
+                            newColor: _selectedColor,
+                            newCustomColor: _customColor,
+                          );
+                      if (context.mounted) Navigator.of(context).pop();
+                      return;
+                    }
+                    await ref.read(folderProvider.notifier).createFolder(
+                          name: _folderNameController.text.isEmpty
+                              ? "New Folder"
+                              : _folderNameController.text,
+                          icon: _selectedIcon,
+                          color: _selectedColor,
+                          customColor: _customColor,
+                        );
+
+                    if (context.mounted) Navigator.of(context).pop();
                   },
                   height: 40,
                   width: 80,
@@ -196,14 +263,6 @@ class _FolderEditDialogState extends ConsumerState<FolderEditDialog> {
                   labelColor: Colors.white,
                   backgroundColor: Colors.deepPurple,
                 ),
-
-                // TextButton.icon(
-                //   icon: const Icon(Icons.check, color: Colors.white),
-                //   onPressed: () {
-                //     // Save changes
-                //   },
-                //   label: const Text("Save"),
-                // ),
               ],
             ),
           )

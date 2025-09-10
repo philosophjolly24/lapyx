@@ -1,12 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_ce_flutter/adapters.dart';
 import 'package:icarus/const/custom_icons.dart';
 import 'package:icarus/const/hive_boxes.dart';
+import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:uuid/uuid.dart';
 
 enum FolderColor {
+  generic,
   red,
   blue,
   green,
@@ -19,10 +23,10 @@ class Folder extends HiveObject {
   String name;
   final String id;
   final DateTime dateCreated;
-  final String? parentID; // null for root folders, clearer than empty string
-  final IconData icon;
-  final FolderColor color;
-  final Color? customColor;
+  String? parentID; // null for root folders, clearer than empty string
+  IconData icon;
+  FolderColor color;
+  Color? customColor;
 
   Folder({
     required this.name,
@@ -40,6 +44,7 @@ class Folder extends HiveObject {
     FolderColor.green: Colors.green,
     FolderColor.orange: Colors.orange,
     FolderColor.purple: Colors.purple,
+    FolderColor.generic: Settings.sideBarColor,
   };
 
   static List<FolderColor> folderColors = [
@@ -48,7 +53,9 @@ class Folder extends HiveObject {
     FolderColor.green,
     FolderColor.orange,
     FolderColor.purple,
+    FolderColor.generic,
   ];
+
   static List<IconData> folderIcons = [
     // 📂 Folder & File Related
 
@@ -109,13 +116,20 @@ final folderProvider =
     NotifierProvider<FolderProvider, String?>(FolderProvider.new);
 
 class FolderProvider extends Notifier<String?> {
-  Future<void> createFolder() async {
+  Future<void> createFolder({
+    required String name,
+    required IconData icon,
+    required FolderColor color,
+    Color? customColor,
+  }) async {
     final newFolder = Folder(
-      icon: Folder.folderIcons[0],
-      name: "test",
+      icon: icon,
+      name: name,
       id: const Uuid().v4(),
       dateCreated: DateTime.now(),
       parentID: state,
+      customColor: customColor,
+      color: color,
     );
 
     await Hive.box<Folder>(HiveBoxNames.foldersBox)
@@ -135,7 +149,7 @@ class FolderProvider extends Notifier<String?> {
 
     final strategyList =
         Hive.box<StrategyData>(HiveBoxNames.strategiesBox).values.toList();
-
+    log(strategyList.length);
     List<String> idsToDelete = [];
 
     for (final strategy in strategyList) {
@@ -145,10 +159,28 @@ class FolderProvider extends Notifier<String?> {
     }
 
     for (final id in idsToDelete) {
-      await Hive.box<StrategyData>(HiveBoxNames.strategiesBox).delete(id);
+      await ref.read(strategyProvider.notifier).deleteStrategy(id);
     }
 
+    List<StrategyData> strategyListNew =
+        Hive.box<StrategyData>(HiveBoxNames.strategiesBox).values.toList();
+    log(strategyListNew.length);
+
     await Hive.box<Folder>(HiveBoxNames.foldersBox).delete(folderID);
+  }
+
+  void editFolder({
+    required Folder folder,
+    required String newName,
+    required IconData newIcon,
+    required FolderColor newColor,
+    required Color? newCustomColor,
+  }) async {
+    folder.name = newName;
+    folder.icon = newIcon;
+    folder.customColor = newCustomColor;
+    folder.color = newColor;
+    await folder.save();
   }
 
   @override

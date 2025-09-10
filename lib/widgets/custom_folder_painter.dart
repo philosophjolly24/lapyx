@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:icarus/const/settings.dart';
 
@@ -7,11 +9,34 @@ import 'package:icarus/const/settings.dart';
 //     painter = RPSCustomPainter(),
 // )
 
+// Color shadeColor(Color color, double amount) {
+//   // amount < 0 => darken, amount > 0 => lighten, range -1.0 to 1.0
+//   assert(amount >= -1.0 && amount <= 1.0);
+//   if (amount == 0) return color;
+
+//   final target = amount > 0 ? Colors.white : Colors.black;
+//   final t = amount.abs();
+
+//   int mix(int channel, int mixWith) =>
+//       (channel + ((mixWith - channel) * t)).round().clamp(0, 255);
+
+//   return Color.fromARGB(
+//     color.alpha,
+//     mix(color.red, target.red),
+//     mix(color.green, target.green),
+//     mix(color.blue, target.blue),
+//   );
+// }
+
 //Copy this CustomPainter code to the Bottom of the File
 class CustomFolderPainter extends CustomPainter {
   final Color strokeColor;
-
-  CustomFolderPainter({super.repaint, required this.strokeColor});
+  final Color backgroundColor;
+  CustomFolderPainter({
+    super.repaint,
+    required this.strokeColor,
+    required this.backgroundColor,
+  });
   @override
   void paint(Canvas canvas, Size size) {
     // Calculate scale factors based on original size (558x445)
@@ -37,7 +62,7 @@ class CustomFolderPainter extends CustomPainter {
     path_0.close();
 
     Paint paint0Fill = Paint()..style = PaintingStyle.fill;
-    paint0Fill.color = Settings.sideBarColor;
+    paint0Fill.color = backgroundColor;
     canvas.drawPath(path_0, paint0Fill);
 
     Path path_1 = Path();
@@ -71,7 +96,7 @@ class CustomFolderPainter extends CustomPainter {
     canvas.drawPath(path_1, paint1Stroke);
 
     Paint paint1Fill = Paint()..style = PaintingStyle.fill;
-    paint1Fill.color = Settings.sideBarColor;
+    paint1Fill.color = backgroundColor;
 
     canvas.drawPath(path_1, paint1Fill);
   }

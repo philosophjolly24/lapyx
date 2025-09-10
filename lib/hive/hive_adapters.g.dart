@@ -878,3 +878,106 @@ class FolderAdapter extends TypeAdapter<Folder> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+class IconDataAdapter extends TypeAdapter<IconData> {
+  @override
+  final typeId = 18;
+
+  @override
+  IconData read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return IconData(
+      (fields[0] as num).toInt(),
+      fontFamily: fields[1] as String?,
+      fontPackage: fields[2] as String?,
+      matchTextDirection: fields[3] == null ? false : fields[3] as bool,
+      fontFamilyFallback: (fields[4] as List?)?.cast<String>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, IconData obj) {
+    writer
+      ..writeByte(5)
+      ..writeByte(0)
+      ..write(obj.codePoint)
+      ..writeByte(1)
+      ..write(obj.fontFamily)
+      ..writeByte(2)
+      ..write(obj.fontPackage)
+      ..writeByte(3)
+      ..write(obj.matchTextDirection)
+      ..writeByte(4)
+      ..write(obj.fontFamilyFallback);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is IconDataAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class FolderColorAdapter extends TypeAdapter<FolderColor> {
+  @override
+  final typeId = 19;
+
+  @override
+  FolderColor read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return FolderColor.generic;
+      case 1:
+        return FolderColor.red;
+      case 2:
+        return FolderColor.blue;
+      case 3:
+        return FolderColor.green;
+      case 4:
+        return FolderColor.orange;
+      case 5:
+        return FolderColor.purple;
+      case 6:
+        return FolderColor.custom;
+      default:
+        return FolderColor.generic;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, FolderColor obj) {
+    switch (obj) {
+      case FolderColor.generic:
+        writer.writeByte(0);
+      case FolderColor.red:
+        writer.writeByte(1);
+      case FolderColor.blue:
+        writer.writeByte(2);
+      case FolderColor.green:
+        writer.writeByte(3);
+      case FolderColor.orange:
+        writer.writeByte(4);
+      case FolderColor.purple:
+        writer.writeByte(5);
+      case FolderColor.custom:
+        writer.writeByte(6);
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FolderColorAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

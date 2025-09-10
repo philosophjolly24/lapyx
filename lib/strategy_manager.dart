@@ -8,13 +8,13 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/const/update_checker.dart';
 import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/widgets/custom_button.dart';
-import 'package:icarus/widgets/dialogs/new_strategy_dialog.dart';
+import 'package:icarus/widgets/dialogs/strategy/create_strategy_dialog.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_tile.dart';
 import 'package:icarus/strategy_view.dart';
 import 'package:icarus/widgets/custom_drop_target.dart';
 import 'package:icarus/widgets/dot_painter.dart';
-import 'package:icarus/widgets/folder_edit.dart';
+import 'package:icarus/widgets/folder_edit_dialog.dart';
 import 'package:icarus/widgets/folder_tile.dart';
 import 'package:window_manager/window_manager.dart';
 
