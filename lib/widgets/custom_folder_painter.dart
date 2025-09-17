@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:icarus/const/settings.dart';
 
 // //Add this CustomPaint widget to the Widget Tree
 // CustomPaint(

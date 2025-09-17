@@ -144,6 +144,26 @@ class FolderProvider extends Notifier<String?> {
     state = null;
   }
 
+  List<String> getFullPathIDs(Folder? folder) {
+    List<String> pathIDs = [];
+    Folder? currentFolder = folder;
+
+    while (currentFolder != null) {
+      pathIDs.insert(0, currentFolder.id);
+      if (currentFolder.parentID != null) {
+        currentFolder = findFolderByID(currentFolder.parentID!);
+      } else {
+        currentFolder = null;
+      }
+    }
+
+    return pathIDs;
+  }
+
+  Folder? findFolderByID(String id) {
+    return Hive.box<Folder>(HiveBoxNames.foldersBox).get(id);
+  }
+
   void deleteFolder(String folderID) async {
     // state = state.where((folder) => folder.id != folderID).toList();
 

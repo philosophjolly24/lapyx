@@ -6,7 +6,6 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/widgets/custom_folder_painter.dart';
 import 'package:icarus/widgets/folder_edit_dialog.dart';
-import 'package:icarus/widgets/folder_view.dart';
 
 class FolderTile extends ConsumerStatefulWidget {
   const FolderTile({
@@ -58,12 +57,6 @@ class _FolderTileState extends ConsumerState<FolderTile>
           onTap: () {
             if (widget.isDemo) return;
             ref.read(folderProvider.notifier).updateID(widget.folder.id);
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (context) => FolderView(folder: widget.folder),
-              ),
-            );
           },
           child: MouseRegion(
             onEnter: (_) {

@@ -13,7 +13,6 @@ class AgentFilter extends ConsumerWidget {
     AgentRole.initiator,
     AgentRole.sentinel,
   ];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return CustomSlidingSegmentedControl<FilterState>(
