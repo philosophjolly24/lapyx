@@ -57,6 +57,13 @@ class Settings {
           // ),
         ),
       ),
+      dialogTheme: DialogTheme(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22),
+          side: const BorderSide(color: Settings.highlightColor, width: 2),
+        ),
+        backgroundColor: Settings.sideBarColor,
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           foregroundColor: WidgetStateProperty.all<Color>(Colors.white),

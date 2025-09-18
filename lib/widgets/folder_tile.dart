@@ -6,6 +6,7 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/widgets/custom_folder_painter.dart';
+import 'package:icarus/widgets/dialogs/custom_alert_dialog.dart';
 import 'package:icarus/widgets/folder_edit_dialog.dart';
 import 'package:icarus/widgets/folder_navigator.dart';
 
@@ -149,6 +150,8 @@ class _FolderTileState extends ConsumerState<FolderTile>
                                 menuChildren: [
                                   MenuItemButton(
                                     onPressed: () async {
+                                      if (widget.isDemo) return;
+
                                       await showDialog<String>(
                                         context: context,
                                         builder: (context) {
@@ -157,7 +160,6 @@ class _FolderTileState extends ConsumerState<FolderTile>
                                           );
                                         },
                                       );
-                                      if (widget.isDemo) return;
                                       // await showDialog(
                                       //   context: context,
                                       //   builder: (context) {
@@ -186,9 +188,23 @@ class _FolderTileState extends ConsumerState<FolderTile>
                                   ),
                                   MenuItemButton(
                                     onPressed: () async {
-                                      ref
-                                          .read(folderProvider.notifier)
-                                          .deleteFolder(widget.folder.id);
+                                      ConfirmAlertDialog.show(
+                                              context: context,
+                                              title:
+                                                  "Are you sure you want to delete '${widget.folder.name}' folder?",
+                                              content:
+                                                  "This will also delete all strategies and subfolders within it.",
+                                              confirmText: "Delete",
+                                              isDestructive: true)
+                                          .then((confirmed) {
+                                        if (confirmed) {
+                                          if (widget.isDemo) return;
+
+                                          ref
+                                              .read(folderProvider.notifier)
+                                              .deleteFolder(widget.folder.id);
+                                        }
+                                      });
                                     },
                                     child: const Row(
                                       children: [
