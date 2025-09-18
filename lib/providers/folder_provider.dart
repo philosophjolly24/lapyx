@@ -203,6 +203,15 @@ class FolderProvider extends Notifier<String?> {
     await folder.save();
   }
 
+  void moveToFolder({required String folderID, String? parentID}) async {
+    final folder = findFolderByID(folderID);
+
+    if (folder != null) {
+      folder.parentID = parentID;
+      await folder.save();
+    }
+  }
+
   @override
   String? build() {
     return null;

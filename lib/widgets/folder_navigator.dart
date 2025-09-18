@@ -153,7 +153,7 @@ class _FolderNavigatorState extends ConsumerState<FolderNavigator> {
   }
 }
 
-abstract class GridItem {}
+sealed class GridItem {}
 
 class FolderItem extends GridItem {
   final Folder folder;

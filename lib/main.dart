@@ -12,8 +12,8 @@ import 'package:icarus/hive/hive_registrar.g.dart';
 import 'package:icarus/home_view.dart';
 import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/providers/strategy_provider.dart';
-import 'package:icarus/strategy_manager.dart';
 import 'package:icarus/strategy_view.dart';
+import 'package:icarus/widgets/folder_navigator.dart';
 import 'package:icarus/widgets/global_shortcuts.dart';
 import 'package:icarus/widgets/settings_tab.dart';
 import 'package:path_provider/path_provider.dart';
@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
         title: 'Icarus',
         theme: Settings.appTheme,
         routes: {
-          Routes.strategyManager: (context) => const StrategyManager(),
+          Routes.folderNavigator: (context) => const FolderNavigator(),
           Routes.strategyView: (context) => const StrategyView(),
           Routes.settings: (context) => const SettingsTab(),
         },

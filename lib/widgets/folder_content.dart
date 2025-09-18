@@ -5,7 +5,6 @@ import 'package:hive_ce_flutter/adapters.dart';
 import 'package:icarus/const/hive_boxes.dart';
 import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/providers/strategy_provider.dart';
-import 'package:icarus/strategy_manager.dart';
 import 'package:icarus/strategy_tile.dart';
 import 'package:icarus/widgets/custom_drop_target.dart';
 import 'package:icarus/widgets/dot_painter.dart';

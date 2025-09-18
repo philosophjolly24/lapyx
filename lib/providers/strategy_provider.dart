@@ -417,4 +417,16 @@ class StrategyProvider extends Notifier<StrategyState> {
     );
     log("Save to hive was called");
   }
+
+  void moveToFolder({required String strategyID, required String? parentID}) {
+    final strategyBox = Hive.box<StrategyData>(HiveBoxNames.strategiesBox);
+    final strategy = strategyBox.get(strategyID);
+
+    if (strategy != null) {
+      strategy.folderID = parentID;
+      strategy.save();
+    } else {
+      log("Strategy with ID $strategyID not found.");
+    }
+  }
 }
