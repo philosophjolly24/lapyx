@@ -6,7 +6,7 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/widgets/custom_folder_painter.dart';
-import 'package:icarus/widgets/dialogs/custom_alert_dialog.dart';
+import 'package:icarus/widgets/dialogs/confirm_alert_dialog.dart';
 import 'package:icarus/widgets/folder_edit_dialog.dart';
 import 'package:icarus/widgets/folder_navigator.dart';
 

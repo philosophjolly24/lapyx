@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:icarus/strategy_manager.dart';
 import 'package:icarus/widgets/folder_navigator.dart';
 
 class HomeView extends StatefulWidget {

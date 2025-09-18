@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
-import 'package:icarus/widgets/dialogs/custom_alert_dialog.dart';
+import 'package:icarus/widgets/dialogs/confirm_alert_dialog.dart';
 
 class DeleteOptions extends ConsumerStatefulWidget {
   const DeleteOptions({super.key});

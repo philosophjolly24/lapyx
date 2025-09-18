@@ -30,7 +30,10 @@ class ConfirmAlertDialog extends ConsumerWidget {
       content: Text(content),
       actions: [
         CustomButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
           onPressed: () => Navigator.of(context).pop(false),
           height: 40,
           label: cancelText,
@@ -38,7 +41,10 @@ class ConfirmAlertDialog extends ConsumerWidget {
           backgroundColor: Colors.transparent,
         ),
         CustomButton(
-          icon: const Icon(Icons.delete),
+          icon: const Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
           onPressed: () => Navigator.of(context).pop(true),
           height: 40,
           label: confirmText,
