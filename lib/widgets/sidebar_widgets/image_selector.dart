@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:typed_data' show Uint8List;
 import 'dart:ui' as ui;
 import 'package:icarus/const/placed_classes.dart';
@@ -9,7 +8,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/providers/image_provider.dart';
-import 'package:icarus/widgets/sidebar_widgets/tool_grid.dart';
 import 'package:uuid/uuid.dart';
 
 class ImageSelector extends ConsumerStatefulWidget {

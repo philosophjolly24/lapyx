@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/coordinate_system.dart';
 import 'package:icarus/const/settings.dart';
-import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/strategy_settings_provider.dart';
 
 class SettingsTab extends ConsumerWidget {
@@ -135,21 +134,21 @@ class SettingsTab extends ConsumerWidget {
                             )
                           ],
                         ),
-                        SettingsSection(title: "Map Settings", children: [
-                          Row(children: [
-                            const Text("Show Spawn Barrier"),
-                            const Spacer(),
-                            Checkbox(
-                                value: ref.watch(mapProvider).showSpawnBarrier,
-                                onChanged: (value) {
-                                  if (value == null) return;
+                        // SettingsSection(title: "Map Settings", children: [
+                        //   Row(children: [
+                        //     const Text("Show Spawn Barrier"),
+                        //     const Spacer(),
+                        //     Checkbox(
+                        //         value: ref.watch(mapProvider).showSpawnBarrier,
+                        //         onChanged: (value) {
+                        //           if (value == null) return;
 
-                                  ref
-                                      .read(mapProvider.notifier)
-                                      .updateSpawnBarrier(value);
-                                })
-                          ])
-                        ])
+                        //           ref
+                        //               .read(mapProvider.notifier)
+                        //               .updateSpawnBarrier(value);
+                        //         })
+                        //   ])
+                        // ])
                       ],
                     ),
                   ),

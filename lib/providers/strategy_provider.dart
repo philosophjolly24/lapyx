@@ -14,6 +14,7 @@ import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/agent_provider.dart';
 import 'package:icarus/providers/auto_save_notifier.dart';
 import 'package:icarus/providers/drawing_provider.dart';
+import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/providers/image_provider.dart';
 import 'package:icarus/providers/map_provider.dart';
 import 'package:icarus/providers/strategy_settings_provider.dart';
@@ -41,6 +42,7 @@ class StrategyData extends HiveObject {
   final DateTime lastEdited;
   final bool isAttack;
   final StrategySettings strategySettings;
+  String? folderID;
 
   StrategyData({
     this.isAttack = true,
@@ -54,6 +56,7 @@ class StrategyData extends HiveObject {
     required this.mapData,
     required this.versionNumber,
     required this.lastEdited,
+    required this.folderID,
     this.utilityData = const [],
     StrategySettings? strategySettings,
   }) : strategySettings = strategySettings ?? StrategySettings();
@@ -102,6 +105,11 @@ class StrategyProvider extends Notifier<StrategyState> {
   }
 
   Timer? _saveTimer;
+
+  //Used For Images
+  void setFromState(StrategyState newState) {
+    state = newState;
+  }
 
   void setUnsaved() async {
     log("Setting unsaved is being called");
@@ -268,20 +276,20 @@ class StrategyProvider extends Notifier<StrategyState> {
     final versionNumber = int.tryParse(json["versionNumber"].toString()) ??
         Settings.versionNumber;
     final newStrategy = StrategyData(
-      id: newID,
-      name: path.basenameWithoutExtension(file.name),
-      drawingData: drawingData,
-      agentData: agentData,
-      abilityData: abilityData,
-      textData: textData,
-      imageData: imageData,
-      mapData: mapData,
-      versionNumber: versionNumber,
-      lastEdited: DateTime.now(),
-      isAttack: isAttack,
-      strategySettings: settingsData,
-      utilityData: utilityData,
-    );
+        id: newID,
+        name: path.basenameWithoutExtension(file.name),
+        drawingData: drawingData,
+        agentData: agentData,
+        abilityData: abilityData,
+        textData: textData,
+        imageData: imageData,
+        mapData: mapData,
+        versionNumber: versionNumber,
+        lastEdited: DateTime.now(),
+        isAttack: isAttack,
+        strategySettings: settingsData,
+        utilityData: utilityData,
+        folderID: null);
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
         .put(newStrategy.id, newStrategy);
@@ -302,6 +310,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       name: name,
       lastEdited: DateTime.now(),
       strategySettings: StrategySettings(),
+      folderID: ref.read(folderProvider),
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
@@ -381,6 +390,9 @@ class StrategyProvider extends Notifier<StrategyState> {
     final strategySettings = ref.read(strategySettingsProvider);
     final utilityData = ref.read(utilityProvider);
 
+    final StrategyData? savedStrat =
+        Hive.box<StrategyData>(HiveBoxNames.strategiesBox).get(id);
+
     final currentStategy = StrategyData(
       drawingData: drawingData,
       agentData: agentData,
@@ -395,6 +407,7 @@ class StrategyProvider extends Notifier<StrategyState> {
       name: state.stratName ?? "placeholder",
       lastEdited: DateTime.now(),
       strategySettings: strategySettings,
+      folderID: savedStrat?.folderID,
     );
 
     await Hive.box<StrategyData>(HiveBoxNames.strategiesBox)
@@ -403,5 +416,17 @@ class StrategyProvider extends Notifier<StrategyState> {
       isSaved: true,
     );
     log("Save to hive was called");
+  }
+
+  void moveToFolder({required String strategyID, required String? parentID}) {
+    final strategyBox = Hive.box<StrategyData>(HiveBoxNames.strategiesBox);
+    final strategy = strategyBox.get(strategyID);
+
+    if (strategy != null) {
+      strategy.folderID = parentID;
+      strategy.save();
+    } else {
+      log("Strategy with ID $strategyID not found.");
+    }
   }
 }

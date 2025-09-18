@@ -7,19 +7,12 @@ import 'package:icarus/providers/agent_filter_provider.dart';
 class AgentFilter extends ConsumerWidget {
   AgentFilter({super.key});
 
-  final List<String> _filterText = [
-    "All",
-    "On Map",
-    "Role",
-  ];
-
   final List<AgentRole> agentRoles = [
     AgentRole.duelist,
     AgentRole.controller,
     AgentRole.initiator,
     AgentRole.sentinel,
   ];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return CustomSlidingSegmentedControl<FilterState>(

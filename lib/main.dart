@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:custom_mouse_cursor/custom_mouse_cursor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,9 +10,10 @@ import 'package:icarus/const/routes.dart';
 import 'package:icarus/const/settings.dart' show Settings;
 import 'package:icarus/hive/hive_registrar.g.dart';
 import 'package:icarus/home_view.dart';
+import 'package:icarus/providers/folder_provider.dart';
 import 'package:icarus/providers/strategy_provider.dart';
-import 'package:icarus/strategy_manager.dart';
 import 'package:icarus/strategy_view.dart';
+import 'package:icarus/widgets/folder_navigator.dart';
 import 'package:icarus/widgets/global_shortcuts.dart';
 import 'package:icarus/widgets/settings_tab.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,11 +25,14 @@ CustomMouseCursor? erasingCursor;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final directory = await getApplicationSupportDirectory();
+  log("App Support Directory: ${directory.path}");
   await Hive.initFlutter(directory.path);
 
   Hive.registerAdapters();
 
   await Hive.openBox<StrategyData>(HiveBoxNames.strategiesBox);
+  await Hive.openBox<Folder>(HiveBoxNames.foldersBox);
+
   // await Hive.box<StrategyData>(HiveBoxNames.strategiesBox).clear();
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = const WindowOptions(
@@ -73,7 +79,7 @@ class MyApp extends StatelessWidget {
         title: 'Icarus',
         theme: Settings.appTheme,
         routes: {
-          Routes.strategyManager: (context) => const StrategyManager(),
+          Routes.folderNavigator: (context) => const FolderNavigator(),
           Routes.strategyView: (context) => const StrategyView(),
           Routes.settings: (context) => const SettingsTab(),
         },

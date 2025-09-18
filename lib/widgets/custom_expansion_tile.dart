@@ -85,8 +85,6 @@ class CustomExpansionTile extends StatefulWidget {
 
 class _CustomExpansionTileState extends State<CustomExpansionTile>
     with SingleTickerProviderStateMixin {
-  static final Animatable<double> _easeOutTween =
-      CurveTween(curve: Curves.easeOut);
   static final Animatable<double> _easeInTween =
       CurveTween(curve: Curves.easeIn);
   static final Animatable<double> _halfTween =

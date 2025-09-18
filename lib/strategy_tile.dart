@@ -2,88 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/agents.dart';
 import 'package:icarus/const/maps.dart';
-import 'package:icarus/const/placed_classes.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/strategy_view.dart';
-import 'package:icarus/widgets/dialogs/delete_strategy_alert_dialog.dart';
-import 'package:icarus/widgets/dialogs/rename_strategy_dialog.dart';
-
-String capitalizeFirstLetter(String text) {
-  if (text.isEmpty) return text;
-  return text[0].toUpperCase() + text.substring(1);
-}
-
-String timeAgo(DateTime date) {
-  final now = DateTime.now();
-  final difference = now.difference(date);
-
-  if (difference.inMinutes < 1) {
-    return 'Just now';
-  } else if (difference.inMinutes < 60) {
-    return '${difference.inMinutes} min${difference.inMinutes == 1 ? '' : 's'} ago';
-  } else if (difference.inHours < 24) {
-    return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
-  } else if (difference.inDays < 30) {
-    return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
-  } else {
-    // Approximate the number of months (assuming 30 days per month)
-    final months = (difference.inDays / 30).floor();
-    return '$months month${months == 1 ? '' : 's'} ago';
-  }
-}
-
-void showLoadingOverlay(BuildContext context) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    },
-  );
-}
+import 'package:icarus/widgets/dialogs/strategy/delete_strategy_alert_dialog.dart';
+import 'package:icarus/widgets/dialogs/strategy/rename_strategy_dialog.dart';
+import 'package:icarus/widgets/folder_navigator.dart';
 
 class StrategyTile extends ConsumerStatefulWidget {
-  const StrategyTile({
-    super.key,
-    required this.strategyData,
-  });
+  const StrategyTile({super.key, required this.strategyData});
+
   final StrategyData strategyData;
+
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _StrategyTileState();
 }
 
 class _StrategyTileState extends ConsumerState<StrategyTile> {
-  Color highlightColor = Settings.highlightColor;
+  Color _highlightColor = Settings.highlightColor;
   bool _isLoading = false;
 
-  Future<void> navigateWithLoading(BuildContext context) async {
-    // Show loading overlay
-    showLoadingOverlay(context);
+  Set<AgentType> get _agentsOnMap {
+    final Set<AgentType> agents = {};
+    for (final agent in widget.strategyData.agentData) {
+      agents.add(agent.type);
+    }
+    return agents;
+  }
+
+  Future<void> _navigateToStrategy() async {
+    if (_isLoading) return;
+
+    setState(() => _isLoading = true);
+    _showLoadingOverlay();
 
     try {
       await ref
           .read(strategyProvider.notifier)
           .loadFromHive(widget.strategyData.id);
 
-      if (!context.mounted) return;
-      // Remove loading overlay
-      Navigator.pop(context);
+      if (!mounted) return;
+      Navigator.pop(context); // Remove loading overlay
 
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.push(
+      await Navigator.push(
         context,
         PageRouteBuilder(
           transitionDuration: const Duration(milliseconds: 200),
-          reverseTransitionDuration:
-              const Duration(milliseconds: 200), // pop duration
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const StrategyView(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          reverseTransitionDuration: const Duration(milliseconds: 200),
+          pageBuilder: (context, animation, _) => const StrategyView(),
+          transitionsBuilder: (context, animation, _, child) {
             return FadeTransition(
               opacity: animation,
               child: ScaleTransition(
@@ -97,343 +64,330 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
         ),
       );
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      // Handle errors
-      Navigator.pop(context); // Remove loading overlay
-      // Show error message
+      if (mounted) Navigator.pop(context); // Remove loading overlay
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  void _showLoadingOverlay() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    Set<AgentType> findAgentsOnMap() {
-      final listOfAgents = widget.strategyData.agentData;
-      final Set<AgentType> agentsOnMap = {};
+    return Draggable<GridItem>(
+      data: StrategyItem(widget.strategyData),
+      dragAnchorStrategy: pointerDragAnchorStrategy,
+      feedback: Opacity(
+        opacity: 0.95,
+        child: Material(
+          color: Colors.transparent,
+          child: _buildTileContentForFeedback(),
+        ),
+      ),
+      child: _buildTileContent(),
+    );
+  }
 
-      for (PlacedAgent agent in listOfAgents) {
-        agentsOnMap.add(agent.type);
-      }
-      return agentsOnMap;
-    }
-
-    final agentsOnMap = findAgentsOnMap();
-
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: MouseRegion(
-            cursor: SystemMouseCursors.click,
-            onEnter: (event) {
-              setState(() {
-                highlightColor = Colors.deepPurpleAccent;
-              });
-            },
-            onExit: (event) {
-              setState(() {
-                highlightColor = Settings.highlightColor;
-              });
-            },
-            child: AbsorbPointer(
-              absorbing: _isLoading,
-              child: GestureDetector(
-                onTap: () async {
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  await navigateWithLoading(context);
-                  if (!context.mounted) return;
-                  // Navigator.pushNamed(context, Routes.strategyView);
-
-                  // Navigator.push(
-                  //   context,
-                  //   PageRouteBuilder(
-                  //     pageBuilder: (_, __, ___) => const StrategyView(),
-                  //     transitionsBuilder: (_, animation, __, child) {
-                  //       const begin = Offset(1.0, 0.0);
-                  //       const end = Offset.zero;
-                  //       const curve = Curves.ease;
-                  //       var tween = Tween(begin: begin, end: end)
-                  //           .chain(CurveTween(curve: curve));
-                  //       return SlideTransition(
-                  //         position: animation.drive(tween),
-                  //         child: child,
-                  //       );
-                  //     },
-                  //   ),
-                  // );
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 100),
-                  width: 306,
-                  height: 240,
-                  decoration: BoxDecoration(
-                    color: Settings.sideBarColor,
-                    borderRadius: const BorderRadius.all(Radius.circular(16)),
-                    border: Border.all(color: highlightColor, width: 2),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: SizedBox(
-                            height: 116,
-                            child: Image.asset(
-                              "assets/maps/thumbnails/${Maps.mapNames[widget.strategyData.mapData]}_thumbnail.webp",
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1A161A),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(16)),
-                            border: Border.all(
-                                color: Settings.highlightColor, width: 1),
-                          ),
-                          height: 104,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ConstrainedBox(
-                                      constraints:
-                                          const BoxConstraints(maxWidth: 130),
-                                      child: Text(
-                                        widget.strategyData.name,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        textAlign: TextAlign.left,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      capitalizeFirstLetter(Maps.mapNames[
-                                          widget.strategyData.mapData]!),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                          maxWidth: 96 + 27),
-                                      child: Row(
-                                        spacing: 5,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          for (int i = 0;
-                                              (agentsOnMap.length > 3)
-                                                  ? i < 3
-                                                  : i < agentsOnMap.length;
-                                              i++)
-                                            Container(
-                                              height: 27,
-                                              width: 27,
-                                              decoration: BoxDecoration(
-                                                color: Settings.sideBarColor,
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(4)),
-                                                border: Border.all(
-                                                    color: Settings
-                                                        .highlightColor),
-                                              ),
-                                              child: Image.asset(AgentData
-                                                  .agents[
-                                                      agentsOnMap.elementAt(i)]!
-                                                  .iconPath),
-                                            ),
-                                          (agentsOnMap.length > 3)
-                                              ? Container(
-                                                  height: 27,
-                                                  width: 27,
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        Settings.sideBarColor,
-                                                    borderRadius:
-                                                        const BorderRadius.all(
-                                                            Radius.circular(4)),
-                                                    border: Border.all(
-                                                        color: Settings
-                                                            .highlightColor),
-                                                  ),
-                                                  child: const Center(
-                                                    child: Icon(
-                                                      Icons.more_horiz,
-                                                      color: Color.fromARGB(
-                                                          190, 210, 214, 219),
-                                                      size: 18,
-                                                    ),
-                                                  ),
-                                                )
-                                              : const SizedBox.shrink(),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      (widget.strategyData.isAttack)
-                                          ? "Attack"
-                                          : "Defense",
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                        color: (widget.strategyData.isAttack)
-                                            ? Colors.redAccent
-                                            : Colors.lightBlueAccent,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      timeAgo(widget.strategyData.lastEdited),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+  Widget _buildTileContent() {
+    return MouseRegion(
+      // Remove Positioned.fill
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _highlightColor = Colors.deepPurpleAccent),
+      onExit: (_) => setState(() => _highlightColor = Settings.highlightColor),
+      child: AbsorbPointer(
+        absorbing: _isLoading,
+        child: GestureDetector(
+          onTap: _navigateToStrategy,
+          child: Stack(
+            // Add Stack here for the context menu
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 100),
+                decoration: BoxDecoration(
+                  color: Settings.sideBarColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: _highlightColor, width: 2),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    children: [
+                      _buildMapThumbnail(),
+                      const SizedBox(height: 10),
+                      _buildInfoSection(),
+                    ],
                   ),
                 ),
               ),
+              _buildContextMenu(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+// Fix the feedback widget to not use Expanded
+  Widget _buildTileContentForFeedback() {
+    return Container(
+      height: 50,
+      width: 220,
+      decoration: BoxDecoration(
+        color: Settings.sideBarColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.deepPurpleAccent, width: 2),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: Row(
+          children: [
+            SizedBox(width: 80, child: _buildMapThumbnail(8)),
+            const SizedBox(width: 20),
+            Text(
+              widget.strategyData.name,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMapThumbnail([double? borderRadius]) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(borderRadius ?? 16),
+      child: SizedBox(
+        height: 116,
+        child: Image.asset(
+          "assets/maps/thumbnails/${Maps.mapNames[widget.strategyData.mapData]}_thumbnail.webp",
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoSection() {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF1A161A),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Settings.highlightColor),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: _buildLeftInfo()),
+            _buildRightInfo(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLeftInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 130),
+          child: Text(
+            widget.strategyData.name,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.topRight,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: MenuAnchor(
-              menuChildren: [
-                MenuItemButton(
-                  onPressed: () async {
-                    await showDialog(
-                      context: context,
-                      builder: (context) {
-                        return RenameStrategyDialog(
-                          strategyId: widget.strategyData.id,
-                          currentName: widget.strategyData.name,
-                        );
-                      },
-                    );
-
-                    // await ref.read(strategyProvider.notifier).
-                  },
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.text_fields,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        "Rename",
-                      )
-                    ],
-                  ),
-                ),
-                MenuItemButton(
-                  onPressed: () async {
-                    await ref
-                        .read(strategyProvider.notifier)
-                        .loadFromHive(widget.strategyData.id);
-                    await ref
-                        .read(strategyProvider.notifier)
-                        .exportFile(widget.strategyData.id);
-                    // await ref.read(strategyProvider.notifier).
-                  },
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.upload,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        "Export",
-                      )
-                    ],
-                  ),
-                ),
-                MenuItemButton(
-                  onPressed: () async {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return DeleteStrategyAlertDialog(
-                            strategyID: widget.strategyData.id,
-                            name: widget.strategyData.name);
-                      },
-                    );
-                  },
-                  child: const Row(
-                    children: [
-                      Icon(
-                        Icons.delete,
-                        color: Colors.redAccent,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        "Delete",
-                        style: TextStyle(color: Colors.redAccent),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-              builder: (context, controller, child) {
-                return IconButton(
-                  onPressed: () {
-                    if (controller.isOpen) {
-                      controller.close();
-                    } else {
-                      controller.open();
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.more_vert_outlined,
-                    shadows: [Shadow(blurRadius: 8)],
-                  ),
-                );
-              },
-            ),
-          ),
-        )
+        const SizedBox(height: 5),
+        Text(_capitalizeFirstLetter(
+            Maps.mapNames[widget.strategyData.mapData]!)),
+        const SizedBox(height: 5),
+        _buildAgentIcons(),
       ],
     );
+  }
+
+  Widget _buildRightInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          widget.strategyData.isAttack ? "Attack" : "Defense",
+          style: TextStyle(
+            color: widget.strategyData.isAttack
+                ? Colors.redAccent
+                : Colors.lightBlueAccent,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(_timeAgo(widget.strategyData.lastEdited)),
+      ],
+    );
+  }
+
+  Widget _buildAgentIcons() {
+    final agents = _agentsOnMap.toList();
+    const maxVisible = 3;
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 123),
+      child: Row(
+        spacing: 5,
+        children: [
+          ...agents.take(maxVisible).map(_buildAgentIcon),
+          if (agents.length > maxVisible) _buildMoreAgentsIndicator(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAgentIcon(AgentType agentType) {
+    return Container(
+      height: 27,
+      width: 27,
+      decoration: BoxDecoration(
+        color: Settings.sideBarColor,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Settings.highlightColor),
+      ),
+      child: Image.asset(AgentData.agents[agentType]!.iconPath),
+    );
+  }
+
+  Widget _buildMoreAgentsIndicator() {
+    return Container(
+      height: 27,
+      width: 27,
+      decoration: BoxDecoration(
+        color: Settings.sideBarColor,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Settings.highlightColor),
+      ),
+      child: const Icon(
+        Icons.more_horiz,
+        color: Color.fromARGB(190, 210, 214, 219),
+        size: 18,
+      ),
+    );
+  }
+
+  Widget _buildContextMenu() {
+    return Align(
+      alignment: Alignment.topRight,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: MenuAnchor(
+          menuChildren: [
+            _buildMenuItem(
+              icon: Icons.text_fields,
+              label: "Rename",
+              onPressed: () => _showRenameDialog(),
+            ),
+            _buildMenuItem(
+              icon: Icons.upload,
+              label: "Export",
+              onPressed: () => _exportStrategy(),
+            ),
+            _buildMenuItem(
+              icon: Icons.delete,
+              label: "Delete",
+              color: Colors.redAccent,
+              onPressed: () => _showDeleteDialog(),
+            ),
+          ],
+          builder: (context, controller, _) {
+            return IconButton(
+              onPressed: () =>
+                  controller.isOpen ? controller.close() : controller.open(),
+              icon: const Icon(
+                Icons.more_vert_outlined,
+                shadows: [Shadow(blurRadius: 8)],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    Color? color,
+  }) {
+    return MenuItemButton(
+      onPressed: onPressed,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color),
+          const SizedBox(width: 8),
+          Text(label, style: TextStyle(color: color)),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showRenameDialog() async {
+    await showDialog(
+      context: context,
+      builder: (_) => RenameStrategyDialog(
+        strategyId: widget.strategyData.id,
+        currentName: widget.strategyData.name,
+      ),
+    );
+  }
+
+  Future<void> _exportStrategy() async {
+    await ref
+        .read(strategyProvider.notifier)
+        .loadFromHive(widget.strategyData.id);
+    await ref
+        .read(strategyProvider.notifier)
+        .exportFile(widget.strategyData.id);
+  }
+
+  void _showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (_) => DeleteStrategyAlertDialog(
+        strategyID: widget.strategyData.id,
+        name: widget.strategyData.name,
+      ),
+    );
+  }
+
+  String _capitalizeFirstLetter(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
+  }
+
+  String _timeAgo(DateTime date) {
+    final difference = DateTime.now().difference(date);
+
+    if (difference.inMinutes < 1) return 'Just now';
+    if (difference.inMinutes < 60)
+      return '${difference.inMinutes} min${difference.inMinutes == 1 ? '' : 's'} ago';
+    if (difference.inHours < 24)
+      return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
+    if (difference.inDays < 30)
+      return '${difference.inDays} day${difference.inDays == 1 ? '' : 's'} ago';
+
+    final months = (difference.inDays / 30).floor();
+    return '$months month${months == 1 ? '' : 's'} ago';
   }
 }

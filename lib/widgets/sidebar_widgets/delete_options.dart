@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/settings.dart';
 import 'package:icarus/providers/action_provider.dart';
 import 'package:icarus/providers/interaction_state_provider.dart';
+import 'package:icarus/widgets/dialogs/confirm_alert_dialog.dart';
 
 class DeleteOptions extends ConsumerStatefulWidget {
   const DeleteOptions({super.key});
@@ -37,7 +37,20 @@ class _DeleteOptionsState extends ConsumerState<DeleteOptions> {
                   ),
                 ),
                 onPressed: () {
-                  ref.read(actionProvider.notifier).clearAllActions();
+                  ConfirmAlertDialog.show(
+                    context: context,
+                    title: "Clear All Items",
+                    content:
+                        "Are you sure you want to clear all items? This cannot be undone.",
+                    confirmText: "Clear All",
+                    cancelText: "Cancel",
+                    confirmColor: Colors.redAccent,
+                    isDestructive: true,
+                  ).then((confirmed) {
+                    if (confirmed) {
+                      ref.read(actionProvider.notifier).clearAllActions();
+                    }
+                  });
                 },
                 child: const Text("Clear all"),
               ),

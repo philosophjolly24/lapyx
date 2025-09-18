@@ -28,6 +28,7 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       mapData: fields[6] as MapValue,
       versionNumber: (fields[0] as num).toInt(),
       lastEdited: fields[9] as DateTime,
+      folderID: fields[13] as String?,
       utilityData: fields[12] == null
           ? const []
           : (fields[12] as List).cast<PlacedUtility>(),
@@ -38,7 +39,7 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
   @override
   void write(BinaryWriter writer, StrategyData obj) {
     writer
-      ..writeByte(13)
+      ..writeByte(14)
       ..writeByte(0)
       ..write(obj.versionNumber)
       ..writeByte(1)
@@ -64,7 +65,9 @@ class StrategyDataAdapter extends TypeAdapter<StrategyData> {
       ..writeByte(11)
       ..write(obj.strategySettings)
       ..writeByte(12)
-      ..write(obj.utilityData);
+      ..write(obj.utilityData)
+      ..writeByte(13)
+      ..write(obj.folderID);
   }
 
   @override
@@ -820,6 +823,161 @@ class UtilityTypeAdapter extends TypeAdapter<UtilityType> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is UtilityTypeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class FolderAdapter extends TypeAdapter<Folder> {
+  @override
+  final typeId = 17;
+
+  @override
+  Folder read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return Folder(
+      name: fields[0] as String,
+      id: fields[1] as String,
+      dateCreated: fields[3] as DateTime,
+      icon: fields[4] as IconData,
+      color: fields[5] == null ? FolderColor.red : fields[5] as FolderColor,
+      parentID: fields[2] as String?,
+      customColor: fields[6] as Color?,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, Folder obj) {
+    writer
+      ..writeByte(7)
+      ..writeByte(0)
+      ..write(obj.name)
+      ..writeByte(1)
+      ..write(obj.id)
+      ..writeByte(2)
+      ..write(obj.parentID)
+      ..writeByte(3)
+      ..write(obj.dateCreated)
+      ..writeByte(4)
+      ..write(obj.icon)
+      ..writeByte(5)
+      ..write(obj.color)
+      ..writeByte(6)
+      ..write(obj.customColor);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FolderAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class IconDataAdapter extends TypeAdapter<IconData> {
+  @override
+  final typeId = 18;
+
+  @override
+  IconData read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return IconData(
+      (fields[0] as num).toInt(),
+      fontFamily: fields[1] as String?,
+      fontPackage: fields[2] as String?,
+      matchTextDirection: fields[3] == null ? false : fields[3] as bool,
+      fontFamilyFallback: (fields[4] as List?)?.cast<String>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, IconData obj) {
+    writer
+      ..writeByte(5)
+      ..writeByte(0)
+      ..write(obj.codePoint)
+      ..writeByte(1)
+      ..write(obj.fontFamily)
+      ..writeByte(2)
+      ..write(obj.fontPackage)
+      ..writeByte(3)
+      ..write(obj.matchTextDirection)
+      ..writeByte(4)
+      ..write(obj.fontFamilyFallback);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is IconDataAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class FolderColorAdapter extends TypeAdapter<FolderColor> {
+  @override
+  final typeId = 19;
+
+  @override
+  FolderColor read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return FolderColor.generic;
+      case 1:
+        return FolderColor.red;
+      case 2:
+        return FolderColor.blue;
+      case 3:
+        return FolderColor.green;
+      case 4:
+        return FolderColor.orange;
+      case 5:
+        return FolderColor.purple;
+      case 6:
+        return FolderColor.custom;
+      default:
+        return FolderColor.generic;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, FolderColor obj) {
+    switch (obj) {
+      case FolderColor.generic:
+        writer.writeByte(0);
+      case FolderColor.red:
+        writer.writeByte(1);
+      case FolderColor.blue:
+        writer.writeByte(2);
+      case FolderColor.green:
+        writer.writeByte(3);
+      case FolderColor.orange:
+        writer.writeByte(4);
+      case FolderColor.purple:
+        writer.writeByte(5);
+      case FolderColor.custom:
+        writer.writeByte(6);
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FolderColorAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

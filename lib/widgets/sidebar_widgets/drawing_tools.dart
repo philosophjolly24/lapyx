@@ -46,6 +46,8 @@ class _DrawingToolsState extends ConsumerState<DrawingTools> {
                             Padding(
                               padding: const EdgeInsets.all(4.0),
                               child: ColorButtons(
+                                height: 26,
+                                width: 26,
                                 color: colorOption.color,
                                 isSelected: colorOption.isSelected,
                                 onTap: () {

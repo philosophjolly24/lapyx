@@ -17,7 +17,7 @@ class Settings {
   static const PhysicalKeyboardKey deleteKey = PhysicalKeyboardKey.keyX;
 
   static const Color sideBarColor = Color(0xFF141114);
-  static const Color highlightColor = Color.fromRGBO(210, 214, 219, 0.102);
+  static const Color highlightColor = Color(0xFF272528);
   static List<ColorOption> penColors = [
     ColorOption(color: Colors.white, isSelected: true),
     ColorOption(color: Colors.red, isSelected: false),
@@ -35,7 +35,7 @@ class Settings {
   static final Uri dicordLink = Uri.parse("https://discord.gg/PN2uKwCqYB");
 
   static const Duration autoSaveOffset = Duration(seconds: 15);
-  static const int versionNumber = 8;
+  static const int versionNumber = 10;
 
   static ThemeData appTheme = ThemeData(
       colorScheme: const ColorScheme.dark(
@@ -56,6 +56,13 @@ class Settings {
           //   const TextStyle(color: Colors.white),
           // ),
         ),
+      ),
+      dialogTheme: DialogTheme(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(22),
+          side: const BorderSide(color: Settings.highlightColor, width: 2),
+        ),
+        backgroundColor: Settings.sideBarColor,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(

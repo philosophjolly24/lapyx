@@ -11,7 +11,10 @@ extension HiveRegistrar on HiveInterface {
     registerAdapter(AbilityInfoAdapter());
     registerAdapter(AgentTypeAdapter());
     registerAdapter(BoundingBoxAdapter());
+    registerAdapter(FolderAdapter());
+    registerAdapter(FolderColorAdapter());
     registerAdapter(FreeDrawingAdapter());
+    registerAdapter(IconDataAdapter());
     registerAdapter(LineAdapter());
     registerAdapter(MapValueAdapter());
     registerAdapter(OffsetAdapter());
@@ -32,7 +35,10 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
     registerAdapter(AbilityInfoAdapter());
     registerAdapter(AgentTypeAdapter());
     registerAdapter(BoundingBoxAdapter());
+    registerAdapter(FolderAdapter());
+    registerAdapter(FolderColorAdapter());
     registerAdapter(FreeDrawingAdapter());
+    registerAdapter(IconDataAdapter());
     registerAdapter(LineAdapter());
     registerAdapter(MapValueAdapter());
     registerAdapter(OffsetAdapter());
