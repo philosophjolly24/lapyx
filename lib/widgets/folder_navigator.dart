@@ -49,8 +49,6 @@ class _FolderNavigatorState extends ConsumerState<FolderNavigator> {
         await ref.read(strategyProvider.notifier).loadFromHive(strategyId);
 
         if (!context.mounted) return;
-        // Remove loading overlay
-        Navigator.pop(context);
 
         Navigator.push(
           context,
@@ -76,7 +74,6 @@ class _FolderNavigatorState extends ConsumerState<FolderNavigator> {
         );
       } catch (e) {
         // Handle errors
-        Navigator.pop(context); // Remove loading overlay
         // Show error message
       }
     }
