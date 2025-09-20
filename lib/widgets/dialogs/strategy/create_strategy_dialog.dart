@@ -24,10 +24,14 @@ class _NameStrategyDialogState extends ConsumerState<CreateStrategyDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Name Strategy"),
-      content: CustomTextField(
-        hintText: "Enter strategy name",
-        controller: _textController,
+      title: const Text("Create Strategy"),
+      content: SizedBox(
+        width: 300,
+        child: CustomTextField(
+          // onEnterPressed: (intent) {},
+          hintText: "Enter strategy name",
+          controller: _textController,
+        ),
       ),
       actions: [
         TextButton(
@@ -64,10 +68,6 @@ class _NameStrategyDialogState extends ConsumerState<CreateStrategyDialog> {
           backgroundColor: Colors.deepPurple,
         )
       ],
-      shape: RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.circular(12.0), // Rounded corners for the dialog
-      ),
     );
   }
 }

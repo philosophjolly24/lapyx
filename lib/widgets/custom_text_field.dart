@@ -9,10 +9,12 @@ class CustomTextField extends ConsumerWidget {
     this.controller,
     this.hintText,
     this.textAlign,
+    // required this.onEnterPressed,
   });
   final TextEditingController? controller;
   final String? hintText;
   final TextAlign? textAlign;
+  // final Function(EnterTextIntent intent) onEnterPressed;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

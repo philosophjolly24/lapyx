@@ -39,6 +39,7 @@ class _RenameStrategyDialogState extends ConsumerState<RenameStrategyDialog> {
     return AlertDialog(
       title: const Text("Rename Strategy"),
       content: CustomTextField(
+        // onEnterPressed: (intent) {},
         hintText: widget.currentName,
         controller: _textController,
         textAlign: TextAlign.start,

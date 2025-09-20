@@ -118,7 +118,7 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
                   padding: const EdgeInsets.all(8),
                   child: Column(
                     children: [
-                      _buildMapThumbnail(),
+                      Expanded(child: _buildMapThumbnail()),
                       const SizedBox(height: 10),
                       _buildInfoSection(),
                     ],
@@ -167,6 +167,7 @@ class _StrategyTileState extends ConsumerState<StrategyTile> {
       borderRadius: BorderRadius.circular(borderRadius ?? 16),
       child: SizedBox(
         height: 116,
+        width: double.infinity,
         child: Image.asset(
           "assets/maps/thumbnails/${Maps.mapNames[widget.strategyData.mapData]}_thumbnail.webp",
           fit: BoxFit.cover,

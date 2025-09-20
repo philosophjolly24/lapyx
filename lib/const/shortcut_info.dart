@@ -45,6 +45,8 @@ class ShortcutInfo {
 
     LogicalKeySet(LogicalKeyboardKey.keyA):
         const DoNothingAndStopPropagationIntent(),
+
+    LogicalKeySet(LogicalKeyboardKey.enter): const EnterTextIntent(),
   };
 }
 
@@ -62,6 +64,10 @@ class AddedTextIntent extends Intent {
 
 class ToggleErasingIntent extends Intent {
   const ToggleErasingIntent();
+}
+
+class EnterTextIntent extends Intent {
+  const EnterTextIntent();
 }
 
 class UndoActionIntent extends Intent {
