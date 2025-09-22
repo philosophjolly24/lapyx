@@ -111,29 +111,29 @@ class SettingsTab extends ConsumerWidget {
                             )
                           ],
                         ),
-                        SettingsSection(
-                          title: "Abilities",
-                          children: [
-                            const Text(
-                              "Scale",
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            const SizedBox(height: 10),
-                            Slider(
-                              min: Settings.abilitySizeMin,
-                              max: Settings.abilitySizeMax,
-                              divisions: 15,
-                              value: ref
-                                  .watch(strategySettingsProvider)
-                                  .abilitySize,
-                              onChanged: (value) {
-                                ref
-                                    .read(strategySettingsProvider.notifier)
-                                    .updateAbilitySize(value);
-                              },
-                            )
-                          ],
-                        ),
+                        // SettingsSection(
+                        //   title: "Abilities",
+                        //   children: [
+                        //     const Text(
+                        //       "Scale",
+                        //       style: TextStyle(fontSize: 15),
+                        //     ),
+                        //     const SizedBox(height: 10),
+                        //     Slider(
+                        //       min: Settings.abilitySizeMin,
+                        //       max: Settings.abilitySizeMax,
+                        //       divisions: 15,
+                        //       value: ref
+                        //           .watch(strategySettingsProvider)
+                        //           .abilitySize,
+                        //       onChanged: (value) {
+                        //         ref
+                        //             .read(strategySettingsProvider.notifier)
+                        //             .updateAbilitySize(value);
+                        //       },
+                        //     )
+                        //   ],
+                        // ),
                         // SettingsSection(title: "Map Settings", children: [
                         //   Row(children: [
                         //     const Text("Show Spawn Barrier"),
