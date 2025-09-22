@@ -15,6 +15,7 @@ import 'package:icarus/widgets/dot_painter.dart';
 
 import 'package:icarus/widgets/drawing_painter.dart';
 import 'package:icarus/widgets/draggable_widgets/placed_widget_builder.dart';
+import 'package:icarus/widgets/image_drop_target.dart';
 import 'package:screenshot/screenshot.dart';
 
 class InteractiveMap extends ConsumerStatefulWidget {
@@ -52,74 +53,80 @@ class _InteractiveMapState extends ConsumerState<InteractiveMap> {
             width: coordinateSystem.playAreaSize.width,
             height: coordinateSystem.playAreaSize.height,
             color: const Color(0xFF1B1B1B),
-            child: InteractiveViewer(
-              transformationController: controller,
-              onInteractionEnd: (details) {
-                ref
-                    .read(screenZoomProvider.notifier)
-                    .updateZoom(controller.value.getMaxScaleOnAxis());
-              },
-              child: Stack(
-                children: [
-                  //Dot Grid
-                  Positioned.fill(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        ref.read(abilityBarProvider.notifier).updateData(null);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: DotGrid(),
-                      ),
-                    ),
-                  ),
-                  // Map SVG
-                  Positioned.fill(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        ref.read(abilityBarProvider.notifier).updateData(null);
-                      },
-                      child: SvgPicture.asset(
-                        assetName,
-                        semanticsLabel: 'Map',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                  if (ref.watch(mapProvider).showSpawnBarrier)
+            child: ImageDropTarget(
+              child: InteractiveViewer(
+                transformationController: controller,
+                onInteractionEnd: (details) {
+                  ref
+                      .read(screenZoomProvider.notifier)
+                      .updateZoom(controller.value.getMaxScaleOnAxis());
+                },
+                child: Stack(
+                  children: [
+                    //Dot Grid
                     Positioned.fill(
-                      top: 0,
-                      left: isAttack ? -1.5 : 1.5,
-                      child: Transform.flip(
-                        flipX: !isAttack,
-                        flipY: !isAttack,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          ref
+                              .read(abilityBarProvider.notifier)
+                              .updateData(null);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: DotGrid(),
+                        ),
+                      ),
+                    ),
+                    // Map SVG
+                    Positioned.fill(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          ref
+                              .read(abilityBarProvider.notifier)
+                              .updateData(null);
+                        },
                         child: SvgPicture.asset(
-                          barrierAssetName,
-                          semanticsLabel: 'Barrier',
+                          assetName,
+                          semanticsLabel: 'Map',
                           fit: BoxFit.contain,
                         ),
                       ),
                     ),
-                  //Agents
-                  Positioned.fill(
-                    child: PlacedWidgetBuilder(),
-                  ),
+                    if (ref.watch(mapProvider).showSpawnBarrier)
+                      Positioned.fill(
+                        top: 0,
+                        left: isAttack ? -1.5 : 1.5,
+                        child: Transform.flip(
+                          flipX: !isAttack,
+                          flipY: !isAttack,
+                          child: SvgPicture.asset(
+                            barrierAssetName,
+                            semanticsLabel: 'Barrier',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    //Agents
+                    Positioned.fill(
+                      child: PlacedWidgetBuilder(),
+                    ),
 
-                  //Painting
-                  Positioned.fill(
-                    child: InteractivePainter(),
-                  ),
-                  // TODO: Later
-                  // Positioned.fill(
-                  //   child: MouseRegion(
-                  //     onHover: (event) {
-                  //       // if(ref.watch(interactionStateProvider).)
-                  //     },
-                  //   ),
-                  // )
-                ],
+                    //Painting
+                    Positioned.fill(
+                      child: InteractivePainter(),
+                    ),
+                    // TODO: Later
+                    // Positioned.fill(
+                    //   child: MouseRegion(
+                    //     onHover: (event) {
+                    //       // if(ref.watch(interactionStateProvider).)
+                    //     },
+                    //   ),
+                    // )
+                  ],
+                ),
               ),
             ),
           ),
