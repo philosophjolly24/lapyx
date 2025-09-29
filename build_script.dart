@@ -4,8 +4,8 @@ import 'dart:io';
 
 void main(List<String> args) {
   if (args.isEmpty) {
-    print('Usage: dart scripts/update_version.dart <version> <build_number>');
-    print('Example: dart scripts/update_version.dart 1.7.2 12');
+    print('Usage: dart build_script.dart <version> <build_number>');
+    print('Example: dart build_script.dart 1.7.2 12');
     exit(1);
   }
 
@@ -27,12 +27,12 @@ void updatePubspec(String fullVersion, String msixVersion) {
   final file = File('pubspec.yaml');
   String content = file.readAsStringSync();
 
-  // Update main version
+  // Update main version - fixed regex pattern
   content = content.replaceFirst(
-      RegExp(r'version: [\d\.]++\d+ #version number'),
+      RegExp(r'version: [\d\.]+\+\d+ #version number'),
       'version: $fullVersion #version number');
 
-  // Update msix version
+  // Update msix version - fixed regex pattern
   content = content.replaceFirst(
       RegExp(r'msix_version: [\d\.]+ #verion number'),
       'msix_version: $msixVersion #verion number');

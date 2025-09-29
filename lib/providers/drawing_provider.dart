@@ -115,6 +115,14 @@ class DrawingProvider extends Notifier<DrawingState> {
     return jsonEncode(jsonList);
   }
 
+  String toJsonFromData(List<DrawingElement> elements) {
+    final List<Map<String, dynamic>> jsonList = elements
+        .whereType<FreeDrawing>()
+        .map((element) => element.toJson())
+        .toList();
+    return jsonEncode(jsonList);
+  }
+
   void fromHive(List<DrawingElement> hiveDrawings) {
     final coordinateSystem = CoordinateSystem.instance;
     final newDrawings = hiveDrawings.map((drawing) {
