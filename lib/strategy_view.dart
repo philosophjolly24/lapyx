@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:icarus/const/custom_icons.dart';
@@ -8,8 +7,7 @@ import 'package:icarus/const/settings.dart';
 import 'package:icarus/interactive_map.dart';
 import 'package:icarus/providers/strategy_provider.dart';
 import 'package:icarus/sidebar.dart';
-import 'package:icarus/widgets/ica_drop_target.dart';
-import 'package:icarus/widgets/image_drop_target.dart';
+
 import 'package:icarus/widgets/map_selector.dart';
 import 'package:icarus/widgets/save_and_load_button.dart';
 import 'package:screenshot/screenshot.dart';
