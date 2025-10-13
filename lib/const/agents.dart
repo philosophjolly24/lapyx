@@ -29,7 +29,8 @@ enum AgentType {
   sage,
   vyse,
   tejo,
-  waylay
+  waylay,
+  veto
 }
 
 enum AgentRole { controller, duelist, initiator, sentinel }
@@ -869,6 +870,33 @@ class AgentData implements DraggableData {
         iconPath: agent.abilities.last.iconPath,
         distanceBetweenAOE: 3 * inGameMeters,
         color: Colors.deepPurpleAccent,
+      );
+
+      return agent;
+    })(),
+    AgentType.veto: (() {
+      final agent = AgentData(
+          type: AgentType.veto, role: AgentRole.sentinel, name: "Veto");
+
+      agent.abilities.first.abilityData = CircleAbility(
+        iconPath: agent.abilities.first.iconPath,
+        size: 24,
+        outlineColor: Colors.lightBlueAccent,
+        hasCenterDot: true,
+      );
+
+      agent.abilities[1].abilityData = CircleAbility(
+        iconPath: agent.abilities[1].iconPath,
+        size: 6.58,
+        outlineColor: Colors.lightBlueAccent,
+        hasCenterDot: true,
+      );
+
+      agent.abilities[2].abilityData = CircleAbility(
+        iconPath: agent.abilities[2].iconPath,
+        size: 18,
+        outlineColor: Colors.lightBlueAccent,
+        hasCenterDot: true,
       );
 
       return agent;

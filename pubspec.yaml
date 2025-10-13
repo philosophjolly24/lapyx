@@ -97,6 +97,7 @@ flutter:
     - assets/agents/Gekko/
     - assets/agents/Harbor/
     - assets/agents/Waylay/
+    - assets/agents/Veto/
 
   uses-material-design: true
 
