@@ -1,6 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
 
 @theme {
     --color-off-white: #f5f5f5;
-    --color-main-button: #AA7DD8;
+    --color-main: #AA7DD8;
+    --color-secondary: #513069;
+    --font-inter: "inter", sans-serif;
+}
+
+@layer base {
+    body {
+        @apply font-inter;
+        @apply text-off-white;
+    }
 }
