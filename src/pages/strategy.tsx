@@ -20,8 +20,8 @@ export default function Strategy() {
   }, [isAttack]);
 
   return (
-    <div className="grid grid-cols-4 gap-4 pt-2 h-full">
-      <div className="col-span-3 ">
+    <div className="grid grid-cols-4 gap-4 h-screen w-full overflow-hidden my-2">
+      <div className="col-span-3 max-h-screen">
         {/* top toolbar */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex flex-row gap-4">
@@ -117,24 +117,26 @@ export default function Strategy() {
           </div>
         </div>
         {/* map */}
-        <div
-          className={`flex items-center justify-center overflow-hidden  h-[90%] w-full`}
-        >
+        <div className="flex items-center justify-center overflow-hidden h-[90%] w-full">
           <img
             src={`/maps/${currentMap}_${mapSide}.svg`}
             alt=""
             loading="lazy"
-            className={`transition-transform duration-300 ease-initial object-none aspect-auto ${
-              isAttack ? "rotate-0" : "rotate-360"
-            } `}
+            className={`transition-transform duration-300 ease-in-out
+                object-contain max-h-full w-full ${
+                  isAttack ? "rotate-0" : "rotate-360"
+                } }`}
           />
         </div>
+
         {/* bottom toolbar */}
 
         {/* <div className="flex items-center justify-center bg-red-400 h-7"></div> */}
       </div>
       {/* sidebar */}
-      <AgentSidebar />
+      <div className="h-screen overflow-y-hidden scrollbar-hidden rounded-md">
+        <AgentSidebar />
+      </div>
     </div>
   );
 }
