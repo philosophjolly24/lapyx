@@ -1,10 +1,11 @@
 import type { Dispatch, SetStateAction } from "react";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { currentMapPool, outOfRotation } from "@/features/maps/scripts/maps";
+import type { mapConfig } from "../scripts/mapScale";
 
 interface MapPickerProps {
   currentMap: string;
-  setCurrentMap: Dispatch<SetStateAction<string>>;
+  setCurrentMap: Dispatch<SetStateAction<keyof typeof mapConfig>>;
 }
 
 export default function MapPicker({

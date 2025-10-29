@@ -4,11 +4,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { currentMapPool } from "@/features/maps/scripts/maps";
 import AgentSidebar from "@/features/agents/components/AgentSidebar";
+import MapDisplay from "@/features/maps/components/MapDisplay";
+import type { mapConfig } from "@/features/maps/scripts/mapScale";
 
 export default function Strategy() {
-  const [currentMap, setCurrentMap] = useState(currentMapPool[1]);
+  const [currentMap, setCurrentMap] = useState<keyof typeof mapConfig>(
+    currentMapPool[1]
+  );
   const [isAttack, setIsAttack] = useState(true);
-  const [mapSide, setMapSide] = useState<string | null>("atk");
+  const [mapSide, setMapSide] = useState<string>("atk");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,8 +25,8 @@ export default function Strategy() {
   }, [isAttack]);
 
   return (
-    <div className="grid grid-cols-4 gap-4 h-screen w-full overflow-hidden my-2">
-      <div className="col-span-3 max-h-screen">
+    <div className="grid grid-cols-4 gap-4 h-screen w-full overflow-hidden ">
+      <div className="col-span-3 max-h-screen mt-2">
         {/* top toolbar */}
         <div className="flex items-center justify-between mb-2">
           <div className="flex flex-row gap-4">
@@ -43,7 +48,7 @@ export default function Strategy() {
 
             {/* starting side */}
             <div
-              className="bg-main rounded-md h-16 w-16 flex  flex-col items-center justify-center"
+              className="bg-active rounded-md h-16 w-16 flex  flex-col items-center justify-center"
               onClick={() => {
                 setIsAttack(!isAttack);
               }}
@@ -117,24 +122,18 @@ export default function Strategy() {
           </div>
         </div>
         {/* map */}
-        <div className="flex items-center justify-center overflow-hidden h-[90%] w-full">
-          <img
-            src={`/maps/${currentMap}_${mapSide}.svg`}
-            alt=""
-            loading="lazy"
-            className={`transition-transform duration-300 ease-in-out
-                object-contain max-h-full w-full ${
-                  isAttack ? "rotate-0" : "rotate-360"
-                } }`}
-          />
-        </div>
+        <MapDisplay
+          currentMap={currentMap}
+          isAttack={isAttack}
+          mapSide={mapSide}
+        />
 
         {/* bottom toolbar */}
 
         {/* <div className="flex items-center justify-center bg-red-400 h-7"></div> */}
       </div>
       {/* sidebar */}
-      <div className="h-screen overflow-y-hidden scrollbar-hidden rounded-md">
+      <div className="col-span-1 rounded-md flex flex-col h-full">
         <AgentSidebar />
       </div>
     </div>

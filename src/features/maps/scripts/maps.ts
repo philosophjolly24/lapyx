@@ -1,4 +1,6 @@
-const maps = [
+import type { mapConfig } from "./mapScale";
+
+const maps: (keyof typeof mapConfig)[] = [
   "abyss",
   "ascent",
   "bind",
@@ -13,7 +15,7 @@ const maps = [
   "sunset",
 ];
 
-const currentMapPool = [
+const currentMapPool: (keyof typeof mapConfig)[] = [
   "abyss",
   "bind",
   "corrode",

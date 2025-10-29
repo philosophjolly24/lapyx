@@ -1,100 +1,95 @@
 import React, { useState, type Dispatch, type SetStateAction } from "react";
 
 import { agents, type agent } from "../scripts/agents";
+import AgentIcon from "./AgentIcon";
 
 interface AgentCardProps {
   agentSort?: "all" | "on map" | "role";
-
   setAgentSort: Dispatch<SetStateAction<"all" | "on map" | "role">>;
-
   currentAgent: agent;
-
   setCurrentAgent: React.Dispatch<React.SetStateAction<agent>>;
 }
 
 interface CurrentAgentCardProps {
   currentAgent: agent;
-
   setCurrentAgent: React.Dispatch<React.SetStateAction<agent>>;
 }
 
-function AgentCard({
+function AgentSelect({
   agentSort,
-
   setAgentSort,
-
   setCurrentAgent,
-
   currentAgent,
 }: AgentCardProps) {
   return (
-    <div className="flex flex-col w-full h-full gap-3 items-center justify-center mb-3">
-      <div className="bg-[#2e2e2e]/25 w-[90%] rounded-md grow mt-3">
+    <div className=" h-full w-full flex flex-col items-center gap-3">
+      {/* current agent */}
+      <div className=" bg-main/25 w-[95%] rounded-md  min-h-[200px] ">
         <CurrentAgentCard
           currentAgent={currentAgent}
           setCurrentAgent={setCurrentAgent}
-        />
+        ></CurrentAgentCard>
       </div>
+      {/* all agents */}
+      <div className=" w-[95%] flex flex-col items-center grow ">
+        {/* agents sort button bar */}
+        <div className=" flex items-center justify-between bg-unactive rounded-md min-h-10 w-full my-3 ">
+          <button
+            className={` w-full h-full font-bold text-lg tracking-wide rounded ${
+              agentSort === "all" ? "bg-active  rounded " : null
+            } `}
+            onClick={() => setAgentSort("all")}
+          >
+            All
+          </button>
 
-      <div className="bg-[#2e2e2e]/25 w-[90%] rounded-md flex flex-col items-center justify-between  h-full">
-        <div className="flex flex-col items-center justify-center gap-3 w-[90%] h-[95%]">
-          <div className=" flex items-center justify-between bg-[#2e2e2e]/25 mt-3  rounded-md h-14 w-full my-3 ">
-            <button
-              className={` w-full h-full font-bold text-lg tracking-wide rounded ${
-                agentSort === "all" ? "bg-main  rounded " : null
-              } `}
-              onClick={() => setAgentSort("all")}
-            >
-              All
-            </button>
+          <button
+            className={` w-full h-full  font-bold text-lg tracking-wide rounded ${
+              agentSort === "on map" ? "bg-active  rounded " : null
+            }  `}
+            onClick={() => setAgentSort("on map")}
+          >
+            On Map
+          </button>
 
-            <button
-              className={` w-full h-full  font-bold text-lg tracking-wide rounded ${
-                agentSort === "on map" ? "bg-main  rounded " : null
-              }  `}
-              onClick={() => setAgentSort("on map")}
-            >
-              On Map
-            </button>
-
-            <button
-              className={` w-full h-full  font-bold text-lg tracking-wide rounded ${
-                agentSort === "role" ? "bg-main  rounded " : null
-              } `}
-              onClick={() => setAgentSort("role")}
-            >
-              Role
-            </button>
-          </div>
-
-          <div className="overflow-y-auto scrollbar-hide h-[90%] pb-3">
-            <ul className="grid grid-cols-4 w-full gap-4">
-              {agents.map((agent) => {
-                return (
-                  <li
-                    key={agent.name}
-                    onClick={() => {
-                      setCurrentAgent(agent);
-                    }}
-                    className="aspect-square"
-                  >
-                    <div className=" flex items-center justify-center bg-main/25 rounded-md">
-                      <img
-                        src={`/agents/${agent.name}/icon.webp`}
-                        alt={`${agent.name}`}
-                        width={32}
-                        height={32}
-                        className="w-fit h-fit"
-                      />
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
+          <button
+            className={` w-full h-full  font-bold text-lg tracking-wide rounded ${
+              agentSort === "role" ? "bg-active  rounded " : null
+            } `}
+            onClick={() => setAgentSort("role")}
+          >
+            Role
+          </button>
+        </div>
+        {/* agent selector */}
+        <div className="overflow-y-auto scrollbar-hide grow w-full px-3 pb-8 h-0">
+          <ul className="grid grid-cols-4 w-full gap-4 rounded-md">
+            {agents.map((agent) => {
+              return (
+                <li
+                  key={agent.name}
+                  onClick={() => {
+                    setCurrentAgent(agent);
+                  }}
+                  className="aspect-square"
+                >
+                  <div className=" flex items-center justify-center bg-main/25 rounded-md">
+                    <img
+                      src={`/agents/${agent.name}/icon.webp`}
+                      alt={`${agent.name}`}
+                      width={32}
+                      height={32}
+                      className="w-fit h-fit rounded-md"
+                    />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
     </div>
+    // agent card
   );
 }
 
@@ -103,16 +98,8 @@ function CurrentAgentCard({ currentAgent }: CurrentAgentCardProps) {
 
   return (
     <div>
-      <div className="flex justify-around content-center gap-3  w-full ">
-        <div className=" flex items-center justify-center  bg-main/25 rounded-md  my-4 ml-3">
-          <img
-            src={`/agents/${currentAgent.name}/icon.webp`}
-            alt={`${currentAgent.name}`}
-            width={120}
-            height={120}
-            className="object-cover w-full h-full"
-          />
-        </div>
+      <div className="flex justify-around items-center content-center gap-3  w-full ">
+        <AgentIcon agent={currentAgent} />
 
         <div className=" flex flex-col grow my-3">
           <div className="flex flex-col items-center justify-center">
@@ -180,4 +167,6 @@ function CurrentAgentCard({ currentAgent }: CurrentAgentCardProps) {
   );
 }
 
-export default React.memo(AgentCard);
+export default React.memo(AgentSelect);
+
+// TODO: hide or fix the agent list styling
